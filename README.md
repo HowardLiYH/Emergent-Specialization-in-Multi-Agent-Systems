@@ -111,23 +111,74 @@ pip install -e .
 ## Running Experiments
 
 ```bash
-# Run all experiments
+# Run all experiments (full suite)
 python -m experiments.runner --all
 
 # Run specific experiment
 python -m experiments.runner -e exp1
 
-# Quick test (10 trials)
+# Run multiple experiments
+python -m experiments.runner -e exp1 exp2 exp3
+
+# Quick test (10 trials instead of 100)
 python -m experiments.runner -e exp1 --trials 10
+
+# Custom seed
+python -m experiments.runner --all --seed 123
+
+# Custom output directory
+python -m experiments.runner --all -o my_results/
+```
+
+### Running Individual Experiments
+
+```bash
+# Experiment 1: Emergence
+python experiments/exp1_emergence.py --trials 100
+
+# Experiment 2: Diversity Value
+python experiments/exp2_diversity_value.py --trials 100
+
+# Experiment 3: Population Size
+python experiments/exp3_population_size.py --trials 50 --sizes 3 5 7 10
+
+# Experiment 4: Transfer Frequency
+python experiments/exp4_transfer_frequency.py --trials 50
+
+# Experiment 5: Regime Transitions
+python experiments/exp5_regime_transitions.py --trials 50
+
+# Experiment 6: Real Data Validation
+python experiments/exp6_real_data.py --data-dir ../MAS_Final_With_Agents/data/bybit
+```
+
+## Generating Figures
+
+```bash
+# Generate all paper figures
+python -c "from src.analysis.figures import generate_all_figures; generate_all_figures()"
+```
+
+## Running Tests
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run specific test class
+pytest tests/test_core.py::TestPopulation -v
 ```
 
 ## Expected Results
 
-| Metric | Initial | Final | p-value |
-|--------|---------|-------|---------|
-| SI | 0.10 ± 0.02 | 0.65 ± 0.10 | < 0.001 |
-| RP | 0.25 ± 0.05 | 0.70 ± 0.12 | < 0.001 |
-| PD | 0.12 ± 0.03 | 0.55 ± 0.08 | < 0.001 |
+| Experiment | Key Metric | Expected Value | p-value |
+|------------|------------|----------------|---------|
+| Exp 1: Emergence | Final SI | 0.65 ± 0.10 | < 0.001 |
+| Exp 2: Diversity | Diverse vs Homogeneous | +35% | < 0.001 |
+| Exp 3: Pop Size | Optimal N* | 5-7 | - |
+| Exp 4: Transfer | Optimal τ* | 10-25 | - |
+| Exp 5: Transitions | Switch Rate | >0.8 | < 0.05 |
+| Exp 6: Real Data | SI matches synthetic | Yes | - |
 
 ## Citation
 
