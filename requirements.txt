@@ -1,0 +1,25 @@
+# Emergent Specialization in Multi-Agent Trading
+# Requirements for NeurIPS 2025 experiments
+
+# Core dependencies
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Progress tracking
+tqdm>=4.65.0
+
+# Visualization (for paper figures)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Statistical tests
+statsmodels>=0.14.0
+
+# ML (optional, for advanced analysis)
+# scikit-learn>=1.2.0
+
+# Development
+pytest>=7.3.0
+black>=23.0.0
+mypy>=1.0.0
