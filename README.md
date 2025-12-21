@@ -1,7 +1,5 @@
 # Emergent Specialization in Multi-Agent Trading
 
-**NeurIPS 2025 Submission**
-
 ## Abstract
 
 We demonstrate that populations of learning agents in financial markets exhibit emergent specialization without explicit supervision. Agents naturally partition the regime space through competitive selection pressure, resembling Evolutionary Stable Strategies (ESS) in biological systems.
