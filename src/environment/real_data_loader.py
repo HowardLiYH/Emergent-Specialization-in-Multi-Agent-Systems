@@ -1,7 +1,7 @@
 """
-Real Data Loader for Experiment 6.
+Real Data Loader for Bybit Cryptocurrency Data.
 
-Loads historical cryptocurrency data from Bybit CSVs.
+Loads historical cryptocurrency data and detects regimes using HMM.
 """
 
 from pathlib import Path
@@ -9,10 +9,16 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import numpy as np
 
+from .hmm_regime_detector import HMMRegimeDetector
+
+
+# Default path to local data
+DEFAULT_DATA_DIR = Path(__file__).parent.parent.parent / "data" / "bybit"
+
 
 def load_bybit_data(
     symbol: str,
-    data_dir: str = "../../MAS_Final_With_Agents/data/bybit",
+    data_dir: Optional[Path] = None,
 ) -> pd.DataFrame:
     """
     Load Bybit data for a symbol.
@@ -24,6 +30,7 @@ def load_bybit_data(
     Returns:
         DataFrame with OHLCV data
     """
+    data_dir = data_dir or DEFAULT_DATA_DIR
     data_path = Path(data_dir) / f"Bybit_{symbol}.csv"
 
     if not data_path.exists():
@@ -46,8 +53,8 @@ def load_bybit_data(
 
 
 def load_multi_asset_data(
-    symbols: List[str] = ["BTC", "ETH", "SOL"],
-    data_dir: str = "../../MAS_Final_With_Agents/data/bybit",
+    symbols: List[str] = None,
+    data_dir: Optional[Path] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
 ) -> Dict[str, pd.DataFrame]:
@@ -55,7 +62,7 @@ def load_multi_asset_data(
     Load data for multiple assets.
 
     Args:
-        symbols: List of coin symbols
+        symbols: List of coin symbols (default: all available)
         data_dir: Path to bybit data directory
         start_date: Optional start date filter
         end_date: Optional end date filter
@@ -63,6 +70,11 @@ def load_multi_asset_data(
     Returns:
         Dict mapping symbol to DataFrame
     """
+    data_dir = data_dir or DEFAULT_DATA_DIR
+
+    if symbols is None:
+        symbols = ["BTC", "ETH", "SOL", "DOGE", "XRP"]
+
     data = {}
 
     for symbol in symbols:
@@ -82,83 +94,95 @@ def load_multi_asset_data(
     return data
 
 
-def label_regimes_hmm(
+def detect_regimes_with_hmm(
     prices: pd.DataFrame,
     n_regimes: int = 4,
-) -> pd.Series:
+    random_state: int = 42,
+) -> Tuple[pd.Series, HMMRegimeDetector]:
     """
-    Label regimes using a simple HMM-like approach.
-
-    This is a simplified version for the paper.
-    Uses volatility + returns to classify regimes.
+    Detect regimes using HMM.
 
     Args:
-        prices: Price DataFrame
+        prices: Price DataFrame with OHLCV
         n_regimes: Number of regimes to detect
+        random_state: Random seed
 
     Returns:
-        Series with regime labels
+        Tuple of (regime labels, fitted detector)
+    """
+    detector = HMMRegimeDetector(
+        n_regimes=n_regimes,
+        random_state=random_state,
+    )
+    regimes = detector.fit_predict(prices)
+    return regimes, detector
+
+
+def prepare_real_data_experiment(
+    symbol: str = "BTC",
+    train_ratio: float = 0.7,
+    n_regimes: int = 4,
+    data_dir: Optional[Path] = None,
+) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series, HMMRegimeDetector]:
+    """
+    Prepare data for real data experiment.
+
+    Splits data into train/test and detects regimes using HMM.
+
+    Args:
+        symbol: Coin symbol
+        train_ratio: Fraction of data for training
+        n_regimes: Number of regimes
+        data_dir: Data directory
+
+    Returns:
+        Tuple of (train_prices, train_regimes, test_prices, test_regimes, detector)
+    """
+    # Load data
+    prices = load_bybit_data(symbol, data_dir)
+
+    # Split by ratio
+    split_idx = int(len(prices) * train_ratio)
+    train_prices = prices.iloc[:split_idx].copy()
+    test_prices = prices.iloc[split_idx:].copy()
+
+    # Fit HMM on training data
+    detector = HMMRegimeDetector(n_regimes=n_regimes)
+    train_regimes = detector.fit_predict(train_prices)
+
+    # Predict on test data using trained model
+    test_regimes = detector.predict(test_prices)
+
+    return train_prices, train_regimes, test_prices, test_regimes, detector
+
+
+def get_regime_statistics(
+    prices: pd.DataFrame,
+    regimes: pd.Series,
+) -> pd.DataFrame:
+    """
+    Compute statistics for each regime.
+
+    Returns DataFrame with regime characteristics.
     """
     close = prices["close"]
-
-    # Compute features
     returns = close.pct_change()
-    volatility = returns.rolling(20).std()
-    momentum = close.pct_change(20)
 
-    # Simple rule-based classification
-    labels = []
-
-    for i in range(len(prices)):
-        if i < 20:
-            labels.append("unknown")
+    stats = []
+    for regime in regimes.unique():
+        if regime == "unknown":
             continue
 
-        ret = momentum.iloc[i]
-        vol = volatility.iloc[i]
+        mask = regimes == regime
+        regime_returns = returns[mask]
 
-        # Classify based on returns and volatility
-        if vol > volatility.median() * 1.5:
-            label = "volatile"
-        elif ret > 0.05:
-            label = "trend_up"
-        elif ret < -0.05:
-            label = "trend_down"
-        else:
-            label = "mean_revert"
+        stats.append({
+            "regime": regime,
+            "count": mask.sum(),
+            "proportion": mask.mean(),
+            "mean_return": regime_returns.mean(),
+            "std_return": regime_returns.std(),
+            "sharpe": regime_returns.mean() / (regime_returns.std() + 1e-8) * np.sqrt(252 * 6),
+        })
 
-        labels.append(label)
-
-    return pd.Series(labels, index=prices.index, name="regime")
-
-
-def prepare_experiment6_data(
-    data_dir: str = "../../MAS_Final_With_Agents/data/bybit",
-    train_end: str = "2023-12-31",
-    test_start: str = "2024-01-01",
-) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
-    """
-    Prepare data for Experiment 6.
-
-    Returns train and test sets with regime labels.
-
-    Args:
-        data_dir: Path to data directory
-        train_end: End of training period
-        test_start: Start of test period
-
-    Returns:
-        Tuple of (train_prices, train_regimes, test_prices, test_regimes)
-    """
-    # Load BTC as primary asset
-    df = load_bybit_data("BTC", data_dir)
-
-    # Split train/test
-    train_df = df[df.index <= train_end]
-    test_df = df[df.index >= test_start]
-
-    # Label regimes
-    train_regimes = label_regimes_hmm(train_df)
-    test_regimes = label_regimes_hmm(test_df)
-
-    return train_df, train_regimes, test_df, test_regimes
+    return pd.DataFrame(stats)

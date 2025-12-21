@@ -1,0 +1,13 @@
+{
+  "experiment": "rl_baselines",
+  "n_trials": 5,
+  "n_iterations": 2000,
+  "diverse_mean": 0.09419226441360988,
+  "diverse_std": 0.03600601362027812,
+  "dqn_mean": 0.04060625141500723,
+  "dqn_std": 0.006216319676787787,
+  "ppo_mean": 0.004354242358922753,
+  "ppo_std": 0.017961871301835703,
+  "diverse_vs_dqn_p": 0.0393467702107216,
+  "diverse_vs_ppo_p": 0.008635759711719593
+}

@@ -1,0 +1,20 @@
+{
+  "experiment": "real_data",
+  "symbol": "BTC",
+  "n_trials": 10,
+  "train_bars": 6136,
+  "test_bars": 2630,
+  "diverse_train_mean": 157.3449630968337,
+  "diverse_train_std": 42.17590977205506,
+  "homogeneous_train_mean": 205.67265713963576,
+  "random_train_mean": 27.711259364720103,
+  "diverse_test_mean": 37.63975036416936,
+  "diverse_test_std": 12.266177063497087,
+  "homogeneous_test_mean": 69.08167517813969,
+  "random_test_mean": 9.98712950484995,
+  "si_mean": 0.8785439499791025,
+  "si_std": 0.002100621402030566,
+  "diversity_mean": 1.0,
+  "train_vs_homo_p": 0.00741882120208722,
+  "test_vs_homo_p": 3.0313043949590633e-05
+}

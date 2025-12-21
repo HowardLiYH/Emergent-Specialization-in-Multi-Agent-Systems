@@ -55,10 +55,12 @@ class NicheAgent:
         agent_id: str,
         regimes: List[str],
         seed: Optional[int] = None,
+        methods: Optional[List[str]] = None,
+        min_exploration: float = 0.05,
     ):
         self.agent_id = agent_id
         self.regimes = regimes
-        self.method_names = list(METHOD_INVENTORY_V2.keys())
+        self.method_names = methods or list(METHOD_INVENTORY_V2.keys())
         self.rng = np.random.default_rng(seed)
 
         # Beliefs per regime per method
@@ -80,7 +82,7 @@ class NicheAgent:
         # Exploration rate (decays over time)
         self.exploration_rate = 0.3
         self.exploration_decay = 0.999
-        self.min_exploration = 0.05
+        self.min_exploration = min_exploration
 
     def select_method(self, regime: str) -> str:
         """Select a method for the current regime."""
@@ -181,10 +183,14 @@ class NichePopulation:
         regimes: List[str] = None,
         niche_bonus: float = 0.3,  # Reward boost for matching niche
         seed: Optional[int] = None,
+        methods: Optional[List[str]] = None,
+        min_exploration_rate: float = 0.05,
     ):
         self.n_agents = n_agents
         self.regimes = regimes or ["trend_up", "trend_down", "mean_revert", "volatile"]
         self.niche_bonus = niche_bonus
+        self.methods = methods
+        self.min_exploration_rate = min_exploration_rate
         self.rng = np.random.default_rng(seed)
 
         self.agents: Dict[str, NicheAgent] = {}
@@ -195,6 +201,8 @@ class NichePopulation:
                 agent_id=agent_id,
                 regimes=self.regimes,
                 seed=(seed + i * 100) if seed else None,
+                methods=methods,
+                min_exploration=min_exploration_rate,
             )
 
         self.iteration = 0
