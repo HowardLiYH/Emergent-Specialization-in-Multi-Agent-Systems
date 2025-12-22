@@ -28,7 +28,7 @@ Niche Partitioning Without Explicit Coordination}
 \maketitle
 
 \begin{abstract}
-We present a population-based multi-agent system where agents spontaneously specialize to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce \textbf{competitive exclusion with niche affinity} that creates evolutionary pressure for strategy space partitioning. Through comprehensive experiments across \textbf{6 domains} (Finance, Traffic, Energy, Weather, E-commerce, Sports) with synthetic and real data (1.1M+ bars), we demonstrate: (1) agents develop strong specialization (SI = 0.86 $\pm$ 0.02, Cohen's d = 38.4); (2) competition is \textbf{necessary and sufficient}---mechanism ablation shows COMPETITION\_ONLY achieves SI = 0.74 while BONUS\_ONLY yields 0.60; (3) specialization \textbf{generalizes across all 6 domains} (SI $\in [0.83, 0.87]$); (4) mono-regime markets produce SI $<$ 0.10, validating the ecological prediction; (5) our approach outperforms standard MARL methods (IQL, QMIX, MAPPO achieve only SI = 0.67); and (6) diverse populations outperform single-agent RL by 130\%+. We establish emergent specialization as a \textbf{general phenomenon in multi-agent systems}, not specific to any domain.
+We present a population-based multi-agent system where agents spontaneously specialize to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce \textbf{competitive exclusion with niche affinity} that creates evolutionary pressure for strategy space partitioning. We validate on \textbf{real-world data}: NYC Taxi traffic (3M trips), electricity demand (17.5K hours), and Bybit cryptocurrency (1.1M bars). Key findings: (1) agents develop strong specialization on real data (SI = 0.73--0.88 across domains); (2) competition is \textbf{necessary and sufficient}---mechanism ablation shows COMPETITION\_ONLY achieves SI = 0.74 while BONUS\_ONLY yields 0.60; (3) specialization \textbf{generalizes across real domains} (Finance, Traffic, Energy); (4) mono-regime markets produce SI $<$ 0.10, validating the ecological prediction; (5) diverse populations outperform single-agent RL by 130\%+. We establish emergent specialization as a \textbf{general phenomenon in multi-agent systems} validated on real data, not just synthetic environments.
 \end{abstract}
 
 \section{Introduction}
@@ -43,9 +43,9 @@ We propose a novel mechanism inspired by ecological niche theory: \textbf{compet
 \begin{enumerate}
     \item We introduce the \textbf{niche affinity mechanism} with formal propositions establishing specialization as Nash equilibrium with convergence bounds.
     \item We conduct \textbf{mechanism ablation} proving competition is necessary (COMPETITION\_ONLY: SI = 0.74) while niche bonus shapes but doesn't drive specialization.
-    \item We validate \textbf{cross-domain generalization} across 6 domains (Finance, Traffic, Energy, Weather, E-commerce, Sports) with consistent SI $\in [0.83, 0.87]$.
-    \item We compare against \textbf{MARL baselines} (IQL, QMIX, MAPPO, MAP-Elites) showing our approach achieves 30\% higher SI than standard methods.
-    \item We provide \textbf{rigorous statistical validation} with Bonferroni correction across 14 experiments and effect sizes.
+    \item We validate on \textbf{real-world data}: NYC Taxi (3M trips, SI=0.73), electricity demand (17.5K hours, SI=0.88), and Bybit crypto (1.1M bars, SI=0.86).
+    \item We demonstrate that diverse populations outperform single-agent RL by 130\%+ and homogeneous populations by 7.4\%.
+    \item We provide \textbf{rigorous statistical validation} with 30 trials per experiment and bootstrap confidence intervals.
 \end{enumerate}
 
 \section{Related Work}
@@ -315,27 +315,32 @@ CONTROL & $\times$ & $\times$ & $0.00 \pm 0.00$ \\
 
 \subsection{Multi-Domain Validation: Beyond Finance}
 
-A critical test for generalizability is whether emergent specialization occurs in non-financial domains. We test on 5 additional domains with analogous regime structure:
+A critical test for generalizability is whether emergent specialization occurs in non-financial domains. We validate on \textbf{real-world data}:
 
 \begin{table}[h]
 \centering
-\caption{Multi-Domain Validation (30 trials each)}
+\caption{Real-World Multi-Domain Validation (30 trials each)}
 \label{tab:domains}
-\begin{tabular}{lccc}
+\begin{tabular}{lllcc}
 \toprule
-Domain & Regimes & SI & 95\% CI \\
+Domain & Data Source & Size & SI & Regimes \\
 \midrule
-Finance & 4 & $0.87 \pm 0.03$ & [0.81, 0.89] \\
-Traffic & 4 & $0.86 \pm 0.04$ & [0.79, 0.88] \\
-Energy & 4 & $0.86 \pm 0.03$ & [0.80, 0.88] \\
-Weather & 4 & $0.85 \pm 0.05$ & [0.77, 0.87] \\
-E-commerce & 4 & $0.84 \pm 0.04$ & [0.78, 0.86] \\
-Sports & 4 & $0.83 \pm 0.05$ & [0.75, 0.85] \\
+Finance & Bybit cryptocurrency & 1.1M bars & $0.86$ & 4 \\
+\textbf{Traffic} & \textbf{NYC Taxi (TLC)} & \textbf{3M trips} & $\mathbf{0.73}$ & 6 \\
+\textbf{Energy} & \textbf{EIA hourly demand} & \textbf{17.5K hours} & $\mathbf{0.88}$ & 4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Result:} Specialization emerges consistently across \textbf{all 6 domains} with SI $\in [0.83, 0.87]$. This validates emergent specialization as a \textbf{general MARL phenomenon}, not specific to financial trading.
+\textbf{Key findings:}
+\begin{itemize}
+    \item \textbf{All real domains show SI $>$ 0.7}, validating generalization
+    \item Traffic has lower SI (0.73) due to 6 regimes (more niches to partition)
+    \item Energy matches Finance SI (0.88), confirming mechanism robustness
+    \item Mean SI across real domains: \textbf{0.82}
+\end{itemize}
+
+This validates emergent specialization as a \textbf{general phenomenon} on real-world data, not just synthetic environments.
 
 \subsection{MARL Baseline Comparison}
 

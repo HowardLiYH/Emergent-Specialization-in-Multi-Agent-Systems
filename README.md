@@ -17,18 +17,24 @@
 
 ## 📖 Abstract
 
-We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning. Validated across **6 domains** (Finance, Traffic, Energy, Weather, E-commerce, Sports).
+We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning. 
+
+**Validated on real-world data:**
+- 🚕 NYC Taxi traffic (3M+ trips)
+- ⚡ Electricity demand (17.5K hours)  
+- 📈 Bybit cryptocurrency (1.1M+ bars)
 
 ### Key Findings
 
-| Finding | Evidence | Significance |
-|---------|----------|--------------|
-| 🎯 **Strong Specialization** | SI = 0.86 ± 0.02 | Cohen's d = 38.4 |
-| 🌍 **Cross-Domain Generalization** | 6/6 domains SI > 0.83 | General MARL phenomenon |
+| Finding | Real Data Evidence | Significance |
+|---------|-------------------|--------------|
+| 🎯 **Strong Specialization** | SI = 0.73-0.88 across domains | Validated on real data |
+| 🚕 **Traffic Domain** | NYC Taxi: SI = 0.73 | 3M real trips, 6 regimes |
+| ⚡ **Energy Domain** | EIA: SI = 0.88 | 17.5K real hours, 4 regimes |
+| 📈 **Finance Domain** | Bybit: SI = 0.86 | 1.1M real bars, 4 regimes |
 | ⚙️ **Competition is Key** | COMPETITION_ONLY: SI=0.74 | Mechanism ablation proof |
 | 🌱 **Genuine Emergence** | λ=0 → SI = 0.59 | Specialization without incentives |
 | 🔬 **Ecological Validation** | Mono-regime SI < 0.10 | Confirms niche theory |
-| 🤖 **Beats MARL Baselines** | +30% vs IQL/QMIX/MAPPO | Superior to standard MARL |
 | 📊 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
 
 ---
@@ -63,7 +69,10 @@ emergent_specialization/
 ├── 📁 experiments/                   # 14+ experiment scripts
 │   ├── exp_mechanism_ablation.py     # ⭐ Competition vs Bonus ablation
 │   └── exp_multi_domain.py           # ⭐ 6-domain validation
-├── 📁 data/bybit/                    # 1.1M+ bars real data
+├── 📁 data/                          # Real-world datasets
+│   ├── bybit/                        # 1.1M+ bars crypto data
+│   ├── traffic/nyc_taxi/             # 3M+ NYC taxi trips
+│   └── energy/                       # 17.5K hours demand data
 ├── 📁 results/                       # Experiment outputs
 ├── 📁 paper/                         # NeurIPS paper
 └── 📁 scripts/                       # Data collection utilities
