@@ -369,76 +369,76 @@ def ablation_exploration_rate(
 ):
     """
     Ablation 3: Exploration Rate
-    
+
     Tests how exploration rate affects specialization and performance.
     """
     print("\n" + "=" * 60)
     print("ABLATION 3: EXPLORATION RATE")
     print("=" * 60)
-    
+
     # Generate data
     config = SyntheticMarketConfig(regime_duration_mean=50, regime_duration_std=20)
     market = SyntheticMarketEnvironment(config)
-    
+
     results = {}
-    
+
     for eps in exploration_rates:
         print(f"\nTesting exploration_rate={eps}")
-        
+
         trial_results = {"si": [], "reward": []}
-        
+
         for trial in tqdm(range(n_trials), desc=f"ε={eps}"):
             all_prices, all_regimes = market.generate(n_bars=n_iterations + 50, seed=trial)
-            
+
             pop = NichePopulation(
                 n_agents=8,
                 niche_bonus=0.5,
                 seed=trial,
                 min_exploration_rate=eps,
             )
-            
+
             total_reward = 0
             window_size = 20
-            
+
             for i in range(n_iterations):
                 start_idx = i
                 end_idx = i + window_size + 1
                 prices = all_prices.iloc[start_idx:end_idx].copy()
                 regime = all_regimes.iloc[end_idx - 1]
-                
+
                 result = pop.run_iteration(prices, regime, compute_reward)
                 reward = compute_reward([result["winner_method"]], prices)
                 total_reward += reward
-            
+
             # Compute SI
             niche_dist = pop.get_niche_distribution()
             si_values = [compute_regime_si(aff) for aff in niche_dist.values()]
             avg_si = np.mean(si_values)
-            
+
             trial_results["si"].append(avg_si)
             trial_results["reward"].append(total_reward)
-        
+
         results[eps] = {
             "si_mean": float(np.mean(trial_results["si"])),
             "si_std": float(np.std(trial_results["si"])),
             "reward_mean": float(np.mean(trial_results["reward"])),
             "reward_std": float(np.std(trial_results["reward"])),
         }
-        
+
         print(f"  SI: {results[eps]['si_mean']:.3f}±{results[eps]['si_std']:.3f}")
         print(f"  Reward: {results[eps]['reward_mean']:.1f}±{results[eps]['reward_std']:.1f}")
-    
+
     # Summary
     print("\n" + "=" * 60)
     print("ABLATION 3 RESULTS: EXPLORATION RATE")
     print("=" * 60)
     print(f"{'ε':>10} | {'SI':>15} | {'Reward':>15}")
     print("-" * 50)
-    
+
     for eps in exploration_rates:
         r = results[eps]
         print(f"{eps:>10.2f} | {r['si_mean']:>7.3f}±{r['si_std']:.3f} | {r['reward_mean']:>7.1f}±{r['reward_std']:.1f}")
-    
+
     return results
 
 
@@ -449,68 +449,68 @@ def ablation_inventory_size(
 ):
     """
     Ablation 4: Method Inventory Size
-    
+
     Tests how inventory size affects specialization and performance.
     """
     print("\n" + "=" * 60)
     print("ABLATION 4: METHOD INVENTORY SIZE")
     print("=" * 60)
-    
+
     # Get all methods
     all_methods = list(METHOD_INVENTORY_V2.keys())
-    
+
     # Generate data
     config = SyntheticMarketConfig(regime_duration_mean=50, regime_duration_std=20)
     market = SyntheticMarketEnvironment(config)
-    
+
     results = {}
-    
+
     for size in inventory_sizes:
         print(f"\nTesting inventory_size={size}")
-        
+
         # Select subset of methods
         methods_subset = all_methods[:size]
-        
+
         trial_results = {"si": [], "reward": [], "coverage": []}
-        
+
         for trial in tqdm(range(n_trials), desc=f"size={size}"):
             all_prices, all_regimes = market.generate(n_bars=n_iterations + 50, seed=trial)
-            
+
             pop = NichePopulation(
                 n_agents=8,
                 niche_bonus=0.5,
                 seed=trial,
                 methods=methods_subset,
             )
-            
+
             total_reward = 0
             window_size = 20
-            
+
             for i in range(n_iterations):
                 start_idx = i
                 end_idx = i + window_size + 1
                 prices = all_prices.iloc[start_idx:end_idx].copy()
                 regime = all_regimes.iloc[end_idx - 1]
-                
+
                 result = pop.run_iteration(prices, regime, compute_reward)
                 reward = compute_reward([result["winner_method"]], prices)
                 total_reward += reward
-            
+
             # Compute SI
             niche_dist = pop.get_niche_distribution()
             si_values = [compute_regime_si(aff) for aff in niche_dist.values()]
             avg_si = np.mean(si_values)
-            
+
             # Compute regime coverage
             primary_niches = [
                 max(aff, key=aff.get) for aff in niche_dist.values()
             ]
             coverage = len(set(primary_niches)) / 4  # 4 regimes
-            
+
             trial_results["si"].append(avg_si)
             trial_results["reward"].append(total_reward)
             trial_results["coverage"].append(coverage)
-        
+
         results[size] = {
             "si_mean": float(np.mean(trial_results["si"])),
             "si_std": float(np.std(trial_results["si"])),
@@ -518,22 +518,22 @@ def ablation_inventory_size(
             "reward_std": float(np.std(trial_results["reward"])),
             "coverage_mean": float(np.mean(trial_results["coverage"])),
         }
-        
+
         print(f"  SI: {results[size]['si_mean']:.3f}±{results[size]['si_std']:.3f}")
         print(f"  Reward: {results[size]['reward_mean']:.1f}±{results[size]['reward_std']:.1f}")
         print(f"  Coverage: {results[size]['coverage_mean']:.2f}")
-    
+
     # Summary
     print("\n" + "=" * 60)
     print("ABLATION 4 RESULTS: INVENTORY SIZE")
     print("=" * 60)
     print(f"{'Size':>10} | {'SI':>15} | {'Reward':>15} | {'Coverage':>10}")
     print("-" * 60)
-    
+
     for size in inventory_sizes:
         r = results[size]
         print(f"{size:>10} | {r['si_mean']:>7.3f}±{r['si_std']:.3f} | {r['reward_mean']:>7.1f}±{r['reward_std']:.1f} | {r['coverage_mean']:>10.2f}")
-    
+
     return results
 
 

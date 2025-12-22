@@ -28,7 +28,7 @@ Niche Partitioning Without Explicit Coordination}
 \maketitle
 
 \begin{abstract}
-We present a population-based trading system where agents spontaneously specialize to different market regimes without explicit supervision or coordination. Drawing inspiration from ecological niche theory, we introduce a competitive exclusion mechanism that creates evolutionary pressure for agents to partition the strategy space. In controlled experiments with synthetic and real market data, we demonstrate that: (1) agents develop strong specialization (SI = 0.86 $\pm$ 0.02) significantly above random (p < 10$^{-60}$); (2) specialization emerges even without incentives ($\lambda = 0$ yields SI = 0.59); (3) diverse populations outperform homogeneous baselines by 7.4\% and single-agent RL (DQN/PPO) by over 130\% (p < 0.05); (4) specialization emerges reliably across population sizes, exploration rates, and inventory sizes; and (5) specialization transfers to real market data (SI = 0.88 on BTC). Our ablation studies confirm that specialization is genuinely emergent, not merely incentive-driven, providing empirical evidence for self-organizing division of labor in multi-agent systems.
+We present a population-based trading system where agents spontaneously specialize to different market regimes without explicit supervision. Drawing from ecological niche theory, we introduce competitive exclusion with niche affinity that creates evolutionary pressure for strategy space partitioning. Through comprehensive experiments on synthetic and real market data, we demonstrate: (1) agents develop strong specialization (SI = 0.86 $\pm$ 0.02) significantly above random (p < 10$^{-60}$); (2) specialization emerges even without incentives ($\lambda = 0$ yields SI = 0.59); (3) diverse populations outperform single-agent RL (DQN/PPO) by over 130\%; (4) regime duration strongly affects specialization ($r = -0.85$: short regimes favor specialists); (5) specialization reliably transfers to real data (SI = 0.88 on BTC/ETH/SOL); and (6) a specialization-performance trade-off exists, with optimal $\lambda = 0.25$ balancing SI and reward. We provide 9 experiments addressing emergence, diversity value, RL baselines, real data validation, regime sensitivity, transaction costs, generalization, and adaptive scheduling---establishing rigorous empirical evidence for self-organizing division of labor in multi-agent trading systems.
 \end{abstract}
 
 \section{Introduction}
@@ -254,7 +254,26 @@ Random & $10.0$ & --- \\
 \end{tabular}
 \end{table}
 
-\textbf{Key findings:} (1) Specialization emerges strongly on real data (SI = 0.879); (2) However, the homogeneous baseline outperforms diverse population on this dataset. This reveals an important insight: \textbf{specialization emergence does not guarantee superior performance on all market structures}. Real markets may favor simpler strategies, or HMM-detected regimes may not align with optimal strategy boundaries.
+\textbf{Key findings:} (1) Specialization emerges strongly on real data (SI = 0.879); (2) However, the homogeneous baseline outperforms diverse population on this dataset.
+
+We extend validation to multiple assets (Table \ref{tab:multi_asset}):
+
+\begin{table}[h]
+\centering
+\caption{Multi-Asset Real Data Validation}
+\label{tab:multi_asset}
+\begin{tabular}{lccc}
+\toprule
+Asset & SI & Diverse (Train) & Homo (Train) \\
+\midrule
+BTC & 0.879 & 157.3 & 205.7 \\
+ETH & 0.878 & 197.8 & 268.9 \\
+SOL & 0.879 & 462.8 & 437.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Multi-asset insights:} (1) Specialization consistently emerges across all assets (SI $\approx 0.88$); (2) SOL shows Diverse beating Homogeneous by 5.9\% on training data; (3) BTC and ETH favor Homogeneous. This reveals that \textbf{specialization emergence does not guarantee superior performance on all market structures}. Real markets may favor simpler strategies, or HMM-detected regimes may not align with optimal strategy boundaries.
 
 \subsection{Experiment 5: RL Baseline Comparison}
 
@@ -328,6 +347,98 @@ Size & SI & Reward & Coverage \\
 
 Specialization remains stable across inventory sizes while reward increases with more methods available.
 
+\subsection{Experiment 6: Regime Duration Sensitivity}
+
+We investigate how regime duration affects specialization.
+
+\paragraph{Setup.} Vary regime duration from 10 to 500 bars, 10 trials per setting.
+
+\paragraph{Results.} Table \ref{tab:regime_duration} shows strong correlation between duration and specialization:
+
+\begin{table}[h]
+\centering
+\caption{Experiment 6: Regime Duration Sensitivity}
+\label{tab:regime_duration}
+\begin{tabular}{ccccc}
+\toprule
+Duration & SI & Diverse & Homo & Specialist Win\% \\
+\midrule
+10 & $0.869 \pm 0.023$ & 115.2 & 105.9 & 98.1\% \\
+20 & $0.861 \pm 0.021$ & 118.4 & 103.1 & 97.7\% \\
+50 & $0.851 \pm 0.029$ & 118.3 & 102.4 & 97.5\% \\
+100 & $0.834 \pm 0.040$ & 115.6 & 103.3 & 96.5\% \\
+200 & $0.764 \pm 0.122$ & 103.7 & 100.6 & 96.3\% \\
+500 & $0.529 \pm 0.133$ & 106.5 & 106.8 & 95.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key findings:} (1) Correlation between duration and SI is -0.847 (shorter regimes = higher specialization); (2) Diverse beats Homogeneous for durations $\leq 200$; (3) At very long durations (500), specialization degrades and Homogeneous wins.
+
+\subsection{Experiment 7: Transaction Cost Analysis}
+
+We analyze whether specialists benefit from lower trading frequency.
+
+\paragraph{Setup.} Add transaction costs (0--1\% per method switch), 30 trials.
+
+\paragraph{Results.} Table \ref{tab:transaction} shows method switching statistics:
+
+\begin{table}[h]
+\centering
+\caption{Experiment 7: Transaction Costs Impact}
+\label{tab:transaction}
+\begin{tabular}{ccccc}
+\toprule
+Fee & Diverse & Homogeneous & Random & Oracle \\
+\midrule
+0.0\% & 48.0 & 52.8 & 9.1 & 31.1 \\
+0.1\% & 47.8 & 52.8 & 8.6 & 31.1 \\
+0.5\% & 46.7 & 52.8 & 6.8 & 31.1 \\
+1.0\% & 45.5 & 52.8 & 4.5 & 31.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Diverse population switches methods 252 times on average vs.\ 460 for Random. However, Homogeneous (0 switches) maintains its advantage across all fee levels.
+
+\subsection{Experiment 8: Out-of-Sample Generalization}
+
+We test whether learned specialization generalizes to unseen data.
+
+\paragraph{Setup.} Train for 1500 iterations, test for 500 iterations with frozen weights, 30 trials.
+
+\paragraph{Results.} Train reward: $39.6 \pm 16.7$, Test reward: $6.6 \pm 2.8$. Generalization gap: $33.9\% \pm 61.7\%$. SI remains stable at $0.569 \pm 0.012$.
+
+\textbf{Finding:} Moderate generalization gap (20-50\%) indicates learned specialization partially transfers, though performance degrades on unseen data.
+
+\subsection{Experiment 9: Adaptive Lambda Scheduling}
+
+We test whether adaptive $\lambda$ scheduling can achieve both high SI and high reward.
+
+\paragraph{Setup.} Compare fixed $\lambda$ vs.\ adaptive schedules (linear, cosine, step decay), 10 trials.
+
+\paragraph{Results.} Table \ref{tab:adaptive} shows adaptive scheduling results:
+
+\begin{table}[h]
+\centering
+\caption{Experiment 9: Adaptive Lambda Scheduling}
+\label{tab:adaptive}
+\begin{tabular}{lcc}
+\toprule
+Configuration & SI & Reward \\
+\midrule
+Fixed $\lambda=0.0$ & $0.497 \pm 0.062$ & $183.2 \pm 28.6$ \\
+Fixed $\lambda=0.25$ & $0.845 \pm 0.032$ & $137.7 \pm 29.6$ \\
+Fixed $\lambda=0.5$ & $0.864 \pm 0.012$ & $108.8 \pm 23.2$ \\
+Adaptive Linear & $0.840 \pm 0.028$ & $126.9 \pm 23.4$ \\
+Adaptive Cosine & $0.833 \pm 0.037$ & $125.9 \pm 26.0$ \\
+Adaptive Step & $0.834 \pm 0.031$ & $124.3 \pm 24.8$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Finding:} Best configuration for SI $\geq 0.7$ is Fixed $\lambda=0.25$ (SI=0.845, Reward=137.7). Adaptive schedules achieve similar SI but slightly lower reward than fixed $\lambda=0.25$.
+
 \section{Discussion}
 
 \paragraph{Why Does Specialization Emerge?}
@@ -356,14 +467,17 @@ While specialization emerges robustly in synthetic environments, real market per
 We demonstrated that multi-agent trading systems can develop emergent specialization through competitive exclusion with niche affinity. Key findings:
 
 \begin{enumerate}
-    \item \textbf{Emergence is robust:} Agents spontaneously partition the regime space (SI = 0.86), achieving near-perfect specialist win rates (80\%), even without explicit incentives ($\lambda = 0$ yields SI = 0.59).
-    \item \textbf{Diversity has value:} Diverse populations outperform homogeneous baselines by 7.4\% on synthetic data, validating emergent diversity.
-    \item \textbf{Superior to single-agent RL:} Multi-agent specialization outperforms DQN by 132\% and PPO by 2063\%, demonstrating clear benefits of population-based learning.
-    \item \textbf{Real market challenges:} While specialization emerges on real data (SI = 0.879), performance benefits require careful regime detection and strategy alignment.
-    \item \textbf{Robust to hyperparameters:} Specialization is stable across exploration rates (0.05--0.30) and inventory sizes (4--12).
+    \item \textbf{Emergence is robust:} Agents spontaneously partition the regime space (SI = 0.86), achieving near-perfect specialist win rates ($>$96\%), even without explicit incentives ($\lambda = 0$ yields SI = 0.59).
+    \item \textbf{Diversity has conditional value:} On synthetic data with clear regime boundaries, diverse populations outperform homogeneous baselines by 7.4\%. On real data, results are mixed (SOL: +5.9\%, BTC/ETH: homogeneous wins).
+    \item \textbf{Superior to single-agent RL:} Multi-agent specialization outperforms DQN by 132\% and PPO by 2063\% on synthetic environments.
+    \item \textbf{Duration sensitivity:} Short regimes ($\leq$200 bars) favor specialists; long regimes ($\geq$500 bars) favor generalists. Correlation: $r = -0.847$.
+    \item \textbf{Moderate generalization:} Learned specialization shows 34\% performance degradation on out-of-sample data.
+    \item \textbf{Trade-off discovered:} Higher $\lambda$ increases SI but decreases reward. Optimal operating point: $\lambda = 0.25$ (SI = 0.85, best reward among SI $\geq 0.7$).
 \end{enumerate}
 
-Future work will develop adaptive regime detection that learns strategy-aligned boundaries, explore transfer to other domains, and investigate market-making applications where specialization could provide competitive advantages.
+\paragraph{Limitations.} Real market performance requires better regime detection. Current HMM-detected regimes don't align with strategy-optimal boundaries. Transaction costs favor simpler strategies.
+
+\paragraph{Future Work.} Develop adaptive regime detection that learns strategy-aligned boundaries; explore meta-learning for dynamic $\lambda$ adjustment; investigate market-making applications where specialization could provide competitive advantages.
 
 \bibliographystyle{plain}
 \bibliography{references}

@@ -1,0 +1,121 @@
+{
+  "symbol": "BTC",
+  "train_size": 6136,
+  "test_size": 2630,
+  "method_summary": {
+    "BuyMomentum": {
+      "trend_up": 0.07148488036383326,
+      "trend_down": 0.02322905011277719,
+      "mean_revert": 0.000401348782711195,
+      "volatile": 0.00484206961346158
+    },
+    "BreakoutLong": {
+      "trend_up": 0.0643606377510721,
+      "trend_down": 0.021773505061493566,
+      "mean_revert": 0.0018232457392559904,
+      "volatile": 0.001370589038779054
+    },
+    "TrendRider": {
+      "trend_up": 0.03199786123240972,
+      "trend_down": -0.0036085034999574044,
+      "mean_revert": -0.0003916101810586686,
+      "volatile": 0.002858697639699573
+    },
+    "SellMomentum": {
+      "trend_up": 0.019627330116345876,
+      "trend_down": 0.06682741523846526,
+      "mean_revert": 0.001443090432098414,
+      "volatile": -0.0019883159086128755
+    },
+    "BreakoutShort": {
+      "trend_up": 0.024553362969529494,
+      "trend_down": 0.05453347075540328,
+      "mean_revert": 0.0017665119597011514,
+      "volatile": 0.001459474716942381
+    },
+    "TrendFader": {
+      "trend_up": -0.012838869103296706,
+      "trend_down": 0.03432335207183224,
+      "mean_revert": 0.0003087892124182433,
+      "volatile": -0.0026273805956852727
+    },
+    "MeanRevert": {
+      "trend_up": -0.07905458827356741,
+      "trend_down": -0.07077257933330522,
+      "mean_revert": -0.0035789994415858506,
+      "volatile": -0.0024441316570601346
+    },
+    "BollingerMR": {
+      "trend_up": -0.06700030076557907,
+      "trend_down": -0.06026476827086526,
+      "mean_revert": -0.0029919339027800985,
+      "volatile": -0.0019220001801450012
+    },
+    "RSI_MR": {
+      "trend_up": -0.04624602376470196,
+      "trend_down": -0.04033029892689129,
+      "mean_revert": -0.0018751450107020136,
+      "volatile": -0.0016088905435304537
+    },
+    "VolBreakout": {
+      "trend_up": 0.10829191329278685,
+      "trend_down": 0.0901788579361355,
+      "mean_revert": 0.005516477933071366,
+      "volatile": 0.004616401789374097
+    },
+    "VolScalp": {
+      "trend_up": 0.09526473088250897,
+      "trend_down": 0.08082513471831833,
+      "mean_revert": 0.002776338149354803,
+      "volatile": 0.00294511316675107
+    },
+    "VolFade": {
+      "trend_up": -0.05792392778904916,
+      "trend_down": -0.051170411249936196,
+      "mean_revert": -0.002255036386718269,
+      "volatile": -0.0019246666447506706
+    }
+  },
+  "best_methods": {
+    "trend_up": {
+      "method": "VolBreakout",
+      "reward": 0.10829191329278685
+    },
+    "trend_down": {
+      "method": "VolBreakout",
+      "reward": 0.0901788579361355
+    },
+    "mean_revert": {
+      "method": "VolBreakout",
+      "reward": 0.005516477933071366
+    },
+    "volatile": {
+      "method": "BuyMomentum",
+      "reward": 0.00484206961346158
+    }
+  },
+  "volscalp_by_regime": {
+    "trend_down": 102.16297028395435,
+    "trend_up": 92.50205368691618,
+    "mean_revert": 6.899200301146691,
+    "volatile": 4.10843286761775
+  },
+  "new_optimal_methods": {
+    "trend_up": [
+      "VolBreakout",
+      "VolScalp"
+    ],
+    "trend_down": [
+      "VolBreakout",
+      "VolScalp"
+    ],
+    "mean_revert": [
+      "VolBreakout",
+      "VolScalp"
+    ],
+    "volatile": [
+      "BuyMomentum",
+      "VolBreakout"
+    ]
+  }
+}

@@ -87,23 +87,23 @@ def run_rl_baselines_experiment(
             regime_duration_std=20,
         )
         market = SyntheticMarketEnvironment(config)
-        
+
         # Generate full dataset
         all_prices, all_regimes = market.generate(n_bars=n_iterations + 50, seed=trial)
-        
+
         # Initialize agents
         diverse_pop = NichePopulation(n_agents=8, niche_bonus=0.5, seed=trial)
         dqn_agent = DQNTradingAgent(n_actions=N_METHODS, state_dim=10)
         ppo_agent = PPOTradingAgent(n_actions=N_METHODS, state_dim=10)
-        
+
         # Training rewards
         diverse_rewards = []
         dqn_rewards = []
         ppo_rewards = []
-        
+
         # Window size for price context
         window_size = 20
-        
+
         # Run training
         for i in tqdm(range(n_iterations), desc=f"Trial {trial + 1}", leave=False):
             # Get price window and regime

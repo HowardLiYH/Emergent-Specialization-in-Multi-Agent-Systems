@@ -1,0 +1,15 @@
+{
+  "experiment": "out_of_sample",
+  "n_trials": 3,
+  "train_iterations": 300,
+  "test_iterations": 100,
+  "train_reward_mean": 39.573814197030075,
+  "train_reward_std": 16.660831607759665,
+  "test_reward_mean": 6.565777576329634,
+  "test_reward_std": 2.848718893202436,
+  "generalization_gap_mean": 33.883627873895826,
+  "generalization_gap_std": 61.67393229188074,
+  "train_test_p_value": 0.09543114452415524,
+  "cohens_d": 2.7617267288070146,
+  "si_mean": 0.5689689377896
+}
