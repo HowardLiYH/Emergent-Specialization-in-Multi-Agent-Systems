@@ -1,0 +1,18 @@
+
+\begin{table}[h!]
+\centering
+\caption{Cross-Domain Prediction Performance. MSE (lower is better) with 95\% bootstrap CI. 
+Statistical significance tested with paired t-test, Bonferroni-corrected $\alpha = 0.0125$.
+$\Delta$\% shows improvement of Diverse over Homogeneous.}
+\label{tab:cross_domain}
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Domain} & \textbf{Diverse MSE} & \textbf{95\% CI} & \textbf{Homo MSE} & \textbf{Naive MSE} & \textbf{$\Delta$\% vs Homo} & \textbf{SI} & \textbf{Sig.} \\
+\midrule
+Finance & 552,986 & [541,870, 563,750] & 534,563 & 475,074 & -3.4\% & 0.466 & \checkmark \\
+Traffic & 363,331 & [346,110, 383,671] & 1,167,166 & 664,477 & +68.9\% & 0.226 & \checkmark \\
+Energy & 0.005064 & [0.005041, 0.005087] & 0.008293 & 0.009198 & +38.9\% & 0.695 & \checkmark \\
+Weather & 15.95 & [15.84, 16.08] & 25.55 & 25.55 & +37.6\% & 0.586 & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}

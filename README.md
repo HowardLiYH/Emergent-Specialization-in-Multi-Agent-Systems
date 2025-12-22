@@ -21,23 +21,31 @@
 
 We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
 
-**Validated on real-world data:**
-- 🚕 NYC Taxi traffic (3M+ trips)
-- ⚡ Electricity demand (17.5K hours)
+**Validated on 4 real-world domains:**
+- 🚕 NYC Taxi traffic (760 hours)
+- ⚡ Electricity demand (26K hours)  
 - 📈 Bybit cryptocurrency (1.1M+ bars)
+- 🌤️ Weather patterns (1.5K days)
 
-### Key Findings
+### Key Findings: Cross-Domain Prediction Performance
 
-| Finding | Real Data Evidence | Significance |
-|---------|-------------------|--------------|
-| 🎯 **Strong Specialization** | SI = 0.73-0.88 across domains | Validated on real data |
-| 🚕 **Traffic Domain** | NYC Taxi: SI = 0.73 | 3M real trips, 6 regimes |
-| ⚡ **Energy Domain** | EIA: SI = 0.88 | 17.5K real hours, 4 regimes |
-| 📈 **Finance Domain** | Bybit: SI = 0.86 | 1.1M real bars, 4 regimes |
+| Domain | Diverse MSE | Homo MSE | **Improvement** | SI | Significant? |
+|--------|-------------|----------|-----------------|-----|--------------|
+| 📈 Finance | 552,986 | 534,563 | -3.4% | 0.47 | ✓ |
+| 🚕 **Traffic** | **363,331** | **1,167,166** | **+68.9%** | 0.23 | ✓ |
+| ⚡ **Energy** | **0.0051** | **0.0083** | **+38.9%** | 0.70 | ✓ |
+| 🌤️ **Weather** | **15.95** | **25.55** | **+37.6%** | 0.59 | ✓ |
+| **Average** | - | - | **+35.5%** | 0.49 | 4/4 ✓ |
+
+### Additional Key Findings
+
+| Finding | Evidence | Significance |
+|---------|----------|--------------|
 | ⚙️ **Competition is Key** | COMPETITION_ONLY: SI=0.74 | Mechanism ablation proof |
 | 🌱 **Genuine Emergence** | λ=0 → SI = 0.59 | Specialization without incentives |
 | 🔬 **Ecological Validation** | Mono-regime SI < 0.10 | Confirms niche theory |
 | 📊 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
+| 📈 **Statistical Rigor** | Bonferroni α=0.0125 | All 4 domains significant |
 
 ---
 

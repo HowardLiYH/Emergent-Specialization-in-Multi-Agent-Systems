@@ -1,0 +1,166 @@
+{
+  "experiment": "unified_prediction_v2",
+  "date": "2025-12-22T20:57:30.117945",
+  "config": {
+    "n_trials": 30,
+    "bonferroni_alpha": 0.0125
+  },
+  "domains": {
+    "finance": {
+      "domain": "finance",
+      "n_trials": 30,
+      "n_points": 500,
+      "period": 1,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 552986.2846361279,
+          "mse_std": 30253.282003995424,
+          "rmse_mean": 743.6304758656196,
+          "ci_lower": 541869.8254479278,
+          "ci_upper": 563749.5294065113
+        },
+        "Homogeneous": {
+          "mse_mean": 534562.7631000002,
+          "mse_std": 0.0,
+          "rmse_mean": 731.1379918319114
+        },
+        "Naive": {
+          "mse_mean": 475073.8575,
+          "rmse_mean": 689.2560173839616
+        },
+        "MA": {
+          "mse_mean": 1880703.4189350002,
+          "rmse_mean": 1371.387406583202
+        }
+      },
+      "specialization": {
+        "si_mean": 0.46579527123087144,
+        "si_std": 0.0731168909034629
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": -3.4464655617400703,
+        "diverse_vs_naive_pct": -16.40006620152276,
+        "p_value": 0.0027066908243258934,
+        "cohens_d": 0.8467467143777505,
+        "significant_bonferroni": true
+      }
+    },
+    "traffic": {
+      "domain": "traffic",
+      "n_trials": 30,
+      "n_points": 500,
+      "period": 24,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 363330.5394278486,
+          "mse_std": 51010.04038063296,
+          "rmse_mean": 602.7690597798203,
+          "ci_lower": 346110.3656469186,
+          "ci_upper": 383670.51653531136
+        },
+        "Homogeneous": {
+          "mse_mean": 1167166.042,
+          "mse_std": 0.0,
+          "rmse_mean": 1080.3545908635738
+        },
+        "Naive": {
+          "mse_mean": 664476.8260000001,
+          "rmse_mean": 815.1544798380244
+        },
+        "MA": {
+          "mse_mean": 5644028.627847223,
+          "rmse_mean": 2375.716445169167
+        }
+      },
+      "specialization": {
+        "si_mean": 0.22579556787938307,
+        "si_std": 0.08570048738039784
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 68.87070679290302,
+        "diverse_vs_naive_pct": 45.320811018344145,
+        "p_value": 2.5981982881690873e-36,
+        "cohens_d": -21.911135553151478,
+        "significant_bonferroni": true
+      }
+    },
+    "energy": {
+      "domain": "energy",
+      "n_trials": 30,
+      "n_points": 500,
+      "period": 24,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 0.005064199072416972,
+          "mse_std": 6.414221855538125e-05,
+          "rmse_mean": 0.07116318621602725,
+          "ci_lower": 0.005040697405742063,
+          "ci_upper": 0.005086524536688299
+        },
+        "Homogeneous": {
+          "mse_mean": 0.008292838026076887,
+          "mse_std": 0.0,
+          "rmse_mean": 0.09106502087012822
+        },
+        "Naive": {
+          "mse_mean": 0.009197987554885826,
+          "rmse_mean": 0.09590613929715774
+        },
+        "MA": {
+          "mse_mean": 0.011785908430573751,
+          "rmse_mean": 0.10856292383025501
+        }
+      },
+      "specialization": {
+        "si_mean": 0.6948229470425565,
+        "si_std": 0.06241713900128491
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 38.932859215475304,
+        "diverse_vs_naive_pct": 44.94231436824516,
+        "p_value": 6.459567800831508e-51,
+        "cohens_d": -69.98885270860436,
+        "significant_bonferroni": true
+      }
+    },
+    "weather": {
+      "domain": "weather",
+      "n_trials": 30,
+      "n_points": 500,
+      "period": 1,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 15.94771586111827,
+          "mse_std": 0.3590075633665813,
+          "rmse_mean": 3.9934591347750477,
+          "ci_lower": 15.839289361012979,
+          "ci_upper": 16.078801690288707
+        },
+        "Homogeneous": {
+          "mse_mean": 25.547899237143685,
+          "mse_std": 1.0658141036401503e-14,
+          "rmse_mean": 5.054492975278894
+        },
+        "Naive": {
+          "mse_mean": 25.547899237143685,
+          "rmse_mean": 5.054492975278894
+        },
+        "MA": {
+          "mse_mean": 15.453851249222094,
+          "rmse_mean": 3.9311386708207197
+        }
+      },
+      "specialization": {
+        "si_mean": 0.5855515185330521,
+        "si_std": 0.07244872323244328
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 37.577192891335116,
+        "diverse_vs_naive_pct": 37.577192891335116,
+        "p_value": 5.893584005595816e-43,
+        "cohens_d": -37.18170492619732,
+        "significant_bonferroni": true
+      }
+    }
+  }
+}
