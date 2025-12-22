@@ -28,7 +28,22 @@ import time
 from src.environment.synthetic_market import SyntheticMarketConfig, SyntheticMarketEnvironment
 from src.agents.niche_population import NichePopulation
 from src.agents.inventory_v2 import METHOD_INVENTORY_V2
-from src.analysis.specialization import compute_specialization_index
+
+
+def compute_regime_si(niche_affinities: Dict[str, float]) -> float:
+    """
+    Compute Specialization Index from REGIME affinities (not method usage).
+
+    This is the correct metric: measures how specialized an agent is
+    to a particular market regime.
+
+    SI = 1 - H(affinity) / H_max
+    """
+    affinities = np.array(list(niche_affinities.values()))
+    affinities = affinities / (affinities.sum() + 1e-8)
+    entropy = -np.sum(affinities * np.log(affinities + 1e-8))
+    max_entropy = np.log(len(affinities))
+    return 1 - (entropy / max_entropy) if max_entropy > 0 else 0.0
 
 
 # Configuration
@@ -157,13 +172,13 @@ def run_single_trial(
             ret = (price_window[-1] - price_window[-2]) / price_window[-2]
             rewards.append(ret * 100)
 
-    # Compute SI - average across agents
-    method_usage = population.get_all_method_usage()
+    # Compute SI - average across agents using NICHE AFFINITY (regime preference)
+    # This is the correct metric that matches V2 experiments (SI = 0.86)
+    niche_distribution = population.get_niche_distribution()
     agent_sis = []
-    for agent_id, agent_methods in method_usage.items():
-        if sum(agent_methods.values()) > 0:
-            agent_si = compute_specialization_index(agent_methods)
-            agent_sis.append(agent_si)
+    for agent_id, niche_affinities in niche_distribution.items():
+        agent_si = compute_regime_si(niche_affinities)
+        agent_sis.append(agent_si)
 
     si = np.mean(agent_sis) if agent_sis else 0.0
     mean_reward = np.mean(rewards) if rewards else 0.0

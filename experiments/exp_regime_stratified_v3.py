@@ -27,7 +27,15 @@ import time
 
 from src.environment.regime_classifier import UnifiedRegimeClassifier
 from src.agents.niche_population import NichePopulation
-from src.analysis.specialization import compute_specialization_index
+
+
+def compute_regime_si(niche_affinities: Dict[str, float]) -> float:
+    """Compute SI from REGIME affinities (not method usage)."""
+    affinities = np.array(list(niche_affinities.values()))
+    affinities = affinities / (affinities.sum() + 1e-8)
+    entropy = -np.sum(affinities * np.log(affinities + 1e-8))
+    max_entropy = np.log(len(affinities))
+    return 1 - (entropy / max_entropy) if max_entropy > 0 else 0.0
 
 
 # Configuration
@@ -131,13 +139,12 @@ def run_on_segment(
                 ret = (price_window[-1] - price_window[-2]) / price_window[-2]
                 rewards.append(ret * 100)
 
-        # Compute SI
-        method_usage = population.get_all_method_usage()
+        # Compute SI using NICHE AFFINITY (regime preference)
+        niche_distribution = population.get_niche_distribution()
         agent_sis = []
-        for agent_id, agent_methods in method_usage.items():
-            if sum(agent_methods.values()) > 0:
-                agent_si = compute_specialization_index(agent_methods)
-                agent_sis.append(agent_si)
+        for agent_id, niche_affinities in niche_distribution.items():
+            agent_si = compute_regime_si(niche_affinities)
+            agent_sis.append(agent_si)
         si = np.mean(agent_sis) if agent_sis else 0.0
 
         si_values.append(si)

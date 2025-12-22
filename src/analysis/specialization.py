@@ -237,6 +237,30 @@ def count_specialists(
     return n_specialists, n_generalists
 
 
+def compute_niche_heterogeneity(
+    niche_distributions: Dict[str, Dict[str, float]],
+) -> float:
+    """
+    Compute Population Niche Heterogeneity (PNH).
+
+    PNH = mean pairwise Jensen-Shannon divergence between agents'
+    niche (regime) affinities.
+
+    This measures how different agents are in their regime preferences,
+    which is distinct from method usage diversity.
+
+    Higher PNH indicates more distinct niche partitioning.
+
+    Args:
+        niche_distributions: Dict mapping agent_id to regime affinity distribution
+            Example: {"agent_0": {"trend_up": 0.7, "mean_revert": 0.3, ...}}
+
+    Returns:
+        Niche heterogeneity index (>= 0)
+    """
+    return compute_population_diversity(niche_distributions)
+
+
 def compute_regime_coverage(
     agents: Dict,
     regime_names: List[str],

@@ -5,6 +5,7 @@ Analysis module: Metrics, statistical tests, and figure generation.
 from .specialization import (
     compute_specialization_index,
     compute_population_diversity,
+    compute_niche_heterogeneity,
     compute_regime_coverage,
     compute_method_coverage,
     SpecializationTracker,
@@ -25,6 +26,7 @@ __all__ = [
     # Specialization metrics
     "compute_specialization_index",
     "compute_population_diversity",
+    "compute_niche_heterogeneity",
     "compute_regime_coverage",
     "compute_method_coverage",
     "SpecializationTracker",

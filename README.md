@@ -284,7 +284,7 @@ docker run -it emergent-specialization python experiments/run_all_v2.py
 
 ```bibtex
 @inproceedings{emergent_specialization_2025,
-  title     = {Emergent Specialization in Multi-Agent Trading: 
+  title     = {Emergent Specialization in Multi-Agent Trading:
                Niche Partitioning Without Explicit Coordination},
   author    = {Anonymous},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},

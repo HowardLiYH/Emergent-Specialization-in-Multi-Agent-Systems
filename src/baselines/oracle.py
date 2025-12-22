@@ -233,3 +233,102 @@ class AdaptiveOracle(OracleSpecialist):
         for method in methods:
             old_value = self.method_values[regime][method]
             self.method_values[regime][method] = old_value + self.learning_rate * (reward - old_value)
+
+
+def compute_empirical_optimal_methods(
+    prices: pd.DataFrame,
+    regimes: pd.Series,
+    reward_fn,
+    window_size: int = 20,
+    top_k: int = 2,
+) -> Dict[str, List[str]]:
+    """
+    Compute empirically optimal methods for each regime.
+
+    This is used to create a fair Oracle baseline that uses
+    the actual best-performing methods, not assumed optimal ones.
+
+    Args:
+        prices: Price DataFrame
+        regimes: Regime labels
+        reward_fn: Reward function
+        window_size: Price window size
+        top_k: Number of top methods per regime
+
+    Returns:
+        Dict mapping regime to list of best methods
+    """
+    from collections import defaultdict
+
+    # Track cumulative rewards per method per regime
+    regime_method_rewards: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: defaultdict(list))
+
+    all_methods = list(METHOD_INVENTORY_V2.keys())
+
+    # Evaluate each method in each regime
+    for i in range(window_size, len(prices) - 1):
+        regime = regimes.iloc[i]
+        price_window = prices.iloc[i-window_size:i+1]
+
+        for method in all_methods:
+            reward = reward_fn([method], price_window)
+            regime_method_rewards[regime][method].append(reward)
+
+    # Find top methods per regime
+    optimal_methods = {}
+    for regime in set(regimes):
+        if regime not in regime_method_rewards:
+            continue
+        method_means = {
+            m: np.mean(rewards) for m, rewards in regime_method_rewards[regime].items()
+            if len(rewards) > 0
+        }
+        sorted_methods = sorted(method_means.keys(), key=lambda m: method_means[m], reverse=True)
+        optimal_methods[regime] = sorted_methods[:top_k]
+
+    return optimal_methods
+
+
+class EmpiricalOracle(OracleSpecialist):
+    """
+    Oracle that uses empirically determined optimal methods.
+
+    Unlike the standard Oracle which uses assumed optimal methods,
+    this Oracle first runs a calibration phase to determine which
+    methods actually perform best in each regime on the given data.
+
+    This is the fairest possible upper bound comparison.
+    """
+
+    def __init__(
+        self,
+        prices: pd.DataFrame,
+        regimes: pd.Series,
+        reward_fn,
+        max_methods: int = 2,
+        window_size: int = 20,
+    ):
+        """
+        Initialize Empirical Oracle.
+
+        Args:
+            prices: Price DataFrame for calibration
+            regimes: Regime labels for calibration
+            reward_fn: Reward function
+            max_methods: Max methods per regime
+            window_size: Price window size
+        """
+        # Compute empirically optimal methods
+        optimal = compute_empirical_optimal_methods(
+            prices, regimes, reward_fn, window_size, max_methods
+        )
+
+        super().__init__(regime_to_methods=optimal, max_methods=max_methods)
+        self.calibration_data = {
+            "n_bars": len(prices),
+            "regimes": list(optimal.keys()),
+            "optimal_methods": optimal,
+        }
+
+    def __repr__(self) -> str:
+        return f"EmpiricalOracle(optimal={self.calibration_data['optimal_methods']})"

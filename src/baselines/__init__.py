@@ -10,18 +10,29 @@ Baselines:
 6. HomogeneousPopulation - Clone best agent
 7. RandomSelection - Random method selection
 8. OracleSpecialist - Perfect regime knowledge (upper bound)
+9. IndependentQLearning - MARL baseline (independent learners)
+10. QMIX - MARL baseline (value factorization)
+11. MAPPO - MARL baseline (centralized critic)
+12. QualityDiversity - Explicit diversity optimization
 """
 
-from .oracle import OracleSpecialist
+from .oracle import OracleSpecialist, EmpiricalOracle
 from .simple_strategies import BuyAndHold, MomentumStrategy, MeanReversionStrategy
 from .random_selection import RandomSelectionPopulation
 from .homogeneous import HomogeneousPopulation
+from .marl_baselines import IndependentQLearning, QMIX, MAPPO, QualityDiversity, MARLConfig
 
 __all__ = [
     "OracleSpecialist",
+    "EmpiricalOracle",
     "BuyAndHold",
     "MomentumStrategy",
     "MeanReversionStrategy",
     "RandomSelectionPopulation",
     "HomogeneousPopulation",
+    "IndependentQLearning",
+    "QMIX",
+    "MAPPO",
+    "QualityDiversity",
+    "MARLConfig",
 ]
