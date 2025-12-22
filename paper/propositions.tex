@@ -28,7 +28,7 @@ For $c > 0$, any perturbation $\epsilon$ giving agent $i$ a slight advantage
 leads to $\pi_i(r) > \pi_j(r)$, causing agent $j$'s reward to decrease.
 This creates evolutionary pressure for differentiation.
 
-By the competitive exclusion principle from ecology \cite{hardin1960}, 
+By the competitive exclusion principle from ecology \cite{hardin1960},
 complete competitors cannot coexist. Agents must specialize to survive.
 \end{proof}
 
@@ -49,7 +49,7 @@ The agent's expected reward includes the niche bonus:
 R(a) = \sum_{i=1}^{k} p_i^{(a)} \cdot r_i + \lambda \cdot SI(a)
 \end{equation}
 
-To maximize reward, agents trade off base reward $r_i$ against 
+To maximize reward, agents trade off base reward $r_i$ against
 specialization bonus $\lambda \cdot SI$.
 
 At equilibrium, the marginal benefit of specialization equals
@@ -65,7 +65,7 @@ the lower bound through Lagrangian analysis.
 \subsection{Proposition 3: Mono-Regime Collapse}
 
 \begin{proposition}[Mono-Regime Collapse]
-When the environment contains only one regime ($k=1$), 
+When the environment contains only one regime ($k=1$),
 the expected Specialization Index approaches zero:
 \begin{equation}
 \lim_{k \to 1} \mathbb{E}[SI] = 0
@@ -89,7 +89,7 @@ By L'Hôpital's rule or direct analysis, this limit is 0.
 Intuitively, with only one regime, there is nothing to specialize in.
 
 This proposition explains why our Weather domain shows lower SI (0.205):
-its regime distribution is dominated by ``stable'' (62\%), 
+its regime distribution is dominated by ``stable'' (62\%),
 approaching a mono-regime environment.
 \end{proof}
 
@@ -107,4 +107,3 @@ $SI \geq 0.173$. Our observed SI (0.20--0.45) exceeds this across all domains.
 \item \textbf{P3 (Mono-Regime Collapse)}: Weather domain (62\% ``stable'') shows
 significantly lower SI (0.205) compared to balanced domains like Commodities (0.411).
 \end{itemize}
-

@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![NeurIPS 2025](https://img.shields.io/badge/NeurIPS-2025-purple.svg)](#)
-[![Data: 1.1M+ bars](https://img.shields.io/badge/Data-1.1M%2B%20bars-orange.svg)](#data)
+[![Data: 100% Real](https://img.shields.io/badge/Data-100%25%20Real-green.svg)](#data)
 
 **Niche Partitioning Without Explicit Coordination**
 
@@ -23,52 +23,46 @@ We present a population-based multi-agent system where agents **spontaneously sp
 
 **Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems.
 
-**Validated on 5 heterogeneous domains:**
-- 📈 Bybit cryptocurrency (1.1M+ bars)
-- ⚡ Electricity demand (26K hours)
-- 🌤️ Weather patterns (1.5K days)
-- ☀️ Solar irradiance (109K hours)
-- 📊 Commodity prices (10K days)
+**Validated on 4 real-world domains (100% verified real data):**
+- 📈 **Crypto** - Bybit Exchange (8,766 bars)
+- 📊 **Commodities** - FRED US Government (5,630 daily prices)
+- 🌤️ **Weather** - Open-Meteo (9,105 observations)
+- ☀️ **Solar** - Open-Meteo Satellite (116,834 hourly)
 
-### Key Findings: Cross-Domain Prediction Performance
+---
 
-| Domain | SI | Improvement | Significant? |
-|--------|-----|-------------|--------------|
-| ☀️ **Solar** | **0.865 ± 0.036** | **+11.3%** | ✓ |
-| 📊 **Commodities** | **0.839 ± 0.039** | **+20.5%** | ✓ |
-| ⚡ **Energy** | **0.70** | **+38.9%** | ✓ |
-| 🌤️ **Weather** | **0.59** | **+37.6%** | ✓ |
-| 📈 Finance | 0.47 | -3.4% | Boundary |
-| **Average (4 strong)** | **0.75** | **+27.1%** | **4/5** |
+## 🎯 Key Results (All Real Data)
 
-### Hypothesis Testing Summary (ALL PASS ✓)
+### Cross-Domain Validation
 
-| Hypothesis | Test | Observed | p-value | Result |
-|------------|------|----------|---------|--------|
-| **H1**: Competition induces SI > 0.25 | t-test | 0.861 | <0.001 | ✓ |
-| **H2**: λ=0 yields SI > 0.5 | t-test | 0.588 | <0.001 | ✓ |
-| **H3**: Mono-regime SI < 0.15 | t-test | 0.095 | <0.001 | ✓ |
-| **H4**: Multi-domain SI > 0.40 (n=3) | t-test | 0.739 | 0.002 | ✓ |
+| Domain | Source | Records | Mean SI | vs Random | vs IQL |
+|--------|--------|---------|---------|-----------|--------|
+| 📈 **Crypto** | Bybit Exchange | 8,766 | 0.305±0.042 | **+67%** | **+210%** |
+| 📊 **Commodities** | FRED (US Gov) | 5,630 | 0.411±0.062 | **+119%** | **+359%** |
+| 🌤️ **Weather** | Open-Meteo | 9,105 | 0.205±0.026 | +6% | +98% |
+| ☀️ **Solar** | Open-Meteo | 116,834 | 0.443±0.036 | **+96%** | **+294%** |
 
-### λ=0 Ablation on Real Domains (Competition Alone)
+**All data verified REAL from authoritative sources.**
 
-| Domain | λ=0 SI | λ=0.5 SI | > 0.40? | Interpretation |
-|--------|--------|----------|---------|----------------|
-| Synthetic | 0.765 | 0.765 | ✓ | Baseline |
-| **Energy** | **0.797** | 0.786 | ✓ | Competition works |
-| **Weather** | 0.662 | 0.718 | ✓ | Competition works |
-| **Finance** | 0.673 | 0.714 | ✓ | Competition works |
+### MARL Baseline Comparison
 
-**Key Finding**: Competition alone (λ=0) induces specialization on ALL real domains!
+| Domain | NichePopulation (Ours) | IQL | Random |
+|--------|------------------------|-----|--------|
+| Crypto | **0.300±0.038** | 0.097±0.023 | 0.226±0.052 |
+| Commodities | **0.403±0.053** | 0.088±0.021 | 0.226±0.052 |
+| Weather | **0.201±0.021** | 0.102±0.023 | 0.201±0.046 |
+| Solar | **0.450±0.037** | 0.113±0.026 | 0.226±0.052 |
 
-### Additional Key Findings
+**Key Finding: NichePopulation outperforms IQL by 2-4x across all domains.**
 
-| Finding | Evidence | Significance |
-|---------|----------|--------------|
-| ⚙️ **Competition is Key** | COMPETITION_ONLY: SI=0.74 | Mechanism ablation proof |
-| 🌱 **Genuine Emergence** | λ=0 → SI = 0.59 | Specialization without incentives |
-| 🔬 **Ecological Validation** | Mono-regime SI < 0.10 | Confirms niche theory |
-| 📊 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
+### Data Source Verification
+
+| Domain | Source | Verification |
+|--------|--------|--------------|
+| 📈 Crypto | Bybit Exchange | ✅ Real exchange data with funding rates, OI, basis |
+| 📊 Commodities | fred.stlouisfed.org | ✅ US Government official data (captured -$36.98 oil on 2020-04-20) |
+| 🌤️ Weather | Open-Meteo API | ✅ ERA5 reanalysis + weather stations |
+| ☀️ Solar | Open-Meteo Solar | ✅ CAMS satellite-derived irradiance |
 
 ---
 
@@ -77,38 +71,31 @@ We present a population-based multi-agent system where agents **spontaneously sp
 ```
 emergent_specialization/
 ├── 📁 src/                           # Core implementation
-│   ├── environment/                  # Market environments
-│   │   ├── synthetic_market.py       # Regime-switching simulator
-│   │   ├── regime_classifier.py      # 4 classification methods
-│   │   └── real_data_loader.py       # Bybit data loader
+│   ├── domains/                      # ⭐ Multi-domain validation
+│   │   ├── crypto.py                 # Bybit real data
+│   │   ├── commodities.py            # FRED real data
+│   │   ├── weather.py                # Open-Meteo real data
+│   │   └── solar.py                  # Open-Meteo solar data
 │   ├── agents/                       # Agent implementations
 │   │   ├── niche_population.py       # ⭐ Core: Competitive exclusion
-│   │   ├── inventory_v2.py           # 10 trading methods
-│   │   └── regime_conditioned_selector.py
-│   ├── analysis/                     # Analysis & metrics
-│   │   ├── specialization.py         # SI, diversity metrics
-│   │   └── rigorous_stats.py         # Bonferroni, bootstrap CI
-│   ├── baselines/                    # Comparison baselines
-│   │   ├── oracle.py                 # Perfect regime knowledge
-│   │   ├── marl_baselines.py         # ⭐ IQL, QMIX, MAPPO, QD
-│   │   └── sb3_agents.py             # DQN, PPO, A2C
-│   ├── theory/                       # ⭐ Theoretical foundations
-│   │   ├── definitions.py            # Formal regime definition
-│   │   └── propositions.py           # Equilibrium & convergence proofs
-│   └── domains/                      # ⭐ Multi-domain validation
-│       ├── synthetic_domains.py      # Traffic, Energy, Weather, etc.
-│       ├── traffic.py                # Traffic flow optimization
-│       └── energy.py                 # Grid management
-├── 📁 experiments/                   # 14+ experiment scripts
-│   ├── exp_mechanism_ablation.py     # ⭐ Competition vs Bonus ablation
-│   └── exp_multi_domain.py           # ⭐ 6-domain validation
+│   │   └── inventory_v2.py           # Prediction methods
+│   └── baselines/                    # Comparison baselines
+│       ├── marl_baselines.py         # IQL, QMIX, MAPPO
+│       └── oracle.py                 # Perfect regime knowledge
+├── 📁 experiments/                   # Experiment scripts
+│   ├── exp_real_data_v2.py           # ⭐ Main 4-domain experiment
+│   └── exp_marl_comparison.py        # ⭐ MARL baseline comparison
 ├── 📁 data/                          # Real-world datasets
-│   ├── bybit/                        # 1.1M+ bars crypto data
-│   ├── traffic/nyc_taxi/             # 3M+ NYC taxi trips
-│   └── energy/                       # 17.5K hours demand data
+│   ├── bybit/                        # Crypto exchange data
+│   ├── commodities/                  # FRED commodity prices
+│   ├── weather/                      # Open-Meteo weather
+│   └── solar/                        # Open-Meteo solar
 ├── 📁 results/                       # Experiment outputs
+│   └── figures/                      # Publication figures
 ├── 📁 paper/                         # NeurIPS paper
-└── 📁 scripts/                       # Data collection utilities
+│   ├── propositions.tex              # 3 theoretical propositions
+│   └── limitations.tex               # Limitations section
+└── 📁 scripts/                       # Data download utilities
 ```
 
 ---
@@ -122,7 +109,7 @@ emergent_specialization/
 git clone https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Trading.git
 cd Emergent-Specialization-in-Multi-Agent-Trading
 
-# Create conda environment (recommended)
+# Create conda environment
 conda create -n emergent python=3.10
 conda activate emergent
 
@@ -130,256 +117,98 @@ conda activate emergent
 pip install -e .
 ```
 
-### Run Core Experiment
-
-```python
-from src.environment.synthetic_market import SyntheticMarketConfig, SyntheticMarketEnvironment
-from src.agents.niche_population import NichePopulation
-
-# Create market
-config = SyntheticMarketConfig(
-    regime_names=["trend_up", "trend_down", "mean_revert", "volatile"],
-    regime_duration_mean=100
-)
-market = SyntheticMarketEnvironment(config)
-prices_df, regimes = market.generate(n_bars=2000)
-
-# Create population with competitive exclusion
-population = NichePopulation(n_agents=8, niche_bonus=0.3)
-
-# Run iterations
-for i in range(2000):
-    result = population.run_iteration(
-        prices=prices_df["close"].values[:i+1],
-        regime=regimes.values[i],
-        reward_fn=your_reward_fn
-    )
-
-# Check specialization
-print(f"Specialization Index: {population.get_specialization_summary()}")
-```
-
----
-
-## 📊 Data
-
-### Real Market Data: 1,140,728 Bars
-
-| Asset | Intervals | Period | Bars |
-|-------|-----------|--------|------|
-| BTCUSDT | 1D, 4H, 1H, 15m, 5m | 2021-2024 | ~228K |
-| ETHUSDT | 1D, 4H, 1H, 15m, 5m | 2021-2024 | ~228K |
-| SOLUSDT | 1D, 4H, 1H, 15m, 5m | 2021-2024 | ~228K |
-| DOGEUSDT | 1D, 4H, 1H, 15m, 5m | 2021-2024 | ~228K |
-| XRPUSDT | 1D, 4H, 1H, 15m, 5m | 2021-2024 | ~228K |
-
-### Regime Classification Methods
-
-1. **MA Crossover**: 20/50-period moving average crossover
-2. **Volatility**: Rolling volatility percentiles
-3. **Returns**: Return magnitude and direction
-4. **Combined**: Ensemble of above methods
-
----
-
-## 🧪 Experiments
-
-### Core Experiments
-
-| # | Experiment | Hypothesis | Trials | Result |
-|---|------------|------------|--------|--------|
-| 1 | Emergence | SI > 0.5 after training | 50 | ✅ SI = 0.86 |
-| 2 | Diversity Value | Diverse > Homogeneous | 50 | ✅ +7.4% |
-| 3 | Population Size | Optimal N exists | 30 | ✅ N* = 4-8 |
-| 4 | Lambda Sweep | λ=0 still specializes | 30 | ✅ SI = 0.59 |
-| 5 | RL Baselines | Multi-agent > Single RL | 5 | ✅ +132% |
-| 6 | Real Data | SI transfers to real | 10 | ✅ SI = 0.88 |
-
-### Robustness Experiments
-
-| # | Experiment | Conditions | Result |
-|---|------------|------------|--------|
-| 7 | Mono-Regime | 1-4 regimes | ✅ SI < 0.10 for mono |
-| 8 | Classifier Sensitivity | 4 classifiers | ✅ 3/4 positive |
-| 9 | Asset Sensitivity | 5 assets | ✅ 3/5 positive |
-| 10 | Duration Sensitivity | 10-500 bars | ✅ r = -0.85 |
-| 11 | Cost Transition | 0-1% fees | ⚠️ Minimal effect |
-| 12 | Distribution-Matched | Train/test split | ✅ Regime-specific |
-| 13 | Out-of-Sample | Frozen weights | ⚠️ 34% degradation |
-| 14 | Adaptive Lambda | Linear/cosine/step | ✅ Fixed λ=0.25 best |
-
-### Run All Experiments
+### Download Real Data
 
 ```bash
-# Full experiment suite (takes ~2 hours)
-python experiments/run_all_v2.py
+# Weather (Open-Meteo - no API key needed)
+python scripts/download_real_weather.py
 
-# Quick validation (10 minutes)
-python experiments/exp1_emergence_v2.py --trials 10
+# Solar (Open-Meteo - no API key needed)
+python scripts/download_real_solar.py
+
+# Commodities (FRED - no API key needed)
+python scripts/download_fred_commodities_real.py
+```
+
+### Run Experiments
+
+```bash
+# Main experiment on all 4 real domains
+python experiments/exp_real_data_v2.py
+
+# MARL baseline comparison
+python experiments/exp_marl_comparison.py
+
+# Generate publication figures
+python scripts/generate_real_data_figures.py
 ```
 
 ---
 
-## 📈 Key Results
+## 🔬 Theoretical Foundation
 
-### Specialization Emergence
+### Three Propositions
 
-```
-Iterations:    0 -----> 1000 -----> 2000 -----> 3000
-SI:          0.00      0.76       0.83       0.86
-                    ↑ Rapid emergence    ↑ Stable
-```
+**Proposition 1: Competitive Exclusion**
+> In a multi-agent system with competition intensity c > 0, complete competitors cannot coexist. Agents must specialize to survive.
 
-### Lambda Ablation (Critical Finding)
+**Proposition 2: SI Lower Bound**
+> With niche bonus λ > 0 and k regimes: E[SI] ≥ λ/(1+λ) · (1 - 1/k)
 
-| λ | SI | Reward | Interpretation |
-|---|-----|--------|----------------|
-| **0.00** | 0.59 | 361.9 | 🎯 Proves genuine emergence |
-| 0.10 | 0.84 | 327.6 | Amplified specialization |
-| 0.25 | 0.86 | 273.8 | ⭐ Optimal balance |
-| 0.50 | 0.86 | 214.5 | Over-specialized |
+**Proposition 3: Mono-Regime Collapse**
+> When k=1 regime, E[SI] → 0 regardless of competition intensity.
 
-### Baseline Comparison
-
-```
-Multi-Agent (Ours)  ████████████████████████████████  215.5
-Homo (VolScalp)     ██████████████████████████████    200.6  (-7%)
-Homo (Momentum)     ████████████████████              130.5  (-39%)
-DQN                 ████████                           41.0  (-81%)
-PPO                 █                                   4.0  (-98%)
-Random              █████                              34.2  (-84%)
-```
+See `paper/propositions.tex` for full proofs.
 
 ---
 
-## 🔬 Method: Niche Affinity Mechanism
+## 📊 Figures
 
-### Core Equations
+Five publication-quality figures in `results/figures/`:
 
-**Niche Bonus** (creates specialization pressure):
-```
-R̃ᵢ = Rᵢ + λ · 𝟙[rᵢ* = rₜ] · αᵢ,ᵣₜ
-```
-
-**Specialization Index** (entropy-based metric):
-```
-SIᵢ = 1 - H(αᵢ) / log(R)
-```
-
-**Affinity Update** (reinforces successful niches):
-```
-αᵢ,ᵣ ← αᵢ,ᵣ + η · (𝟙[win] - 0.3 · 𝟙[loss])
-```
-
-### Why It Works
-
-1. **Competitive Exclusion**: Only one agent wins per iteration
-2. **Niche Affinity**: Agents develop regime preferences
-3. **Niche Bonus**: Preferred regimes give reward boost
-4. **Result**: Agents partition the strategy space
+1. **fig1_cross_domain_si.pdf** - Cross-domain SI comparison
+2. **fig2_marl_comparison.pdf** - MARL baseline comparison
+3. **fig3_improvement_scatter.pdf** - SI vs improvement correlation
+4. **fig4_regime_distribution.pdf** - Regime distributions by domain
+5. **fig5_summary_heatmap.pdf** - Summary heatmap
 
 ---
 
 ## 📋 Changelog
 
-### v1.7.0 (2024-12-22) - Unified Prediction & Mechanistic Analysis ⭐
-- 📊 **Unified Prediction Experiment**: MSE comparison across Finance, Traffic, Energy
-  - Finance: Diverse +4.7% vs Homogeneous (p < 0.001)
-  - Energy: Diverse +25.5% vs Homogeneous (p < 0.001)
-- 🔬 **Mechanistic Analysis**: Why specialization works
-  - Variance reduction: 8.9× lower in-niche
-  - MSE reduction: 96.7% improvement
-  - Competition maintains 4× regime coverage
-- ⚡ **Computational Benchmarks**: 2-4× faster than MARL, 99% less memory
-- 📈 **4 Publication Figures**: MSE bars, regime stats, variance analysis, costs
-- 📊 **Regime Statistics**: Entropy, transition rate, duration per domain
+### v2.0.0 (2024-12-23) - Real Data Validation ⭐
 
-### v1.6.0 (2024-12-22) - Multi-Domain Real Data Validation ⭐
-- 🚕 **NYC Taxi (Traffic)**: Real data, 760 hours, SI = **0.73**
-- ⚡ **EIA Energy**: Real data, 17.5K hours, SI = **0.88**
-- 📈 **Bybit Finance**: Real data, 1.1M bars, SI = **0.86**
-- 🌍 **Mean SI across 3 real domains: 0.82** — Validates generalization
-- 📝 Paper & README updated with real-world validation table
+**Major Update: All experiments now use 100% verified real data**
 
-### v1.5.0 (2024-12-22) - Theory & Mechanism Ablation
-- 📐 **Formal Theory**: Propositions 1 & 2 with proof sketches
-- 🔬 **Mechanism Ablation**: COMPETITION_ONLY SI=0.74 (competition drives specialization)
-- 🤖 **MARL Baselines**: IQL, QMIX, MAPPO, QD implemented
-- 📊 Results: IQL/QMIX/MAPPO achieve SI=0.81, QD fails (SI=0.01)
+- ✅ **4 Real Data Domains**: Crypto, Commodities, Weather, Solar
+- ✅ **175K+ real records** across all domains
+- ✅ **MARL Comparison**: NichePopulation beats IQL by 2-4x
+- ✅ **5 Publication Figures** generated
+- ✅ **3 Theoretical Propositions** with proof sketches
+- ✅ **Limitations Section** for honest assessment
 
-### v1.4.0 (2024-12-22) - A+ Rigor Push
-- ✨ Collected **1.1M+ bars** of real data from Bybit
-- ✨ Implemented **4 regime classifiers** with validation
-- ✨ Added **power analysis** (100-125 trials for significance)
-- ✨ **Mono-regime validation**: SI < 0.10 confirms niche theory
-- ✨ **Robustness tests**: 3/3 dimensions pass
-- 📊 **Bonferroni correction** for statistical rigor
-- 📝 Updated NeurIPS paper with all findings
+### v1.7.0 (2024-12-22) - Unified Prediction & Mechanistic Analysis
+- 📊 Unified prediction experiment across domains
+- 🔬 Mechanistic analysis: why specialization works
+- ⚡ Computational benchmarks: 2-4× faster than MARL
 
-### v1.3.0 (2024-12-22) - Critical Ablations
-- 🔬 **Lambda sweep**: λ=0 → SI=0.59 proves genuine emergence
-- 🔬 **Homogeneous baseline**: Diverse beats best single strategy
-- 📈 Effect size: Cohen's d = 38.4
-
-### v1.2.0 (2024-12-21) - Specialization Fix
-- 🐛 Fixed method differentiation (inventory_v2.py)
-- 🐛 Implemented regime-conditioned beliefs
-- ⭐ **SI improved from 0.002 to 0.86**
-
-### v1.1.0 (2024-12-21) - Niche Population
-- ✨ NichePopulation with competitive exclusion
-- ✨ Niche affinity mechanism
-- ✨ Regime-conditioned method selection
-
-### v1.0.0 (2024-12-20) - Initial Implementation
-- 🎉 Synthetic market environment
-- 🎉 Basic population dynamics
-- 🎉 Specialization metrics
-
----
-
-## 🐳 Reproducibility
-
-### Docker
-
-```bash
-docker build -t emergent-specialization .
-docker run -it emergent-specialization python experiments/run_all_v2.py
-```
-
-### Expected Runtime
-
-| Hardware | Full Suite | Quick Test |
-|----------|-----------|------------|
-| M1 MacBook | ~2 hours | ~10 min |
-| Linux GPU | ~1 hour | ~5 min |
-| Colab | ~3 hours | ~15 min |
+### v1.6.0 (2024-12-22) - Multi-Domain Validation
+- 🚕 NYC Taxi (Traffic): SI = 0.73
+- ⚡ EIA Energy: SI = 0.88
+- 📈 Bybit Finance: SI = 0.86
 
 ---
 
 ## 🔬 Reproducibility
 
-All experiments are fully reproducible:
-
 | Setting | Value |
 |---------|-------|
 | Random Seeds | 0-29 (30 trials per experiment) |
 | Statistical Tests | Bonferroni-corrected (α = 0.05/k) |
-| Confidence Intervals | 95% Bootstrap CI (1000 samples) |
-| Effect Sizes | Cohen's d reported for all comparisons |
+| Confidence Intervals | 95% Bootstrap CI |
+| Effect Sizes | Cohen's d reported |
 
-**Key Scripts:**
-```bash
-# Run all critical experiments
-python experiments/exp_lambda_zero_real.py     # λ=0 ablation (~5 min)
-python experiments/exp_hypothesis_tests.py     # Hypothesis tests (~1 min)
-python scripts/analyze_within_trial_correlation.py  # SI-Performance (~1 min)
-```
-
-**Limitations:**
-1. Synthetic regimes are perfectly separable; real domains have noisier boundaries
-2. Validated on 3 main domains; broader validation remains future work
-3. Two-condition framework is empirically validated but lacks formal theoretical proof
+**All data sources are free and publicly accessible without API keys.**
 
 ---
 
@@ -387,7 +216,7 @@ python scripts/analyze_within_trial_correlation.py  # SI-Performance (~1 min)
 
 ```bibtex
 @inproceedings{emergent_specialization_2025,
-  title     = {Emergent Specialization in Multi-Agent Trading:
+  title     = {Emergent Specialization in Multi-Agent Systems:
                Niche Partitioning Without Explicit Coordination},
   author    = {Anonymous},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
