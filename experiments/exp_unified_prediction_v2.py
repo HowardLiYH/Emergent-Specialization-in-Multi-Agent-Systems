@@ -612,7 +612,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
             raise FileNotFoundError(f"Weather data not found: {filepath}")
         df = pd.read_csv(filepath)
         values = df['temperature'].values.astype(float)
-        
+
         # Use existing regime labels
         if 'regime' in df.columns:
             regimes = df['regime'].tolist()
@@ -625,7 +625,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
             raise FileNotFoundError(f"Healthcare data not found: {filepath}")
         df = pd.read_csv(filepath)
         values = df['ili_rate'].values.astype(float)
-        
+
         # Use existing regime labels
         if 'regime' in df.columns:
             regimes = df['regime'].tolist()
@@ -795,7 +795,7 @@ def run_all_domains(n_trials: int = 30, include_traffic: bool = False) -> Dict:
     """Run all domain experiments."""
     # Main 4 domains (Traffic excluded - see Appendix D)
     main_domains = ["finance", "energy", "weather", "healthcare"]
-    
+
     print("="*70)
     print("UNIFIED PREDICTION EXPERIMENT v2")
     print(f"Domains: {', '.join(d.capitalize() for d in main_domains)}")

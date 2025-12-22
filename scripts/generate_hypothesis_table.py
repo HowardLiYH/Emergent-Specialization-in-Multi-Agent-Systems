@@ -13,17 +13,17 @@ import numpy as np
 
 def generate_latex_table():
     """Generate LaTeX table from results with baseline comparisons."""
-    
+
     results_path = Path(__file__).parent.parent / "results" / "unified_prediction_v2" / "results.json"
-    
+
     with open(results_path) as f:
         data = json.load(f)
-    
+
     domains = data["domains"]
     n_domains = len([d for d in domains.values() if "error" not in d])
     alpha = 0.05
     bonferroni_alpha = alpha / n_domains
-    
+
     print("="*90)
     print("TABLE 5: Multi-Domain Specialization with Baseline Comparisons")
     print("="*90)

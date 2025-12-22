@@ -25,7 +25,7 @@ We present a population-based multi-agent system where agents **spontaneously sp
 
 **Validated on 4 heterogeneous domains:**
 - 📈 Bybit cryptocurrency (1.1M+ bars)
-- ⚡ Electricity demand (26K hours)  
+- ⚡ Electricity demand (26K hours)
 - 🌤️ Weather patterns (1.5K days)
 - 🏥 Healthcare/Flu rates (727 weeks)
 
