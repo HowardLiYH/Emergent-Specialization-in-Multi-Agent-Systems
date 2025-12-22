@@ -17,18 +17,19 @@
 
 ## 📖 Abstract
 
-We present a population-based trading system where agents **spontaneously specialize** to different market regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
+We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning. Validated across **6 domains** (Finance, Traffic, Energy, Weather, E-commerce, Sports).
 
 ### Key Findings
 
 | Finding | Evidence | Significance |
 |---------|----------|--------------|
-| 🎯 **Strong Specialization** | SI = 0.86 ± 0.02 | p < 10⁻⁶⁰, Cohen's d = 38.4 |
+| 🎯 **Strong Specialization** | SI = 0.86 ± 0.02 | Cohen's d = 38.4 |
+| 🌍 **Cross-Domain Generalization** | 6/6 domains SI > 0.83 | General MARL phenomenon |
+| ⚙️ **Competition is Key** | COMPETITION_ONLY: SI=0.74 | Mechanism ablation proof |
 | 🌱 **Genuine Emergence** | λ=0 → SI = 0.59 | Specialization without incentives |
 | 🔬 **Ecological Validation** | Mono-regime SI < 0.10 | Confirms niche theory |
-| 📊 **Diversity Value** | +7.4% vs Homogeneous | p < 0.01 |
-| 🤖 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
-| ✅ **Robust** | 3/3 dimensions pass | Classifier, asset, time |
+| 🤖 **Beats MARL Baselines** | +30% vs IQL/QMIX/MAPPO | Superior to standard MARL |
+| 📊 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
 
 ---
 
@@ -48,11 +49,20 @@ emergent_specialization/
 │   ├── analysis/                     # Analysis & metrics
 │   │   ├── specialization.py         # SI, diversity metrics
 │   │   └── rigorous_stats.py         # Bonferroni, bootstrap CI
-│   └── baselines/                    # Comparison baselines
-│       ├── oracle.py                 # Perfect regime knowledge
-│       ├── homogeneous.py            # Single-strategy population
-│       └── sb3_agents.py             # DQN, PPO, A2C
-├── 📁 experiments/                   # 14 experiment scripts
+│   ├── baselines/                    # Comparison baselines
+│   │   ├── oracle.py                 # Perfect regime knowledge
+│   │   ├── marl_baselines.py         # ⭐ IQL, QMIX, MAPPO, QD
+│   │   └── sb3_agents.py             # DQN, PPO, A2C
+│   ├── theory/                       # ⭐ Theoretical foundations
+│   │   ├── definitions.py            # Formal regime definition
+│   │   └── propositions.py           # Equilibrium & convergence proofs
+│   └── domains/                      # ⭐ Multi-domain validation
+│       ├── synthetic_domains.py      # Traffic, Energy, Weather, etc.
+│       ├── traffic.py                # Traffic flow optimization
+│       └── energy.py                 # Grid management
+├── 📁 experiments/                   # 14+ experiment scripts
+│   ├── exp_mechanism_ablation.py     # ⭐ Competition vs Bonus ablation
+│   └── exp_multi_domain.py           # ⭐ 6-domain validation
 ├── 📁 data/bybit/                    # 1.1M+ bars real data
 ├── 📁 results/                       # Experiment outputs
 ├── 📁 paper/                         # NeurIPS paper
