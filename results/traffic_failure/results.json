@@ -1,0 +1,39 @@
+{
+  "domain": "traffic",
+  "n_trials": 30,
+  "n_points": 500,
+  "period": 24,
+  "strategies": {
+    "Diverse": {
+      "mse_mean": 363330.5394278486,
+      "mse_std": 51010.04038063296,
+      "rmse_mean": 602.7690597798203,
+      "ci_lower": 345728.7954357764,
+      "ci_upper": 381939.8830004204
+    },
+    "Homogeneous": {
+      "mse_mean": 1167166.042,
+      "mse_std": 0.0,
+      "rmse_mean": 1080.3545908635738
+    },
+    "Naive": {
+      "mse_mean": 664476.8260000001,
+      "rmse_mean": 815.1544798380244
+    },
+    "MA": {
+      "mse_mean": 5644028.627847223,
+      "rmse_mean": 2375.716445169167
+    }
+  },
+  "specialization": {
+    "si_mean": 0.22579556787938307,
+    "si_std": 0.08570048738039784
+  },
+  "comparison": {
+    "diverse_vs_homo_pct": 68.87070679290302,
+    "diverse_vs_naive_pct": 45.320811018344145,
+    "p_value": 2.5981982881690873e-36,
+    "cohens_d": -21.911135553151478,
+    "significant_bonferroni": true
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "H1": {
+    "hypothesis": "H1: Competition induces SI > 0.25 (random)",
+    "test": "One-sample t-test (greater)",
+    "null_value": 0.25,
+    "sample_mean": 0.8609186474026664,
+    "sample_std": 0.02240574585990157,
+    "n": 50,
+    "t_statistic": 192.80086502491312,
+    "p_value": 0.0,
+    "significant_001": "True",
+    "conclusion": "SUPPORTED"
+  },
+  "H2": {
+    "hypothesis": "H2: \u03bb=0 yields SI > 0.5 (genuine emergence)",
+    "test": "One-sample t-test (greater)",
+    "null_value": 0.5,
+    "sample_mean": 0.5884457474040254,
+    "sample_std": 0.08716906964214144,
+    "n": 30,
+    "t_statistic": 5.557444993673404,
+    "p_value": 2.6980974495716126e-06,
+    "significant_005": "True",
+    "conclusion": "SUPPORTED"
+  },
+  "H3": {
+    "hypothesis": "H3: Mono-regime SI < 0.15 (ecological validation)",
+    "test": "One-sample t-test (less)",
+    "null_value": 0.15,
+    "sample_mean": 0.09512276201394305,
+    "sample_std": 0.007298501342032128,
+    "n": 100,
+    "t_statistic": -75.18973473364797,
+    "p_value": 1.891225789485633e-89,
+    "significant_001": "True",
+    "conclusion": "SUPPORTED"
+  },
+  "H4": {
+    "hypothesis": "H4: Multi-domain mean SI > 0.50",
+    "test": "One-sample t-test (greater)",
+    "null_value": 0.5,
+    "sample_mean": 0.5044778826344583,
+    "sample_std": 0.18116899061857128,
+    "n": 4,
+    "domain_sis": {
+      "finance": 0.46579527123087144,
+      "energy": 0.6948229470425565,
+      "weather": 0.5855515185330521,
+      "healthcare": 0.27174179373135293
+    },
+    "t_statistic": 0.04943321281604837,
+    "p_value": 0.48184055353502575,
+    "significant_005": "False",
+    "conclusion": "NOT SUPPORTED"
+  }
+}

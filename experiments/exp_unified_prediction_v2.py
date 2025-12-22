@@ -61,17 +61,17 @@ def bootstrap_ci(data: np.ndarray, n_bootstrap: int = 1000,
 
 class PredictionMethod(ABC):
     """Base class for prediction methods."""
-    
+
     def __init__(self, name: str, optimal_regimes: List[str] = None):
         self.name = name
         self.optimal_regimes = optimal_regimes or []
 
     @abstractmethod
-    def predict(self, history: np.ndarray, regime: str, 
+    def predict(self, history: np.ndarray, regime: str,
                 time_idx: int = 0, period: int = 24) -> float:
         """
         Predict next value.
-        
+
         Args:
             history: Historical values
             regime: Current regime label
@@ -204,14 +204,14 @@ class RushHourPredictor(PredictionMethod):
         # Average of past week same hours
         if len(history) < period:
             return history[-1] if len(history) > 0 else 0.0
-        
+
         # Get values from same hour in previous days
         same_hour_values = []
         for d in range(1, min(8, len(history) // period + 1)):
             idx = d * period
             if len(history) >= idx:
                 same_hour_values.append(history[-idx])
-        
+
         if same_hour_values:
             return np.mean(same_hour_values)
         return history[-1]
@@ -311,6 +311,52 @@ class StormPredictor(PredictionMethod):
 
 
 # ==============================================================================
+# Healthcare-Specific Methods (for ILI/Flu prediction)
+# ==============================================================================
+
+class FluPersistencePredictor(PredictionMethod):
+    """ILI persistence - last week's rate is good baseline."""
+    def __init__(self):
+        super().__init__("FluPersist", ["off_season", "flu_low"])
+
+    def predict(self, history: np.ndarray, regime: str,
+                time_idx: int = 0, period: int = 52) -> float:  # Weekly data
+        return history[-1] if len(history) > 0 else 0.0
+
+
+class FluSeasonalPredictor(PredictionMethod):
+    """Uses same week from previous year."""
+    def __init__(self):
+        super().__init__("FluSeasonal", ["flu_moderate"])
+
+    def predict(self, history: np.ndarray, regime: str,
+                time_idx: int = 0, period: int = 52) -> float:
+        # Use same week from ~1 year ago
+        if len(history) >= 52:
+            return history[-52]
+        # Fallback to 4-week MA
+        if len(history) >= 4:
+            return np.mean(history[-4:])
+        return history[-1] if len(history) > 0 else 0.0
+
+
+class FluPeakPredictor(PredictionMethod):
+    """Predicts peak flu dynamics with volatility awareness."""
+    def __init__(self):
+        super().__init__("FluPeak", ["flu_peak"])
+
+    def predict(self, history: np.ndarray, regime: str,
+                time_idx: int = 0, period: int = 52) -> float:
+        if len(history) < 4:
+            return history[-1] if len(history) > 0 else 0.0
+        # During peak: use recent trend
+        recent_trend = (history[-1] - history[-4]) / 4
+        # Cap extreme predictions
+        pred = history[-1] + recent_trend
+        return max(0.5, min(pred, 15.0))  # ILI rate range
+
+
+# ==============================================================================
 # Domain Configuration
 # ==============================================================================
 
@@ -355,6 +401,16 @@ DOMAIN_CONFIGS = {
         "period": 1,  # Daily data
         "target_column": "temperature",
     },
+    "healthcare": {
+        "methods": [
+            FluPersistencePredictor(),
+            FluSeasonalPredictor(),
+            FluPeakPredictor(),
+        ],
+        "baselines": [NaivePredictor(), MAPredictor(4)],  # 4-week MA
+        "period": 52,  # 52-week annual cycle
+        "target_column": "ili_rate",
+    },
 }
 
 
@@ -364,20 +420,20 @@ DOMAIN_CONFIGS = {
 
 class DiversePopulation:
     """Diverse population that learns to specialize based on regime."""
-    
+
     def __init__(self, methods: List[PredictionMethod], n_agents: int = 8, seed: int = None):
         self.n_agents = n_agents
         self.rng = np.random.default_rng(seed)
         self.methods = methods
         self.n_methods = len(methods)
-        
+
         # Each agent has belief scores for each method
         self.agent_beliefs = []
         for _ in range(n_agents):
             # Random initialization with slight variation
             beliefs = np.ones(self.n_methods) * 0.5 + self.rng.uniform(-0.1, 0.1, self.n_methods)
             self.agent_beliefs.append(beliefs)
-        
+
         # Track method usage per agent
         self.method_usage = [np.zeros(self.n_methods) for _ in range(n_agents)]
 
@@ -389,18 +445,18 @@ class DiversePopulation:
         probs = exp_beliefs / np.sum(exp_beliefs)
         return self.rng.choice(self.n_methods, p=probs)
 
-    def predict(self, history: np.ndarray, regime: str, 
+    def predict(self, history: np.ndarray, regime: str,
                 time_idx: int = 0, period: int = 24) -> Tuple[float, Dict]:
         """
         Get ensemble prediction from all agents.
-        
+
         Returns:
             prediction: Ensemble mean prediction
             selections: Dict of agent_idx -> (method_idx, prediction)
         """
         predictions = []
         selections = {}
-        
+
         for i in range(self.n_agents):
             method_idx = self.select_method_idx(i)
             method = self.methods[method_idx]
@@ -408,21 +464,21 @@ class DiversePopulation:
             predictions.append(pred)
             selections[i] = (method_idx, pred)
             self.method_usage[i][method_idx] += 1
-        
+
         return np.mean(predictions), selections
 
     def update(self, selections: Dict, actual: float, lr: float = 0.1):
         """Update beliefs based on prediction errors."""
         errors = {i: abs(pred - actual) for i, (_, pred) in selections.items()}
         mean_error = np.mean(list(errors.values()))
-        
+
         for agent_idx, (method_idx, _) in selections.items():
             # Beat average = success
             if errors[agent_idx] < mean_error:
                 self.agent_beliefs[agent_idx][method_idx] += lr
             else:
                 self.agent_beliefs[agent_idx][method_idx] -= lr * 0.5
-            
+
             # Clamp beliefs
             self.agent_beliefs[agent_idx] = np.clip(self.agent_beliefs[agent_idx], 0.1, 2.0)
 
@@ -445,7 +501,7 @@ class DiversePopulation:
 
 class HomogeneousPopulation:
     """Population using single best method (benchmark)."""
-    
+
     def __init__(self, method: PredictionMethod):
         self.method = method
 
@@ -461,7 +517,7 @@ class HomogeneousPopulation:
 def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
     """
     Load data and compute regimes for a domain.
-    
+
     Returns:
         values: The time series values
         regimes: List of regime labels
@@ -469,7 +525,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
     """
     data_dir = Path(__file__).parent.parent / "data"
     config = DOMAIN_CONFIGS[domain]
-    
+
     if domain == "finance":
         filepath = data_dir / "bybit" / "Bybit_BTC.csv"
         if not filepath.exists():
@@ -477,11 +533,11 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
         df = pd.read_csv(filepath)
         col = 'close' if 'close' in df.columns else 'Close'
         values = df[col].values.astype(float)
-        
+
         # Compute regimes from returns
         returns = np.diff(values) / values[:-1]
         returns = np.insert(returns, 0, 0)
-        
+
         regimes = []
         for i in range(len(values)):
             if i < 20:
@@ -490,7 +546,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
             window_ret = returns[i-20:i]
             vol = np.std(window_ret)
             trend = np.mean(window_ret)
-            
+
             if vol > 0.02:
                 regimes.append('volatile')
             elif trend > 0.003:
@@ -506,7 +562,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
             raise FileNotFoundError(f"Traffic data not found: {filepath}")
         df = pd.read_csv(filepath)
         values = df['trip_count'].values.astype(float)
-        
+
         # Use existing regime labels if available
         if 'regime' in df.columns:
             regimes = df['regime'].tolist()
@@ -532,7 +588,7 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
             raise FileNotFoundError(f"Energy data not found")
         df = pd.read_csv(filepath)
         values = df['demand'].values.astype(float)
-        
+
         # Use existing regime labels if available
         if 'regime' in df.columns:
             regimes = df['regime'].tolist()
@@ -563,6 +619,29 @@ def load_domain_data(domain: str) -> Tuple[np.ndarray, List[str], int]:
         else:
             regimes = ['stable_warm'] * len(values)
 
+    elif domain == "healthcare":
+        filepath = data_dir / "healthcare" / "cdc_fluview" / "weekly_ili.csv"
+        if not filepath.exists():
+            raise FileNotFoundError(f"Healthcare data not found: {filepath}")
+        df = pd.read_csv(filepath)
+        values = df['ili_rate'].values.astype(float)
+        
+        # Use existing regime labels
+        if 'regime' in df.columns:
+            regimes = df['regime'].tolist()
+        else:
+            # Compute regimes from ILI rates
+            regimes = []
+            for v in values:
+                if v > 4.0:
+                    regimes.append('flu_peak')
+                elif v > 2.5:
+                    regimes.append('flu_moderate')
+                elif v > 1.5:
+                    regimes.append('flu_low')
+                else:
+                    regimes.append('off_season')
+
     else:
         raise ValueError(f"Unknown domain: {domain}")
 
@@ -590,7 +669,7 @@ def run_prediction_experiment(domain: str, n_trials: int = 30,
     # Ensure enough history
     min_history = max(period * 8, 50)  # At least 8 periods or 50 points
     n_points = min(n_iterations, len(values) - min_history - 1)
-    
+
     if n_points < 100:
         print(f"  WARNING: Only {n_points} prediction points available")
 
@@ -712,23 +791,28 @@ def run_prediction_experiment(domain: str, n_trials: int = 30,
     return results
 
 
-def run_all_domains(n_trials: int = 30) -> Dict:
+def run_all_domains(n_trials: int = 30, include_traffic: bool = False) -> Dict:
     """Run all domain experiments."""
+    # Main 4 domains (Traffic excluded - see Appendix D)
+    main_domains = ["finance", "energy", "weather", "healthcare"]
+    
     print("="*70)
     print("UNIFIED PREDICTION EXPERIMENT v2")
-    print("Domains: Finance, Traffic, Energy, Weather")
-    print(f"Trials: {n_trials}, Bonferroni α = 0.0125")
+    print(f"Domains: {', '.join(d.capitalize() for d in main_domains)}")
+    print(f"Trials: {n_trials}, Bonferroni α = {0.05/len(main_domains):.4f}")
     print("="*70)
 
     all_results = {
         "experiment": "unified_prediction_v2",
         "date": pd.Timestamp.now().isoformat(),
-        "config": {"n_trials": n_trials, "bonferroni_alpha": 0.05/4},
+        "config": {"n_trials": n_trials, "bonferroni_alpha": 0.05/len(main_domains)},
         "domains": {}
     }
 
-    domains = ["finance", "traffic", "energy", "weather"]
-    
+    domains = main_domains
+    if include_traffic:
+        domains = domains + ["traffic"]  # For appendix analysis
+
     for domain in domains:
         try:
             results = run_prediction_experiment(domain, n_trials)
@@ -743,15 +827,15 @@ def run_all_domains(n_trials: int = 30) -> Dict:
     print("\n" + "="*70)
     print("CROSS-DOMAIN SUMMARY (MSE)")
     print("="*70)
-    print(f"{'Domain':<10} {'Diverse':<14} {'Homo':<14} {'Naive':<14} {'Δ% Homo':<10} {'SI':<6} {'Sig?'}")
-    print("-"*80)
+    print(f"{'Domain':<12} {'Diverse':<14} {'Homo':<14} {'Naive':<14} {'Δ% Homo':<10} {'SI':<6} {'Sig?'}")
+    print("-"*82)
 
     for domain, res in all_results["domains"].items():
         if "error" not in res:
             s = res["strategies"]
             c = res["comparison"]
             si = res["specialization"]["si_mean"]
-            print(f"{domain:<10} {s['Diverse']['mse_mean']:<14.4f} "
+            print(f"{domain.capitalize():<12} {s['Diverse']['mse_mean']:<14.4f} "
                   f"{s['Homogeneous']['mse_mean']:<14.4f} "
                   f"{s['Naive']['mse_mean']:<14.4f} "
                   f"{c['diverse_vs_homo_pct']:>+8.1f}%  "
@@ -772,4 +856,3 @@ def run_all_domains(n_trials: int = 30) -> Dict:
 
 if __name__ == "__main__":
     run_all_domains(n_trials=30)
-

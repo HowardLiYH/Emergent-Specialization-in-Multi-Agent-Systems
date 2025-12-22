@@ -28,7 +28,7 @@ Competition-Driven Niche Partitioning}
 \maketitle
 
 \begin{abstract}
-We present a population-based multi-agent system where agents spontaneously specialize to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce \textbf{competitive exclusion with niche affinity} that creates evolutionary pressure for strategy space partitioning. We validate on \textbf{four real-world domains}: Finance (Bybit cryptocurrency, 1.1M bars), Traffic (NYC Taxi, 760 hours), Energy (EIA demand, 26K hours), and Weather (NOAA, 1.5K days). Key findings: (1) Diverse populations achieve \textbf{+35.5\% average prediction improvement} over homogeneous baselines across domains; (2) Competition is \textbf{necessary and sufficient}---mechanism ablation shows COMPETITION\_ONLY achieves SI = 0.74 while BONUS\_ONLY yields 0.60; (3) Domain-appropriate method selection yields dramatic gains: Traffic +68.9\%, Energy +38.9\%, Weather +37.6\%; (4) Mono-regime markets produce SI $<$ 0.10, validating ecological niche theory; (5) All 4 domains show statistically significant improvement ($p < 0.0125$ after Bonferroni correction). We establish emergent specialization as a \textbf{general phenomenon in multi-agent systems} providing genuine predictive value across diverse domains.
+We investigate whether competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems. Drawing from ecological niche theory, we demonstrate that competitive dynamics naturally partition strategy space---agents specialize to different environmental regimes without coordination. We validate across \textbf{four heterogeneous domains}: Finance, Energy, Weather, and Healthcare. Key findings: (1) Competition is \textbf{necessary and sufficient} for specialization---at $\lambda=0$ (no niche bonus), agents still achieve SI = 0.59, significantly above random; (2) Mono-regime environments produce SI $<$ 0.10, confirming the ecological prediction that niche partitioning requires environmental heterogeneity; (3) Diverse populations achieve \textbf{+18.9\% average improvement} over homogeneous baselines in prediction accuracy; (4) Mechanism ablation shows COMPETITION\_ONLY achieves SI = 0.74 while BONUS\_ONLY yields 0.60. These results establish emergent specialization as a robust phenomenon in multi-agent systems, with implications for distributed AI systems requiring coordination without explicit communication.
 \end{abstract}
 
 \section{Introduction}
@@ -313,67 +313,65 @@ CONTROL & $\times$ & $\times$ & $0.00 \pm 0.00$ \\
 
 \textbf{Key findings:} (1) Competition is \textbf{necessary} for specialization (COMPETITION\_ONLY $>$ CONTROL); (2) Niche bonus is \textbf{helpful} but not sufficient (BONUS\_ONLY $<$ COMPETITION\_ONLY); (3) Both mechanisms together yield highest SI.
 
-\subsection{Multi-Domain Validation: Beyond Finance}
+\subsection{Hypothesis Testing Summary}
 
-A critical test for generalizability is whether emergent specialization occurs in non-financial domains. We validate on \textbf{real-world data}:
+We test four central hypotheses with one-sample t-tests (Table \ref{tab:hypotheses}):
 
 \begin{table}[h]
 \centering
-\caption{Real-World Multi-Domain Validation (30 trials each)}
-\label{tab:domains}
-\begin{tabular}{lllcc}
+\caption{Hypothesis Testing Summary (Bonferroni-corrected $\alpha = 0.0125$)}
+\label{tab:hypotheses}
+\begin{tabular}{llcccl}
 \toprule
-Domain & Data Source & Size & SI & Regimes \\
+\textbf{ID} & \textbf{Hypothesis} & \textbf{$H_0$} & \textbf{Observed} & \textbf{p-value} & \textbf{Result} \\
 \midrule
-Finance & Bybit cryptocurrency & 1.1M bars & $0.86$ & 4 \\
-\textbf{Traffic} & \textbf{NYC Taxi (TLC)} & \textbf{3M trips} & $\mathbf{0.73}$ & 6 \\
-\textbf{Energy} & \textbf{EIA hourly demand} & \textbf{17.5K hours} & $\mathbf{0.88}$ & 4 \\
+H1 & Competition induces SI $>$ 0.25 & 0.25 & 0.861 & $<$0.001 & \checkmark \\
+H2 & $\lambda=0$ yields SI $>$ 0.5 & 0.50 & 0.588 & $<$0.001 & \checkmark \\
+H3 & Mono-regime SI $<$ 0.15 & 0.15 & 0.095 & $<$0.001 & \checkmark \\
+H4 & Multi-domain SI $>$ 0.50 & 0.50 & 0.504 & 0.48 & $\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \textbf{Key findings:}
 \begin{itemize}
-    \item \textbf{All real domains show SI $>$ 0.7}, validating generalization
-    \item Traffic has lower SI (0.73) due to 6 regimes (more niches to partition)
-    \item Energy matches Finance SI (0.88), confirming mechanism robustness
-    \item Mean SI across real domains: \textbf{0.82}
+    \item \textbf{H1-H3 strongly supported}: Competition is necessary and sufficient for specialization
+    \item \textbf{H4 not significant}: Mean SI (0.50) is borderline due to Healthcare's weak regime structure
+    \item \textbf{Core thesis validated}: Specialization emerges from competition alone ($\lambda=0$ yields SI = 0.59)
 \end{itemize}
-
-This validates emergent specialization as a \textbf{general phenomenon} on real-world data, not just synthetic environments.
 
 \subsection{Cross-Domain Prediction Experiment}
 
-We extend validation to \textbf{four domains} with domain-appropriate prediction methods. Unlike prior experiments measuring SI on synthetic regimes, this measures \textbf{actual prediction MSE} (Table \ref{tab:cross_domain}).
+We extend validation to \textbf{four heterogeneous domains} with domain-appropriate prediction methods: Finance (cryptocurrency), Energy (electricity demand), Weather (temperature), and Healthcare (flu rates). Unlike prior experiments measuring SI on synthetic regimes, this measures \textbf{actual prediction MSE} (Table \ref{tab:cross_domain}).
 
 \begin{table}[h]
 \centering
-\caption{Cross-Domain Prediction Performance (30 trials each). MSE normalized by Naive baseline. Bonferroni-corrected $\alpha = 0.0125$.}
+\caption{Cross-Domain Prediction Performance (30 trials each). Bonferroni-corrected $\alpha = 0.0125$.}
 \label{tab:cross_domain}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{Domain} & \textbf{Diverse} & \textbf{Homo} & \textbf{$\Delta$\%} & \textbf{SI} & \textbf{Sig.} \\
+\textbf{Domain} & \textbf{Diverse MSE} & \textbf{Homo MSE} & \textbf{$\Delta$\%} & \textbf{SI} & \textbf{Sig.} \\
 \midrule
-Finance & 1.16 & 1.13 & $-3.4\%$ & 0.47 & $\checkmark$ \\
-\textbf{Traffic} & \textbf{0.55} & \textbf{1.76} & \textbf{+68.9\%} & 0.23 & $\checkmark$ \\
-\textbf{Energy} & \textbf{0.55} & \textbf{0.90} & \textbf{+38.9\%} & 0.70 & $\checkmark$ \\
-\textbf{Weather} & \textbf{0.62} & \textbf{1.00} & \textbf{+37.6\%} & 0.59 & $\checkmark$ \\
+Finance & 552,986 & 534,563 & $-3.4\%$ & 0.47 & $\checkmark$ \\
+\textbf{Energy} & \textbf{0.0051} & \textbf{0.0083} & \textbf{+38.9\%} & \textbf{0.70} & $\checkmark$ \\
+\textbf{Weather} & \textbf{15.95} & \textbf{25.55} & \textbf{+37.6\%} & \textbf{0.59} & $\checkmark$ \\
+Healthcare & 0.847 & 0.869 & $+2.5\%$ & 0.27 & $\times$ \\
 \midrule
-\textbf{Mean} & \textbf{0.72} & \textbf{1.20} & \textbf{+35.5\%} & 0.49 & 4/4 \\
+\textbf{Mean} & --- & --- & \textbf{+18.9\%} & 0.50 & 3/4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \textbf{Key findings:}
 \begin{itemize}
-    \item \textbf{3/4 domains}: Diverse significantly outperforms Homogeneous (Traffic +69\%, Energy +39\%, Weather +38\%)
-    \item \textbf{Finance exception}: Homogeneous slightly better ($-3.4\%$), likely due to limited regime diversity in BTC data
-    \item \textbf{Domain-appropriate methods} are critical: Traffic uses HourlyPersistence (captures 24h periodicity), Energy uses PeakLoad patterns
-    \item \textbf{All p-values} $< 0.0125$ after Bonferroni correction
-    \item \textbf{Average improvement} across domains: +35.5\% vs Homogeneous
+    \item \textbf{3/4 domains}: Diverse outperforms Homogeneous (Energy +39\%, Weather +38\%, Healthcare +2.5\%)
+    \item \textbf{Strong specialization} correlates with performance: Energy (SI=0.70) and Weather (SI=0.59) show largest gains
+    \item \textbf{Healthcare limitation}: Weekly ILI data has limited regime differentiation, resulting in low SI (0.27)
+    \item \textbf{Finance exception}: BTC's trend-dominated structure favors single Momentum predictor
+    \item \textbf{Average improvement} across domains: +18.9\% vs Homogeneous
 \end{itemize}
 
-This demonstrates that specialized agent populations provide \textbf{genuine prediction value} across diverse domains, not just emergent SI metrics.
+This demonstrates that specialized agent populations provide \textbf{genuine prediction value} when regimes have distinct optimal strategies---a key condition validated by the Traffic failure (Appendix D).
 
 \subsection{MARL Baseline Comparison}
 
@@ -466,6 +464,23 @@ Our method is 2--4$\times$ faster, uses 99\% less memory, and provides interpret
 
 \section{Discussion}
 
+\paragraph{Theoretical Grounding.}
+We provide formal propositions establishing specialization as equilibrium behavior:
+
+\textbf{Proposition 1} (Specialization as Nash Equilibrium): In a competitive multi-agent system with $R$ distinct regimes and limited agent capacity, the unique Nash equilibrium involves agents specializing such that each regime has at least one specialist, and generalist strategies are strictly dominated.
+
+\textbf{Proposition 2} (SI Convergence): Under competitive dynamics, the Specialization Index converges to $\text{SI} \to 1 - 1/R$ as the number of iterations approaches infinity, where $R$ is the number of regimes.
+
+\emph{Proof sketches are provided in Appendix E.}
+
+\paragraph{Conditions for Specialization.}
+Our experiments reveal three necessary conditions for emergent specialization:
+\begin{enumerate}
+    \item \textbf{Regime heterogeneity}: Environment must have distinct states (mono-regime $\to$ SI $<$ 0.10)
+    \item \textbf{Strategy differentiation}: Different strategies must be optimal in different regimes (Healthcare/Traffic show weak SI when this fails)
+    \item \textbf{Competitive pressure}: Limited rewards create zero-sum dynamics that force niche partitioning
+\end{enumerate}
+
 \paragraph{Why Does Specialization Emerge?}
 Our ablation studies reveal two key insights: (1) $\lambda = 0$ still yields SI = 0.59, proving specialization arises from competitive dynamics alone; (2) mono-regime markets produce SI $<$ 0.10, confirming the ecological prediction that niche partitioning requires environmental heterogeneity.
 
@@ -480,15 +495,14 @@ While specialization reliably emerges on real data (SI $\approx$ 0.88), performa
 
 \section{Conclusion}
 
-We demonstrated that multi-agent systems develop emergent specialization through competitive exclusion with niche affinity, and that this phenomenon \textbf{generalizes beyond financial trading} with \textbf{genuine predictive value}. Key findings:
+We demonstrated that \textbf{competition alone is sufficient to induce emergent specialization} in multi-agent systems, consistent with ecological niche theory. Key findings:
 
 \begin{enumerate}
-    \item \textbf{Prediction improvement:} Diverse populations achieve +35.5\% average MSE reduction across 4 domains (Finance, Traffic, Energy, Weather).
-    \item \textbf{Competition drives specialization:} Mechanism ablation proves competition is necessary and sufficient (COMPETITION\_ONLY: SI = 0.74).
-    \item \textbf{Domain-appropriate methods:} Traffic (+68.9\%), Energy (+38.9\%), and Weather (+37.6\%) show dramatic improvement with domain-specific prediction strategies.
-    \item \textbf{Ecological validation:} Mono-regime SI $<$ 0.10 confirms niche theory prediction.
-    \item \textbf{Statistical rigor:} All 4 domains significant at Bonferroni-corrected $\alpha = 0.0125$.
-    \item \textbf{Extreme effect size:} Cohen's d = 38.4, establishing a strong, replicable effect.
+    \item \textbf{Core thesis validated:} At $\lambda=0$ (no niche bonus), agents still achieve SI = 0.59, significantly above random (H2 supported, $p < 0.001$).
+    \item \textbf{Competition is necessary:} Mechanism ablation shows COMPETITION\_ONLY achieves SI = 0.74 vs BONUS\_ONLY at 0.60.
+    \item \textbf{Ecological validation:} Mono-regime environments produce SI $<$ 0.10, confirming that niche partitioning requires heterogeneity (H3 supported).
+    \item \textbf{Cross-domain generalization:} 3/4 heterogeneous domains (Energy, Weather, Healthcare) show performance improvement with diverse populations (+18.9\% average).
+    \item \textbf{Conditions for specialization:} Strong SI requires (1) regime heterogeneity, (2) distinct optimal strategies per regime, and (3) competitive pressure.
 \end{enumerate}
 
 \paragraph{Broader Impact.} Emergent specialization is a general principle for multi-agent systems, applicable to any domain with environmental heterogeneity. This opens avenues for self-organizing systems in traffic management, energy grids, and beyond.

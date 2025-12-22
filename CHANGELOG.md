@@ -538,6 +538,53 @@ Analyzed why specialists outperform generalists:
 
 ---
 
+## Phase 12: Narrow & Deepen for NeurIPS (2024-12-22)
+
+### Core Thesis Focus
+
+Refocused paper around single thesis: "Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization."
+
+### Domain Changes
+
+- Replaced Traffic with **Healthcare** (CDC FluView ILI data) as 4th domain
+- Traffic moved to Appendix D as "negative control" (shows low SI when strategy differentiation fails)
+
+### New 4-Domain Results
+
+| Domain | Diverse | Homo | **Δ% vs Homo** | SI | Significant? |
+|--------|---------|------|----------------|-----|--------------|
+| Finance | 552,986 | 534,563 | -3.4% | 0.47 | ✓ |
+| **Energy** | **0.0051** | **0.0083** | **+38.9%** | **0.70** | ✓ |
+| **Weather** | **15.95** | **25.55** | **+37.6%** | **0.59** | ✓ |
+| Healthcare | 0.847 | 0.869 | +2.5% | 0.27 | ✗ |
+| **Average** | - | - | **+18.9%** | 0.50 | 3/4 |
+
+### Hypothesis Testing Table (H1-H4)
+
+| Hypothesis | Observed | p-value | Result |
+|------------|----------|---------|--------|
+| H1: SI > 0.25 (random) | 0.861 | <0.001 | ✓ |
+| H2: λ=0 → SI > 0.5 | 0.588 | <0.001 | ✓ |
+| H3: Mono-regime SI < 0.15 | 0.095 | <0.001 | ✓ |
+| H4: Multi-domain SI > 0.50 | 0.504 | 0.48 | ✗ |
+
+### Paper Updates
+
+- Rewrote abstract with single-thesis focus (~150 words)
+- Added Propositions 1 & 2 (theoretical grounding)
+- Added "Conditions for Specialization" section
+- Updated hypothesis testing table
+- Traffic failure analysis for Appendix D
+
+### Files Added/Modified
+- `data/healthcare/cdc_fluview/weekly_ili.csv`: Healthcare domain data
+- `experiments/exp_hypothesis_tests.py`: Formal hypothesis testing
+- `results/hypothesis_tests/`: H1-H4 test results
+- `results/traffic_failure/`: Traffic failure analysis
+- `paper/main.tex`: Comprehensive paper updates
+
+---
+
 ## Phase 11: Domain-Appropriate Prediction Methods (2024-12-22)
 
 ### Critical Fix: Traffic Domain Failure

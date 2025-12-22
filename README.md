@@ -21,21 +21,32 @@
 
 We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
 
-**Validated on 4 real-world domains:**
-- 🚕 NYC Taxi traffic (760 hours)
-- ⚡ Electricity demand (26K hours)  
+**Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems.
+
+**Validated on 4 heterogeneous domains:**
 - 📈 Bybit cryptocurrency (1.1M+ bars)
+- ⚡ Electricity demand (26K hours)  
 - 🌤️ Weather patterns (1.5K days)
+- 🏥 Healthcare/Flu rates (727 weeks)
 
 ### Key Findings: Cross-Domain Prediction Performance
 
 | Domain | Diverse MSE | Homo MSE | **Improvement** | SI | Significant? |
 |--------|-------------|----------|-----------------|-----|--------------|
 | 📈 Finance | 552,986 | 534,563 | -3.4% | 0.47 | ✓ |
-| 🚕 **Traffic** | **363,331** | **1,167,166** | **+68.9%** | 0.23 | ✓ |
-| ⚡ **Energy** | **0.0051** | **0.0083** | **+38.9%** | 0.70 | ✓ |
-| 🌤️ **Weather** | **15.95** | **25.55** | **+37.6%** | 0.59 | ✓ |
-| **Average** | - | - | **+35.5%** | 0.49 | 4/4 ✓ |
+| ⚡ **Energy** | **0.0051** | **0.0083** | **+38.9%** | **0.70** | ✓ |
+| 🌤️ **Weather** | **15.95** | **25.55** | **+37.6%** | **0.59** | ✓ |
+| 🏥 Healthcare | 0.847 | 0.869 | +2.5% | 0.27 | ✗ |
+| **Average** | - | - | **+18.9%** | 0.50 | 3/4 |
+
+### Hypothesis Testing Summary
+
+| Hypothesis | Test | Observed | p-value | Result |
+|------------|------|----------|---------|--------|
+| **H1**: Competition induces SI > 0.25 | t-test | 0.861 | <0.001 | ✓ |
+| **H2**: λ=0 yields SI > 0.5 | t-test | 0.588 | <0.001 | ✓ |
+| **H3**: Mono-regime SI < 0.15 | t-test | 0.095 | <0.001 | ✓ |
+| **H4**: Multi-domain SI > 0.50 | t-test | 0.504 | 0.48 | ✗ |
 
 ### Additional Key Findings
 
@@ -45,7 +56,6 @@ We present a population-based multi-agent system where agents **spontaneously sp
 | 🌱 **Genuine Emergence** | λ=0 → SI = 0.59 | Specialization without incentives |
 | 🔬 **Ecological Validation** | Mono-regime SI < 0.10 | Confirms niche theory |
 | 📊 **Beats Single-Agent RL** | +132% vs DQN | Significant advantage |
-| 📈 **Statistical Rigor** | Bonferroni α=0.0125 | All 4 domains significant |
 
 ---
 

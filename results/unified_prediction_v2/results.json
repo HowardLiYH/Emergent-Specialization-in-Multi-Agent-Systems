@@ -1,6 +1,6 @@
 {
   "experiment": "unified_prediction_v2",
-  "date": "2025-12-22T20:57:30.117945",
+  "date": "2025-12-22T21:07:20.916325",
   "config": {
     "n_trials": 30,
     "bonferroni_alpha": 0.0125
@@ -16,8 +16,8 @@
           "mse_mean": 552986.2846361279,
           "mse_std": 30253.282003995424,
           "rmse_mean": 743.6304758656196,
-          "ci_lower": 541869.8254479278,
-          "ci_upper": 563749.5294065113
+          "ci_lower": 542825.154740059,
+          "ci_upper": 563574.2205628047
         },
         "Homogeneous": {
           "mse_mean": 534562.7631000002,
@@ -45,45 +45,6 @@
         "significant_bonferroni": true
       }
     },
-    "traffic": {
-      "domain": "traffic",
-      "n_trials": 30,
-      "n_points": 500,
-      "period": 24,
-      "strategies": {
-        "Diverse": {
-          "mse_mean": 363330.5394278486,
-          "mse_std": 51010.04038063296,
-          "rmse_mean": 602.7690597798203,
-          "ci_lower": 346110.3656469186,
-          "ci_upper": 383670.51653531136
-        },
-        "Homogeneous": {
-          "mse_mean": 1167166.042,
-          "mse_std": 0.0,
-          "rmse_mean": 1080.3545908635738
-        },
-        "Naive": {
-          "mse_mean": 664476.8260000001,
-          "rmse_mean": 815.1544798380244
-        },
-        "MA": {
-          "mse_mean": 5644028.627847223,
-          "rmse_mean": 2375.716445169167
-        }
-      },
-      "specialization": {
-        "si_mean": 0.22579556787938307,
-        "si_std": 0.08570048738039784
-      },
-      "comparison": {
-        "diverse_vs_homo_pct": 68.87070679290302,
-        "diverse_vs_naive_pct": 45.320811018344145,
-        "p_value": 2.5981982881690873e-36,
-        "cohens_d": -21.911135553151478,
-        "significant_bonferroni": true
-      }
-    },
     "energy": {
       "domain": "energy",
       "n_trials": 30,
@@ -94,8 +55,8 @@
           "mse_mean": 0.005064199072416972,
           "mse_std": 6.414221855538125e-05,
           "rmse_mean": 0.07116318621602725,
-          "ci_lower": 0.005040697405742063,
-          "ci_upper": 0.005086524536688299
+          "ci_lower": 0.005041942954831582,
+          "ci_upper": 0.0050859943870555455
         },
         "Homogeneous": {
           "mse_mean": 0.008292838026076887,
@@ -133,8 +94,8 @@
           "mse_mean": 15.94771586111827,
           "mse_std": 0.3590075633665813,
           "rmse_mean": 3.9934591347750477,
-          "ci_lower": 15.839289361012979,
-          "ci_upper": 16.078801690288707
+          "ci_lower": 15.828668869231599,
+          "ci_upper": 16.069373941828637
         },
         "Homogeneous": {
           "mse_mean": 25.547899237143685,
@@ -160,6 +121,45 @@
         "p_value": 5.893584005595816e-43,
         "cohens_d": -37.18170492619732,
         "significant_bonferroni": true
+      }
+    },
+    "healthcare": {
+      "domain": "healthcare",
+      "n_trials": 30,
+      "n_points": 310,
+      "period": 52,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 0.8471455551101026,
+          "mse_std": 0.04845705591215612,
+          "rmse_mean": 0.9204051038048967,
+          "ci_lower": 0.8299212044795788,
+          "ci_upper": 0.863305267897442
+        },
+        "Homogeneous": {
+          "mse_mean": 0.8688826305062316,
+          "mse_std": 1.1102230246251565e-16,
+          "rmse_mean": 0.9321387399449889
+        },
+        "Naive": {
+          "mse_mean": 0.8688826305062316,
+          "rmse_mean": 0.9321387399449889
+        },
+        "MA": {
+          "mse_mean": 1.0136397215136352,
+          "rmse_mean": 1.0067967627647774
+        }
+      },
+      "specialization": {
+        "si_mean": 0.27174179373135293,
+        "si_std": 0.0648608595328956
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 2.501727463865226,
+        "diverse_vs_naive_pct": 2.501727463865226,
+        "p_value": 0.022232281392267923,
+        "cohens_d": -0.6237311830000297,
+        "significant_bonferroni": false
       }
     }
   }
