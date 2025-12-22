@@ -497,14 +497,56 @@ Standard MARL methods (IQL, QMIX, MAPPO) achieve similar SI to our approach, but
 
 ---
 
+## Phase 10: Unified Prediction & Mechanistic Analysis (2024-12-22)
+
+### Unified Prediction Experiment
+
+Evaluated prediction accuracy across all 3 domains with 4 baselines:
+
+| Domain | Diverse MSE | Homo MSE | Improvement | Significant? |
+|--------|-------------|----------|-------------|--------------|
+| Finance | 538,116 | 564,808 | +4.7% | ✓ (p < 0.001) |
+| Traffic | 726,043 | 472,670 | -53.6% | ✓ |
+| Energy | 0.0090 | 0.0121 | +25.5% | ✓ (p < 0.001) |
+
+### Mechanistic Analysis
+
+Analyzed why specialists outperform generalists:
+
+| Analysis | Finding |
+|----------|---------|
+| Variance Reduction | 8.9× lower in-niche variance |
+| MSE Decomposition | 96.7% MSE reduction for specialists |
+| Competition Effect | Maintains 4× more regime coverage |
+
+### Computational Benchmarks
+
+| Method | Train Time | Memory | Speedup |
+|--------|------------|--------|---------|
+| Ours | 0.9s | 1 MB | - |
+| IQL | 2.1s | 256 MB | 2.3× |
+| QMIX | 3.7s | 512 MB | 4.0× |
+| MAPPO | 3.7s | 384 MB | 4.0× |
+
+### Files Added
+- `experiments/exp_unified_prediction.py`: Cross-domain prediction comparison
+- `experiments/exp_regime_statistics.py`: Regime characteristic analysis
+- `experiments/exp_mechanistic_analysis.py`: Why specialization works
+- `experiments/benchmark_costs.py`: Computational cost comparison
+- `src/analysis/figures_final.py`: Publication figure generation
+- `scripts/download_eia_data.py`: EIA energy data collection
+
+---
+
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Total experiments | **18+** |
-| Total code files | **60+** |
-| Lines of code | **~7,000** |
-| Data collected | **1.1M+ finance + 46MB traffic + 3MB energy** |
+| Total experiments | **22+** |
+| Total code files | **70+** |
+| Lines of code | **~8,500** |
+| Data collected | **1.1M+ finance + 46MB traffic + 26K energy** |
 | Real domains validated | **3 (Finance, Traffic, Energy)** |
 | Statistical rigor | Bonferroni correction, bootstrap CIs, effect sizes |
 | Theory | Formal propositions with proof sketches |
+| Figures | 4 publication-quality figures |

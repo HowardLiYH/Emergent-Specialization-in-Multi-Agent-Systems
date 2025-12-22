@@ -261,6 +261,7 @@ class NichePopulation:
         return {
             "winner_id": winner_id,
             "winner_method": selections[winner_id],
+            "winner_reward": raw_rewards[winner_id],
             "regime": regime,
         }
 

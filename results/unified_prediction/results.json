@@ -1,0 +1,106 @@
+{
+  "experiment": "unified_prediction",
+  "date": "2025-12-22T15:05:23.355833",
+  "config": {
+    "n_trials": 30,
+    "bonferroni_alpha": 0.016666666666666666
+  },
+  "domains": {
+    "finance": {
+      "domain": "finance",
+      "n_trials": 30,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 538115.6728637757,
+          "mse_std": 11448.7019412666,
+          "rmse_mean": 733.5636801694695,
+          "ci_lower": 534089.0063554045,
+          "ci_upper": 542179.0261195617
+        },
+        "Homogeneous": {
+          "mse_mean": 564808.3820600003,
+          "mse_std": 1.1641532182693481e-10,
+          "rmse_mean": 751.537345752026
+        },
+        "Naive": {
+          "mse_mean": 492515.977,
+          "rmse_mean": 701.794825429769
+        },
+        "MA(10)": {
+          "mse_mean": 1922336.2044550006,
+          "rmse_mean": 1386.4833949438416
+        }
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 4.725976108723715,
+        "p_value": 2.994144928567925e-13,
+        "cohens_d": -3.241826555810057,
+        "significant_bonferroni": true
+      }
+    },
+    "traffic": {
+      "domain": "traffic",
+      "n_trials": 30,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 726042.5991044418,
+          "mse_std": 29927.43393312251,
+          "rmse_mean": 852.0813336204718,
+          "ci_lower": 715420.0847376015,
+          "ci_upper": 737436.0443892172
+        },
+        "Homogeneous": {
+          "mse_mean": 472669.84287999995,
+          "mse_std": 5.820766091346741e-11,
+          "rmse_mean": 687.5098856598354
+        },
+        "Naive": {
+          "mse_mean": 588708.3120000002,
+          "rmse_mean": 767.2732968115077
+        },
+        "MA(10)": {
+          "mse_mean": 6603514.925040003,
+          "rmse_mean": 2569.7305160347073
+        }
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": -53.60459526688429,
+        "p_value": 1.5119583009187283e-28,
+        "cohens_d": 11.771825195041941,
+        "significant_bonferroni": true
+      }
+    },
+    "energy": {
+      "domain": "energy",
+      "n_trials": 30,
+      "strategies": {
+        "Diverse": {
+          "mse_mean": 0.009000813615018336,
+          "mse_std": 0.00010461963376608594,
+          "rmse_mean": 0.09487261783580306,
+          "ci_lower": 0.008964206595641832,
+          "ci_upper": 0.009036088283279193
+        },
+        "Homogeneous": {
+          "mse_mean": 0.01207929234631686,
+          "mse_std": 5.204170427930421e-18,
+          "rmse_mean": 0.10990583399582053
+        },
+        "Naive": {
+          "mse_mean": 0.009754431293440068,
+          "rmse_mean": 0.09876452446825261
+        },
+        "MA(10)": {
+          "mse_mean": 0.01431791610556508,
+          "rmse_mean": 0.11965749498282621
+        }
+      },
+      "comparison": {
+        "diverse_vs_homo_pct": 25.48558841890431,
+        "p_value": 3.6897570235990136e-44,
+        "cohens_d": -40.91441363814316,
+        "significant_bonferroni": true
+      }
+    }
+  }
+}

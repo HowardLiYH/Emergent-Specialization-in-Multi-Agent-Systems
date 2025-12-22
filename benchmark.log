@@ -1,0 +1,29 @@
+======================================================================
+COMPUTATIONAL COST BENCHMARKS
+======================================================================
+Benchmarking: Our Method (NichePopulation)
+Benchmarking: IQL (simulated)
+Benchmarking: QMIX (simulated)
+Benchmarking: MAPPO (simulated)
+
+======================================================================
+BENCHMARK RESULTS
+======================================================================
+Method               Train(s)     Infer(ms)    Memory(MB)   LoC      Interp? 
+----------------------------------------------------------------------
+Ours (NichePopulation) 0.91         0.23         1.0          901      Yes     
+IQL                  2.09         0.50         256.0        450      No      
+QMIX                 3.65         0.81         512.0        750      No      
+MAPPO                3.69         0.59         384.0        600      No      
+
+======================================================================
+ADVANTAGES OVER BASELINES
+======================================================================
+Speedup vs IQL:   2.3x faster
+Speedup vs QMIX:  4.0x faster
+Speedup vs MAPPO: 4.0x faster
+Memory reduction: 99.6% less than IQL
+Code simplicity:  -151 fewer lines than QMIX
+Interpretable:    Yes (vs No for all baselines)
+
+Results saved to: /Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/results/benchmarks/results.json

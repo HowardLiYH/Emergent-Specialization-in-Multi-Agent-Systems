@@ -1,0 +1,82 @@
+{
+  "experiment": "regime_statistics",
+  "date": "2025-12-22T15:05:47.835196",
+  "domains": {
+    "finance": {
+      "regime_count": 4,
+      "regime_names": [
+        "mean_revert",
+        "volatile",
+        "trend_up",
+        "trend_down"
+      ],
+      "regime_distribution": {
+        "mean_revert": 0.42087811571003886,
+        "volatile": 0.250057168991539,
+        "trend_down": 0.16476103361536704,
+        "trend_up": 0.16430368168305512
+      },
+      "entropy": 1.8822471567904557,
+      "max_entropy": 2.0,
+      "normalized_entropy": 0.9411235783952279,
+      "max_proportion": 0.42087811571003886,
+      "transition_rate_pct": 16.843910806174957,
+      "mean_duration": 5.936863543788188,
+      "n_transitions": 1473,
+      "n_samples": 8746,
+      "autocorrelation": 0.8400757574693046
+    },
+    "traffic": {
+      "regime_count": 6,
+      "regime_names": [
+        "weekend_active",
+        "midday",
+        "night",
+        "weekend_quiet",
+        "morning_rush",
+        "evening_rush"
+      ],
+      "regime_distribution": {
+        "night": 0.32763157894736844,
+        "midday": 0.1763157894736842,
+        "weekend_active": 0.15789473684210525,
+        "weekend_quiet": 0.13157894736842105,
+        "evening_rush": 0.11710526315789474,
+        "morning_rush": 0.08947368421052632
+      },
+      "entropy": 2.448281040412763,
+      "max_entropy": 2.584962500721156,
+      "normalized_entropy": 0.9471243933827815,
+      "max_proportion": 0.32763157894736844,
+      "transition_rate_pct": 15.942028985507244,
+      "mean_duration": 6.2727272727272725,
+      "n_transitions": 121,
+      "n_samples": 760,
+      "autocorrelation": 0.904368328136565
+    },
+    "energy": {
+      "regime_count": 4,
+      "regime_names": [
+        "normal",
+        "peak_demand",
+        "high_load",
+        "low_demand"
+      ],
+      "regime_distribution": {
+        "normal": 0.4980386182732224,
+        "low_demand": 0.37723273793655027,
+        "high_load": 0.12377651673839357,
+        "peak_demand": 0.0009521270518337967
+      },
+      "entropy": 1.4140725518655426,
+      "max_entropy": 2.0,
+      "normalized_entropy": 0.7070362759327713,
+      "max_proportion": 0.4980386182732224,
+      "transition_rate_pct": 31.017672151127364,
+      "mean_duration": 3.223968565815324,
+      "n_transitions": 8144,
+      "n_samples": 26257,
+      "autocorrelation": 0.4631958379987698
+    }
+  }
+}

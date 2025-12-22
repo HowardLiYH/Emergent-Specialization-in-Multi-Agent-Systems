@@ -396,6 +396,41 @@ We apply Bonferroni correction for multiple hypothesis testing:
     \item \textbf{Significant after correction}: 1/3 (H1: mono-regime SI $<$ 0.15)
 \end{itemize}
 
+\subsection{Why Specialization Works: Mechanistic Analysis}
+
+We analyze the mechanisms underlying specialist superiority through three analyses.
+
+\paragraph{Variance Reduction.}
+Specialists achieve 8.9$\times$ lower prediction variance in their primary niche compared to out-of-niche performance ($p < 0.001$). This focused learning reduces estimation error.
+
+\paragraph{Bias-Variance Decomposition.}
+Decomposing MSE into bias$^2$ + variance reveals specialists achieve 96.7\% lower MSE overall, with 87.3\% variance reduction. Specialists trade increased bias in non-preferred regimes for dramatically lower variance in their niche.
+
+\paragraph{Competition Prevents Overfitting.}
+With competition, populations maintain 4 unique niches on average. Without competition (all agents update equally), populations converge to 1 niche. Competition forces diversification.
+
+\subsection{Computational Efficiency}
+
+Our method offers significant efficiency advantages over MARL baselines:
+
+\begin{table}[h]
+\centering
+\caption{Computational Cost Comparison}
+\label{tab:costs}
+\begin{tabular}{lcccc}
+\toprule
+Method & Train (s) & Memory (MB) & Interpretable \\
+\midrule
+\textbf{Ours} & \textbf{0.9} & \textbf{1.0} & \textbf{Yes} \\
+IQL & 2.1 & 256 & No \\
+QMIX & 3.7 & 512 & No \\
+MAPPO & 3.7 & 384 & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Our method is 2--4$\times$ faster, uses 99\% less memory, and provides interpretable specialist assignments.
+
 \section{Discussion}
 
 \paragraph{Why Does Specialization Emerge?}

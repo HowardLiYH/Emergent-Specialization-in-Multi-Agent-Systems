@@ -1,0 +1,18 @@
+/Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/scripts/download_eia_data.py:36: FutureWarning: 'H' is deprecated and will be removed in a future version, please use 'h' instead.
+  date_range = pd.date_range(start=start_date, end=end_date, freq='H')
+No EIA API key found. To use real data:
+1. Register at https://www.eia.gov/opendata/register.php
+2. Set EIA_API_KEY environment variable
+Using synthetic EIA-style data instead...
+Generating realistic EIA-style electricity demand data...
+Generated 26257 hours of data
+Regime distribution:
+regime
+normal         13077
+low_demand      9905
+high_load       3250
+peak_demand       25
+Name: count, dtype: int64
+Saved to: /Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/data/energy/eia_hourly_demand.csv
+
+=== EIA Data Ready ===

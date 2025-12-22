@@ -1,0 +1,15 @@
+============================================================
+GENERATING PUBLICATION FIGURES
+============================================================
+Generating Figure 1: Cross-domain MSE comparison...
+  Saved: fig1_cross_domain_mse.pdf
+Generating Figure 2: Regime statistics...
+  Saved: fig2_regime_statistics.pdf
+Generating Figure 3: Mechanistic variance analysis...
+  Saved: fig3_mechanistic.pdf
+Generating Figure 4: Computational costs...
+  Saved: fig4_computational.pdf
+
+============================================================
+All figures saved to: /Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/results/figures
+============================================================

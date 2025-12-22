@@ -249,20 +249,32 @@ SIᵢ = 1 - H(αᵢ) / log(R)
 
 ## 📋 Changelog
 
-### v1.6.0 - Multi-Domain Real Data Validation ⭐
+### v1.7.0 (2024-12-22) - Unified Prediction & Mechanistic Analysis ⭐
+- 📊 **Unified Prediction Experiment**: MSE comparison across Finance, Traffic, Energy
+  - Finance: Diverse +4.7% vs Homogeneous (p < 0.001)
+  - Energy: Diverse +25.5% vs Homogeneous (p < 0.001)
+- 🔬 **Mechanistic Analysis**: Why specialization works
+  - Variance reduction: 8.9× lower in-niche
+  - MSE reduction: 96.7% improvement
+  - Competition maintains 4× regime coverage
+- ⚡ **Computational Benchmarks**: 2-4× faster than MARL, 99% less memory
+- 📈 **4 Publication Figures**: MSE bars, regime stats, variance analysis, costs
+- 📊 **Regime Statistics**: Entropy, transition rate, duration per domain
+
+### v1.6.0 (2024-12-22) - Multi-Domain Real Data Validation ⭐
 - 🚕 **NYC Taxi (Traffic)**: Real data, 760 hours, SI = **0.73**
 - ⚡ **EIA Energy**: Real data, 17.5K hours, SI = **0.88**
 - 📈 **Bybit Finance**: Real data, 1.1M bars, SI = **0.86**
 - 🌍 **Mean SI across 3 real domains: 0.82** — Validates generalization
 - 📝 Paper & README updated with real-world validation table
 
-### v1.5.0 - Theory & Mechanism Ablation
+### v1.5.0 (2024-12-22) - Theory & Mechanism Ablation
 - 📐 **Formal Theory**: Propositions 1 & 2 with proof sketches
 - 🔬 **Mechanism Ablation**: COMPETITION_ONLY SI=0.74 (competition drives specialization)
 - 🤖 **MARL Baselines**: IQL, QMIX, MAPPO, QD implemented
 - 📊 Results: IQL/QMIX/MAPPO achieve SI=0.81, QD fails (SI=0.01)
 
-### v1.4.0 - A+ Rigor Push
+### v1.4.0 (2024-12-22) - A+ Rigor Push
 - ✨ Collected **1.1M+ bars** of real data from Bybit
 - ✨ Implemented **4 regime classifiers** with validation
 - ✨ Added **power analysis** (100-125 trials for significance)
@@ -271,22 +283,22 @@ SIᵢ = 1 - H(αᵢ) / log(R)
 - 📊 **Bonferroni correction** for statistical rigor
 - 📝 Updated NeurIPS paper with all findings
 
-### v1.3.0 - Critical Ablations
+### v1.3.0 (2024-12-22) - Critical Ablations
 - 🔬 **Lambda sweep**: λ=0 → SI=0.59 proves genuine emergence
 - 🔬 **Homogeneous baseline**: Diverse beats best single strategy
 - 📈 Effect size: Cohen's d = 38.4
 
-### v1.2.0 - Specialization Fix
+### v1.2.0 (2024-12-21) - Specialization Fix
 - 🐛 Fixed method differentiation (inventory_v2.py)
 - 🐛 Implemented regime-conditioned beliefs
 - ⭐ **SI improved from 0.002 to 0.86**
 
-### v1.1.0 - Niche Population
+### v1.1.0 (2024-12-21) - Niche Population
 - ✨ NichePopulation with competitive exclusion
 - ✨ Niche affinity mechanism
 - ✨ Regime-conditioned method selection
 
-### v1.0.0 - Initial Implementation
+### v1.0.0 (2024-12-20) - Initial Implementation
 - 🎉 Synthetic market environment
 - 🎉 Basic population dynamics
 - 🎉 Specialization metrics

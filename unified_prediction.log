@@ -1,0 +1,61 @@
+======================================================================
+UNIFIED PREDICTION EXPERIMENT
+Domains: Finance, Traffic, Energy
+Trials: 30, Bonferroni α = 0.0167
+======================================================================
+
+============================================================
+FINANCE DOMAIN
+============================================================
+Finance: Loaded 8766 data points
+  Regime distribution: {'mean_revert': 8041, 'volatile': 340, 'trend_up': 234, 'trend_down': 151}
+
+FINANCE Results (MSE):
+  Diverse:      538115.672864 [534089.006355, 542179.026120]
+  Homogeneous:  564808.382060
+  Naive:        492515.977000
+  MA(10):       1922336.204455
+  Improvement:  4.73% vs Homo
+  p-value:      0.000000
+  Significant:  True
+
+============================================================
+TRAFFIC DOMAIN
+============================================================
+Traffic: Loaded 760 data points
+  Regime distribution: {'volatile': 740, 'mean_revert': 20}
+
+TRAFFIC Results (MSE):
+  Diverse:      726042.599104 [715420.084738, 737436.044389]
+  Homogeneous:  472669.842880
+  Naive:        588708.312000
+  MA(10):       6603514.925040
+  Improvement:  -53.60% vs Homo
+  p-value:      0.000000
+  Significant:  True
+
+============================================================
+ENERGY DOMAIN
+============================================================
+Energy: Loaded 26257 data points
+  Regime distribution: {'volatile': 26237, 'mean_revert': 20}
+
+ENERGY Results (MSE):
+  Diverse:      0.009001 [0.008964, 0.009036]
+  Homogeneous:  0.012079
+  Naive:        0.009754
+  MA(10):       0.014318
+  Improvement:  25.49% vs Homo
+  p-value:      0.000000
+  Significant:  True
+
+======================================================================
+CROSS-DOMAIN SUMMARY (MSE)
+======================================================================
+Domain     Diverse      Homo         Naive        MA(10)       Δ%       Sig?
+---------------------------------------------------------------------------
+finance    538115.6729  564808.3821  492515.9770  1922336.2045   +4.7%  ✓
+traffic    726042.5991  472669.8429  588708.3120  6603514.9250  -53.6%  ✓
+energy     0.0090       0.0121       0.0098       0.0143        +25.5%  ✓
+
+Results saved to: /Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/results/unified_prediction/results.json

@@ -1,0 +1,101 @@
+{
+  "experiment": "mechanistic_analysis",
+  "date": "2025-12-22T15:09:40.766650",
+  "analyses": {
+    "variance_reduction": {
+      "in_niche_variance_mean": 0.009989731848685875,
+      "out_niche_variance_mean": 0.08915953089324136,
+      "variance_ratio": 8.925117535058769,
+      "t_statistic": -120.49272748995661,
+      "p_value": 2.632349290397546e-215,
+      "significant": true,
+      "interpretation": "Specialists have 8.9x lower variance in-niche"
+    },
+    "bias_variance": {
+      "regimes": {
+        "trend_up": {
+          "specialist": {
+            "bias": 0.05327769111309644,
+            "bias_squared": 0.002838512370342515,
+            "variance": 0.005702083102252568,
+            "mse": 0.00854059547259507
+          },
+          "generalist": {
+            "bias": -0.7014705512052042,
+            "bias_squared": 0.49206093420813296,
+            "variance": 0.05527313818682937,
+            "mse": 0.5473340723949623
+          }
+        },
+        "trend_down": {
+          "specialist": {
+            "bias": -0.0064387603815790895,
+            "bias_squared": 4.1457635251392504e-05,
+            "variance": 0.009976720545107731,
+            "mse": 0.010018178180359123
+          },
+          "generalist": {
+            "bias": 0.6121220768968764,
+            "bias_squared": 0.37469343702454544,
+            "variance": 0.08218134403845001,
+            "mse": 0.4568747810629954
+          }
+        },
+        "mean_revert": {
+          "specialist": {
+            "bias": -0.021324283776977794,
+            "bias_squared": 0.00045472507860107834,
+            "variance": 0.011241714905375311,
+            "mse": 0.011696439983976386
+          },
+          "generalist": {
+            "bias": 0.0473644387687382,
+            "bias_squared": 0.00224339005987755,
+            "variance": 0.08018242836753063,
+            "mse": 0.08242581842740819
+          }
+        },
+        "volatile": {
+          "specialist": {
+            "bias": 0.015167249143369529,
+            "bias_squared": 0.0002300454465770437,
+            "variance": 0.007730265543235027,
+            "mse": 0.00796031098981207
+          },
+          "generalist": {
+            "bias": 0.05674512237288889,
+            "bias_squared": 0.003220008913114135,
+            "variance": 0.05585634192121948,
+            "mse": 0.059076350834333616
+          }
+        }
+      },
+      "summary": {
+        "specialist_mse": 0.009553881156685661,
+        "generalist_mse": 0.28642775567992496,
+        "specialist_variance": 0.00866269602399266,
+        "generalist_variance": 0.06837331312850738,
+        "mse_reduction_pct": 96.66447089458681,
+        "variance_reduction_pct": 87.33029653293069
+      }
+    },
+    "competition_effect": {
+      "with_competition": {
+        "mean_unique_niches": 4.0,
+        "std_unique_niches": 0.0
+      },
+      "without_competition": {
+        "mean_unique_niches": 1.0,
+        "std_unique_niches": 0.0
+      },
+      "diversity_increase": 3.0,
+      "interpretation": "Competition maintains diversity by preventing convergence to dominant regime"
+    }
+  },
+  "summary": {
+    "variance_ratio": 8.925117535058769,
+    "mse_reduction_pct": 96.66447089458681,
+    "diversity_increase": 3.0,
+    "mechanism_explanation": "Specialization improves prediction through three mechanisms: (1) 8.9x variance reduction in-niche, (2) 96.7% lower MSE from focused learning, (3) Competition prevents overfitting to dominant regime."
+  }
+}

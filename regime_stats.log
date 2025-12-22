@@ -1,0 +1,47 @@
+======================================================================
+REGIME STATISTICS ANALYSIS
+======================================================================
+
+FINANCE Domain:
+----------------------------------------
+  Regime count:      4
+  Regimes:           [np.str_('mean_revert'), np.str_('volatile'), np.str_('trend_up'), np.str_('trend_down')]
+  Entropy:           1.882 (max: 2.000)
+  Normalized entropy:0.941
+  Max proportion:    0.421
+  Transition rate:   16.8%
+  Mean duration:     5.9 steps
+  Autocorrelation:   0.840
+
+TRAFFIC Domain:
+----------------------------------------
+  Regime count:      6
+  Regimes:           [np.str_('weekend_active'), np.str_('midday'), np.str_('night'), np.str_('weekend_quiet'), np.str_('morning_rush'), np.str_('evening_rush')]
+  Entropy:           2.448 (max: 2.585)
+  Normalized entropy:0.947
+  Max proportion:    0.328
+  Transition rate:   15.9%
+  Mean duration:     6.3 steps
+  Autocorrelation:   0.904
+
+ENERGY Domain:
+----------------------------------------
+  Regime count:      4
+  Regimes:           [np.str_('normal'), np.str_('peak_demand'), np.str_('high_load'), np.str_('low_demand')]
+  Entropy:           1.414 (max: 2.000)
+  Normalized entropy:0.707
+  Max proportion:    0.498
+  Transition rate:   31.0%
+  Mean duration:     3.2 steps
+  Autocorrelation:   0.463
+
+======================================================================
+SUMMARY TABLE
+======================================================================
+Domain     Regimes  Entropy    MaxProp    TransRate    Duration  
+------------------------------------------------------------
+finance    4        0.941      0.421      16.8         5.9       
+traffic    6        0.947      0.328      15.9         6.3       
+energy     4        0.707      0.498      31.0         3.2       
+
+Results saved to: /Users/yuhaoli/code/MAS_For_Finance/emergent_specialization/results/regime_statistics/results.json
