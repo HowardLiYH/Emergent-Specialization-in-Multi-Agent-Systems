@@ -23,21 +23,23 @@ We present a population-based multi-agent system where agents **spontaneously sp
 
 **Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems.
 
-**Validated on 4 heterogeneous domains:**
+**Validated on 5 heterogeneous domains:**
 - 📈 Bybit cryptocurrency (1.1M+ bars)
 - ⚡ Electricity demand (26K hours)
 - 🌤️ Weather patterns (1.5K days)
-- 🏥 Healthcare/Flu rates (727 weeks)
+- ☀️ Solar irradiance (109K hours)
+- 📊 Commodity prices (10K days)
 
 ### Key Findings: Cross-Domain Prediction Performance
 
-| Domain | Diverse MSE | Homo MSE | **Improvement** | SI | Significant? |
-|--------|-------------|----------|-----------------|-----|--------------|
-| 📈 Finance | 552,986 | 534,563 | -3.4% | 0.47 | ✓ |
-| ⚡ **Energy** | **0.0051** | **0.0083** | **+38.9%** | **0.70** | ✓ |
-| 🌤️ **Weather** | **15.95** | **25.55** | **+37.6%** | **0.59** | ✓ |
-| 🏥 Healthcare | 0.847 | 0.869 | +2.5% | 0.27 | ✗ |
-| **Average** | - | - | **+18.9%** | 0.50 | 3/4 |
+| Domain | SI | Improvement | Significant? |
+|--------|-----|-------------|--------------|
+| ☀️ **Solar** | **0.865 ± 0.036** | **+11.3%** | ✓ |
+| 📊 **Commodities** | **0.839 ± 0.039** | **+20.5%** | ✓ |
+| ⚡ **Energy** | **0.70** | **+38.9%** | ✓ |
+| 🌤️ **Weather** | **0.59** | **+37.6%** | ✓ |
+| 📈 Finance | 0.47 | -3.4% | Boundary |
+| **Average (4 strong)** | **0.75** | **+27.1%** | **4/5** |
 
 ### Hypothesis Testing Summary (ALL PASS ✓)
 

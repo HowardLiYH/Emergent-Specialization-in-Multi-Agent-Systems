@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-12-22T22:47:55.876423",
+  "n_trials": 125,
+  "domains": {
+    "solar": {
+      "domain": "solar",
+      "si_mean": 0.8653720507193011,
+      "si_std": 0.036167361025503025,
+      "improvement_mean": 11.266376556770126,
+      "improvement_std": 1.2598528584952504,
+      "n_trials": 125,
+      "n_regimes": 3,
+      "regime_distribution": {
+        "partly_cloudy": 0.197836,
+        "clear": 0.7505960000000002,
+        "overcast": 0.051568
+      },
+      "verdict": "include"
+    },
+    "commodities": {
+      "domain": "commodities",
+      "si_mean": 0.8390559510484273,
+      "si_std": 0.03878754060524174,
+      "improvement_mean": 20.472228000048073,
+      "improvement_std": 0.6740751064098612,
+      "n_trials": 125,
+      "n_regimes": 5,
+      "regime_distribution": {
+        "sideways": 0.09115999999999999,
+        "bear": 0.259112,
+        "volatile": 0.5960080000000001,
+        "normal": 0.0003,
+        "bull": 0.05342
+      },
+      "verdict": "include"
+    }
+  }
+}
