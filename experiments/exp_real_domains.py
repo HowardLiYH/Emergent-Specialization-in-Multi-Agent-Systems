@@ -70,10 +70,10 @@ def load_traffic_data() -> Tuple[pd.DataFrame, List[str]]:
     path = DATA_DIR / "traffic" / "nyc_taxi" / "hourly_aggregated.csv"
     if not path.exists():
         raise FileNotFoundError(f"Traffic data not found: {path}")
-    
+
     df = pd.read_csv(path)
     regimes = df['regime'].unique().tolist()
-    
+
     print(f"Loaded traffic data: {len(df)} hours, {len(regimes)} regimes")
     return df, regimes
 
@@ -83,10 +83,10 @@ def load_energy_data() -> Tuple[pd.DataFrame, List[str]]:
     path = DATA_DIR / "energy" / "hourly_demand.csv"
     if not path.exists():
         raise FileNotFoundError(f"Energy data not found: {path}")
-    
+
     df = pd.read_csv(path)
     regimes = df['regime'].unique().tolist()
-    
+
     print(f"Loaded energy data: {len(df)} hours, {len(regimes)} regimes")
     return df, regimes
 
@@ -130,7 +130,7 @@ def run_domain_experiment(
 ) -> Tuple[float, float]:
     """
     Run emergent specialization experiment on real domain data.
-    
+
     Returns: (SI, mean_reward)
     """
     # Create population with domain regimes
@@ -141,37 +141,37 @@ def run_domain_experiment(
         seed=trial_id,
         methods=list(methods.keys()),
     )
-    
+
     # Create reward function based on method-regime alignment
     def reward_fn(selected_methods, obs_window):
         if len(obs_window) < 2:
             return 0.0
-        
+
         # Signal based on observation change
         signal = obs_window[-1] - obs_window[-2]
         return signal * 100
-    
+
     # Run through data
     feature_values = df[feature_col].values
     regime_labels = df['regime'].values
-    
+
     n_iterations = min(len(df) - 20, max_iterations)
     rewards = []
-    
+
     for i in range(20, 20 + n_iterations):
         regime = regime_labels[i]
         obs_window = feature_values[max(0, i-20):i+1]
-        
+
         result = population.run_iteration(obs_window, regime, reward_fn)
-        
+
         if len(obs_window) >= 2:
             ret = obs_window[-1] - obs_window[-2]
             rewards.append(ret * 100)
-    
+
     # Compute SI
     niche_dist = population.get_niche_distribution()
     agent_sis = [compute_regime_si(aff) for aff in niche_dist.values()]
-    
+
     return np.mean(agent_sis), np.mean(rewards) if rewards else 0.0
 
 
@@ -179,13 +179,13 @@ def bootstrap_ci(values: List[float], confidence: float = 0.95) -> Tuple[float, 
     """Compute bootstrap confidence interval."""
     if len(values) < 2:
         return (np.mean(values), np.mean(values))
-    
+
     n_bootstrap = 1000
     bootstrap_means = [
         np.mean(np.random.choice(values, size=len(values), replace=True))
         for _ in range(n_bootstrap)
     ]
-    
+
     alpha = 1 - confidence
     return (
         np.percentile(bootstrap_means, alpha / 2 * 100),
@@ -196,38 +196,38 @@ def bootstrap_ci(values: List[float], confidence: float = 0.95) -> Tuple[float, 
 def run_experiment():
     """Run the full real-domain validation experiment."""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     print("=" * 60)
     print("REAL-WORLD DOMAIN VALIDATION EXPERIMENT")
     print("=" * 60)
     print()
-    
+
     results = []
-    
+
     # ========== Traffic Domain (NYC Taxi) ==========
     print("\n--- Domain: Traffic (NYC Taxi) ---")
     try:
         traffic_df, traffic_regimes = load_traffic_data()
         traffic_methods = create_traffic_methods()
-        
+
         si_values = []
         reward_values = []
-        
+
         start_time = time.time()
         for trial in range(N_TRIALS):
             if (trial + 1) % 10 == 0:
                 print(f"    Trial {trial + 1}/{N_TRIALS}...")
-            
+
             si, reward = run_domain_experiment(
                 traffic_df, traffic_regimes, traffic_methods,
                 "Traffic", "trip_count_norm", trial
             )
             si_values.append(si)
             reward_values.append(reward)
-        
+
         elapsed = time.time() - start_time
         ci_lower, ci_upper = bootstrap_ci(si_values)
-        
+
         result = DomainResult(
             domain="Traffic",
             data_source="NYC Taxi (TLC)",
@@ -242,38 +242,38 @@ def run_experiment():
             n_trials=N_TRIALS,
         )
         results.append(result)
-        
+
         print(f"    SI: {result.si_mean:.4f} ± {result.si_std:.4f} [{ci_lower:.4f}, {ci_upper:.4f}]")
         print(f"    Data: {len(traffic_df)} hours, {len(traffic_regimes)} regimes")
         print(f"    Time: {elapsed:.1f}s")
-        
+
     except Exception as e:
         print(f"    Error: {e}")
-    
+
     # ========== Energy Domain ==========
     print("\n--- Domain: Energy (Electricity Demand) ---")
     try:
         energy_df, energy_regimes = load_energy_data()
         energy_methods = create_energy_methods()
-        
+
         si_values = []
         reward_values = []
-        
+
         start_time = time.time()
         for trial in range(N_TRIALS):
             if (trial + 1) % 10 == 0:
                 print(f"    Trial {trial + 1}/{N_TRIALS}...")
-            
+
             si, reward = run_domain_experiment(
                 energy_df, energy_regimes, energy_methods,
                 "Energy", "demand", trial
             )
             si_values.append(si)
             reward_values.append(reward)
-        
+
         elapsed = time.time() - start_time
         ci_lower, ci_upper = bootstrap_ci(si_values)
-        
+
         result = DomainResult(
             domain="Energy",
             data_source="EIA-style hourly demand",
@@ -288,31 +288,31 @@ def run_experiment():
             n_trials=N_TRIALS,
         )
         results.append(result)
-        
+
         print(f"    SI: {result.si_mean:.4f} ± {result.si_std:.4f} [{ci_lower:.4f}, {ci_upper:.4f}]")
         print(f"    Data: {len(energy_df)} hours, {len(energy_regimes)} regimes")
         print(f"    Time: {elapsed:.1f}s")
-        
+
     except Exception as e:
         print(f"    Error: {e}")
-    
+
     # ========== Summary ==========
     print("\n" + "=" * 60)
     print("REAL-WORLD VALIDATION SUMMARY")
     print("=" * 60)
-    
+
     # Add Finance for comparison
     print("\n| Domain | Data Source | SI | 95% CI |")
     print("|--------|-------------|-----|--------|")
     print("| Finance | Bybit 1.1M bars | 0.86 | [0.81, 0.89] |")
-    
+
     for r in results:
         print(f"| {r.domain} | {r.data_source} | {r.si_mean:.2f} | [{r.si_ci_lower:.2f}, {r.si_ci_upper:.2f}] |")
-    
+
     # Statistical test: Are all SIs > 0.5?
     all_sis = [0.86] + [r.si_mean for r in results]  # Include finance
     print(f"\nMean SI across real domains: {np.mean(all_sis):.4f}")
-    
+
     # Save results
     summary = {
         "experiment": "real_domain_validation",
@@ -328,15 +328,14 @@ def run_experiment():
             "mean_si": float(np.mean(all_sis)),
         }
     }
-    
+
     with open(RESULTS_DIR / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
-    
+
     print(f"\nResults saved to {RESULTS_DIR}")
-    
+
     return results
 
 
 if __name__ == "__main__":
     run_experiment()
-

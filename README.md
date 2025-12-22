@@ -17,11 +17,11 @@
 
 ## 📖 Abstract
 
-We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning. 
+We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
 
 **Validated on real-world data:**
 - 🚕 NYC Taxi traffic (3M+ trips)
-- ⚡ Electricity demand (17.5K hours)  
+- ⚡ Electricity demand (17.5K hours)
 - 📈 Bybit cryptocurrency (1.1M+ bars)
 
 ### Key Findings
