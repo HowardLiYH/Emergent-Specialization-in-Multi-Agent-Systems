@@ -10,7 +10,6 @@
 
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![NeurIPS 2025](https://img.shields.io/badge/NeurIPS-2025-purple.svg)](#)
 [![Data: 100% Real](https://img.shields.io/badge/Data-100%25%20Real-green.svg)](#data)
 
 **Niche Partitioning Without Explicit Coordination**
