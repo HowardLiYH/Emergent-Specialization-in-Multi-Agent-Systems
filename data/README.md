@@ -67,4 +67,3 @@ python scripts/download_real_solar.py          # Solar
 ## Data Verification
 
 All data has been verified against original sources. See `REAL_DATA_MANIFEST.md` for detailed verification.
-

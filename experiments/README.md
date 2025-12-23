@@ -38,4 +38,3 @@ All experiments use identical settings (see `config.py`):
 ## Results
 
 Results are saved to `../results/` with JSON files and figures.
-
