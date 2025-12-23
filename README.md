@@ -336,11 +336,11 @@ Five publication-quality figures in `results/figures/`:
 ## 📚 Citation
 
 ```bibtex
-@misc{li2024emergent,
+@misc{li2025emergent,
   title     = {Emergent Specialization in Multi-Agent Systems:
                Niche Partitioning Without Explicit Coordination},
   author    = {Li, Yuhao},
-  year      = {2024},
+  year      = {2025},
   howpublished = {\url{https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems}},
   note      = {Preprint}
 }
