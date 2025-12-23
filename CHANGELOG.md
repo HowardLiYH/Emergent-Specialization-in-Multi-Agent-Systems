@@ -8,8 +8,6 @@ This document chronicles the complete research journey from initial conception t
 
 ## Phase 0: Genesis (Initial Conception)
 
-**Date**: Project inception
-
 ### Starting Point
 - Multi-agent trading system (`MAS_Final_With_Agents`)
 - Population-based learning with `PopAgent`
@@ -364,7 +362,7 @@ Created `diagnose_real_data.py` to investigate:
 
 ---
 
-## Phase 5: A+ Rigor Push (2024-12-22)
+## Phase 5: A+ Rigor Push
 
 ### Data Infrastructure
 - Collected **1,140,728 rows** of OHLCV data from Bybit API
@@ -412,7 +410,7 @@ Created `diagnose_real_data.py` to investigate:
 
 ---
 
-## Phase 6: Theoretical Grounding (2024-12-22)
+## Phase 6: Theoretical Grounding
 
 ### Formal Definitions
 - Created `src/theory/definitions.py` with mathematical regime criteria
@@ -431,7 +429,7 @@ Created `diagnose_real_data.py` to investigate:
 
 ---
 
-## Phase 7: Mechanism Ablation (2024-12-22)
+## Phase 7: Mechanism Ablation
 
 ### Experiments
 Isolated effects of niche bonus and competition:
@@ -451,7 +449,7 @@ Isolated effects of niche bonus and competition:
 
 ---
 
-## Phase 8: MARL Baselines (2024-12-22)
+## Phase 8: MARL Baselines
 
 ### Implementations
 - **IQL** (Independent Q-Learning): SI = 0.81
@@ -467,7 +465,7 @@ Standard MARL methods (IQL, QMIX, MAPPO) achieve similar SI to our approach, but
 
 ---
 
-## Phase 9: Multi-Domain Real Data Validation (2024-12-22)
+## Phase 9: Multi-Domain Real Data Validation
 
 ### Data Collected
 | Domain | Source | Size | Regimes |
@@ -497,7 +495,7 @@ Standard MARL methods (IQL, QMIX, MAPPO) achieve similar SI to our approach, but
 
 ---
 
-## Phase 10: Unified Prediction & Mechanistic Analysis (2024-12-22)
+## Phase 10: Unified Prediction & Mechanistic Analysis
 
 ### Unified Prediction Experiment
 
@@ -538,7 +536,7 @@ Analyzed why specialists outperform generalists:
 
 ---
 
-## Phase 12: Narrow & Deepen for NeurIPS (2024-12-22)
+## Phase 12: Narrow & Deepen for NeurIPS
 
 ### Core Thesis Focus
 
@@ -585,7 +583,7 @@ Refocused paper around single thesis: "Competition alone, without explicit diver
 
 ---
 
-## Phase 11: Domain-Appropriate Prediction Methods (2024-12-22)
+## Phase 11: Domain-Appropriate Prediction Methods
 
 ### Critical Fix: Traffic Domain Failure
 
@@ -631,8 +629,6 @@ Refocused paper around single thesis: "Competition alone, without explicit diver
 ---
 
 ## Phase 13: NeurIPS Strong Accept Push
-
-**Date**: December 2024
 
 ### Objective
 Address Stanford professor review concerns and achieve Strong Accept quality.
@@ -683,8 +679,6 @@ Proves competition ALONE induces specialization on real data (not just synthetic
 ---
 
 ## Phase 14: Tier-1 Domain Expansion (5-Domain Paper)
-
-**Date**: December 2024
 
 ### Objective
 Expand from 4 domains to 5+ domains by testing new Tier-1 domain candidates.
@@ -758,7 +752,7 @@ Weather to create a **5-domain paper** with robust cross-domain validation.
 | Theory | Formal propositions with proof sketches |
 | Figures | 10+ publication-quality figures |
 
-## [2024-12-22] Phase 14: Real Data Acquisition
+## Phase 14b: Real Data Acquisition
 
 ### Critical Change: All Domains Now Use Verified Real Data
 
@@ -816,7 +810,7 @@ Weather to create a **5-domain paper** with robust cross-domain validation.
 | **Total** | **175,404** | - | **100%** |
 
 
-## [2024-12-23] Phase 15: Final Results with Real Data
+## Phase 15: Final Results with Real Data
 
 ### Experiments Completed
 
@@ -863,7 +857,7 @@ with NichePopulation significantly outperforming MARL baselines.**
 
 ---
 
-## [2024-12-23] Phase 16: NeurIPS Strong Accept
+## Phase 16: NeurIPS Strong Accept
 
 ### Formal Mathematical Proofs
 
@@ -950,7 +944,7 @@ This phase addresses all remaining NeurIPS reviewer concerns:
 
 ---
 
-## [2024-12-23] Phase 17: NeurIPS A+ Upgrade
+## Phase 17: NeurIPS A+ Upgrade
 
 ### Motivation Rewrite
 
@@ -1022,7 +1016,7 @@ Implemented full PyTorch versions:
 
 ---
 
-## [2024-12-23] Phase 18: 100% Real Data Validation
+## Phase 18: 100% Real Data Validation
 
 ### Critical Update: All Domains Now Use REAL DATA
 
@@ -1103,7 +1097,7 @@ Replaced synthetic data with verified real data sources for all 6 domains.
 
 ---
 
-## [2024-12-23] Phase 19: Unified Experimental Pipeline
+## Phase 19: Unified Experimental Pipeline
 
 ### Problem Identified
 
@@ -1179,7 +1173,7 @@ Created `experiments/exp_unified_pipeline.py` that runs ALL experiments with IDE
 
 ---
 
-## [2024-12-23] Phase 20: Method Specialization Experiment
+## Phase 20: Method Specialization Experiment
 
 ### Gap Identified
 
