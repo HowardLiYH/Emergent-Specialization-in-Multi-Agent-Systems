@@ -1,0 +1,74 @@
+{
+  "crypto": {
+    "domain": "crypto",
+    "data_source": "Bybit Exchange",
+    "n_records": 8766,
+    "n_regimes": 4,
+    "niche_si_mean": 0.786,
+    "niche_si_std": 0.055,
+    "homo_si_mean": 0.002,
+    "improvement_vs_homo": 50027.5,
+    "p_value": 0.0,
+    "is_significant": true
+  },
+  "commodities": {
+    "domain": "commodities",
+    "data_source": "FRED (US Government)",
+    "n_records": 5630,
+    "n_regimes": 4,
+    "niche_si_mean": 0.773,
+    "niche_si_std": 0.055,
+    "homo_si_mean": 0.002,
+    "improvement_vs_homo": 49175.8,
+    "p_value": 0.0,
+    "is_significant": true
+  },
+  "weather": {
+    "domain": "weather",
+    "data_source": "Open-Meteo API",
+    "n_records": 9105,
+    "n_regimes": 4,
+    "niche_si_mean": 0.758,
+    "niche_si_std": 0.046,
+    "homo_si_mean": 0.002,
+    "improvement_vs_homo": 48217.6,
+    "p_value": 0.0,
+    "is_significant": true
+  },
+  "solar": {
+    "domain": "solar",
+    "data_source": "Open-Meteo Solar API",
+    "n_records": 116834,
+    "n_regimes": 4,
+    "niche_si_mean": 0.764,
+    "niche_si_std": 0.042,
+    "homo_si_mean": 0.002,
+    "improvement_vs_homo": 48604.9,
+    "p_value": 0.0,
+    "is_significant": true
+  },
+  "traffic": {
+    "domain": "traffic",
+    "data_source": "NYC TLC Yellow Taxi",
+    "n_records": 2879,
+    "n_regimes": 6,
+    "niche_si_mean": 0.574,
+    "niche_si_std": 0.058,
+    "homo_si_mean": 0.003,
+    "improvement_vs_homo": 18097.5,
+    "p_value": 0.0,
+    "is_significant": true
+  },
+  "air_quality": {
+    "domain": "air_quality",
+    "data_source": "Open-Meteo Air Quality API",
+    "n_records": 2880,
+    "n_regimes": 4,
+    "niche_si_mean": 0.816,
+    "niche_si_std": 0.036,
+    "homo_si_mean": 0.002,
+    "improvement_vs_homo": 51941.8,
+    "p_value": 0.0,
+    "is_significant": true
+  }
+}
