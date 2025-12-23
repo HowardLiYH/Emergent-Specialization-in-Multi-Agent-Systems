@@ -1,137 +1,231 @@
 """
-Air Quality Domain - EPA PM2.5/AQI prediction with quality regimes.
+Air Quality Domain Module - NYC PM2.5 Monitoring.
 
-Regimes: good, moderate, unhealthy_sensitive, unhealthy
-Methods: Persistence, MA(7), Seasonal(365), Trend
+This module provides regime detection and prediction methods
+for air quality data from Open-Meteo (REAL DATA).
+
+Data Source: Open-Meteo Air Quality API
+URL: https://open-meteo.com/en/docs/air-quality-api
+
+Regimes (based on EPA PM2.5 AQI categories):
+- good: PM2.5 < 12 μg/m³ (AQI 0-50)
+- moderate: PM2.5 12-35 μg/m³ (AQI 51-100)
+- unhealthy_sensitive: PM2.5 35-55 μg/m³ (AQI 101-150)
+- unhealthy: PM2.5 ≥ 55 μg/m³ (AQI 151+)
+
+Prediction Task: Hourly PM2.5 level forecasting
+Metric: RMSE (Root Mean Square Error)
 """
 
+import csv
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Callable
+from datetime import datetime
+from collections import defaultdict
+
 import numpy as np
-import pandas as pd
 
-from .base import DomainEnvironment, DomainMethod
-
-
-AIR_QUALITY_REGIMES = ["good", "moderate", "unhealthy_sensitive", "unhealthy"]
-AIR_QUALITY_METHODS = ["Persistence", "MA7", "Seasonal365", "Trend"]
+# Data directory
+DATA_DIR = Path(__file__).parent.parent.parent / "data" / "air_quality"
 
 
-class AirQualityMethod(DomainMethod):
-    """Air quality prediction method."""
-
-    def __init__(self, name: str, optimal_regimes: List[str]):
-        self.name = name
-        self.optimal_regimes = optimal_regimes
-        self._history = []
-
-    def predict(self, current_value: float, history: np.ndarray) -> float:
-        """Predict next PM2.5 value."""
-        if self.name == "Persistence":
-            return current_value
-        elif self.name == "MA7":
-            if len(history) >= 7:
-                return np.mean(history[-7:])
-            return current_value
-        elif self.name == "Seasonal365":
-            if len(history) >= 365:
-                return history[-365]
-            elif len(history) >= 7:
-                return history[-7]  # Fallback to weekly
-            return current_value
-        elif self.name == "Trend":
-            if len(history) >= 7:
-                recent = history[-7:]
-                slope = (recent[-1] - recent[0]) / 7
-                return current_value + slope
-            return current_value
-        return current_value
-
-    def execute(self, observation: np.ndarray) -> Dict:
-        """Execute method on observation."""
-        pm25 = observation[0] if len(observation) > 0 else 20.0
-        prediction = self.predict(pm25, np.array(self._history))
-        self._history.append(pm25)
-        if len(self._history) > 400:
-            self._history = self._history[-365:]
-
-        # Convert to signal based on prediction accuracy expectation
-        signal = np.clip((prediction - pm25) / 10, -1, 1)
-        return {"signal": signal, "prediction": prediction, "confidence": 0.5}
-
-
-def load_air_quality_data(data_path: Optional[str] = None) -> pd.DataFrame:
-    """Load EPA air quality data from CSV."""
-    if data_path is None:
-        data_path = Path(__file__).parent.parent.parent / "data" / "air_quality" / "epa_daily_aqi.csv"
-
-    df = pd.read_csv(data_path)
-    df['date'] = pd.to_datetime(df['date'])
-    return df
-
-
-def create_air_quality_environment(
-    n_bars: int = 2000,
-    city: str = "Los_Angeles",
-    seed: Optional[int] = None,
-) -> Tuple[pd.DataFrame, pd.Series, Dict[str, AirQualityMethod]]:
+def load_data() -> Dict:
     """
-    Create air quality prediction environment from real data.
-
-    State: [pm25, pm25_lag1, pm25_ma7, day_of_week, month]
+    Load Open-Meteo real air quality data.
+    
+    Returns:
+        Dict with 'timestamps', 'pm25', 'regimes' arrays
     """
-    df = load_air_quality_data()
-
-    # Filter by city
-    city_df = df[df['city'] == city].copy()
-    if len(city_df) == 0:
-        # Use first available city
-        city = df['city'].iloc[0]
-        city_df = df[df['city'] == city].copy()
-
-    city_df = city_df.sort_values('date').reset_index(drop=True)
-
-    # Sample if needed
-    if len(city_df) > n_bars:
-        if seed is not None:
-            np.random.seed(seed)
-        start_idx = np.random.randint(0, len(city_df) - n_bars)
-        city_df = city_df.iloc[start_idx:start_idx + n_bars].reset_index(drop=True)
-
-    # Extract state features
-    state_df = pd.DataFrame({
-        'pm25': city_df['pm25'],
-        'pm25_lag1': city_df['pm25_lag1'],
-        'pm25_ma7': city_df['pm25_ma7'],
-        'day_of_week': city_df['day_of_week'],
-        'month': city_df['month'],
-    })
-
-    regimes = pd.Series(city_df['regime'].values)
-
-    # Create methods with optimal regime mappings
-    methods = {
-        "Persistence": AirQualityMethod("Persistence", ["good", "moderate"]),
-        "MA7": AirQualityMethod("MA7", ["moderate", "unhealthy_sensitive"]),
-        "Seasonal365": AirQualityMethod("Seasonal365", ["good"]),
-        "Trend": AirQualityMethod("Trend", ["unhealthy_sensitive", "unhealthy"]),
+    data_file = DATA_DIR / "openmeteo_real_air_quality.csv"
+    
+    if not data_file.exists():
+        raise FileNotFoundError(f"Air quality data not found: {data_file}")
+    
+    timestamps = []
+    pm25_values = []
+    regimes = []
+    
+    with open(data_file, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            timestamps.append(datetime.fromisoformat(row['timestamp']))
+            pm25_values.append(float(row['pm25']))
+            regimes.append(row['regime'])
+    
+    return {
+        'timestamps': np.array(timestamps),
+        'pm25': np.array(pm25_values),
+        'regimes': np.array(regimes),
+        'data_source': 'Open-Meteo (REAL)',
+        'records': len(timestamps),
     }
 
-    return state_df, regimes, methods
+
+def detect_regime(pm25: np.ndarray, timestamps: np.ndarray = None) -> np.ndarray:
+    """
+    Detect regime based on PM2.5 levels (EPA AQI categories).
+    
+    Args:
+        pm25: Array of PM2.5 values in μg/m³
+        timestamps: Optional array of datetime objects
+    
+    Returns:
+        Array of regime labels
+    """
+    regimes = []
+    
+    for val in pm25:
+        if val >= 55:
+            regimes.append('unhealthy')
+        elif val >= 35:
+            regimes.append('unhealthy_sensitive')
+        elif val >= 12:
+            regimes.append('moderate')
+        else:
+            regimes.append('good')
+    
+    return np.array(regimes)
 
 
-class AirQualityDomain:
-    """Wrapper for air quality domain environment."""
+def get_prediction_methods() -> Dict[str, Callable]:
+    """
+    Get prediction methods for air quality domain.
+    
+    Returns:
+        Dict mapping method name to prediction function
+    """
+    return {
+        'persistence': persistence_predictor,
+        'hourly_average': hourly_average_predictor,
+        'moving_average': moving_average_predictor,
+        'regime_average': regime_average_predictor,
+        'exponential_smoothing': exponential_smoothing,
+    }
 
-    def __init__(self, n_bars: int = 2000, city: str = "Los_Angeles", seed: int = None):
-        self.df, self.regimes, self.methods = create_air_quality_environment(
-            n_bars=n_bars, city=city, seed=seed
-        )
 
-    @property
-    def regime_names(self):
-        return AIR_QUALITY_REGIMES
+def persistence_predictor(history: np.ndarray, horizon: int = 1) -> np.ndarray:
+    """
+    Naive persistence: predict last value.
+    """
+    if len(history) == 0:
+        return np.zeros(horizon)
+    return np.full(horizon, history[-1])
 
-    @property
-    def method_names(self):
-        return AIR_QUALITY_METHODS
+
+def hourly_average_predictor(history: np.ndarray, horizon: int = 1) -> np.ndarray:
+    """
+    Hourly average: predict based on historical average for each hour.
+    """
+    if len(history) < 24:
+        return persistence_predictor(history, horizon)
+    
+    hourly_avg = defaultdict(list)
+    for i, val in enumerate(history):
+        hourly_avg[i % 24].append(val)
+    
+    hourly_avg = {h: np.mean(vals) for h, vals in hourly_avg.items()}
+    
+    predictions = []
+    last_hour = len(history) % 24
+    for h in range(horizon):
+        hour = (last_hour + h) % 24
+        predictions.append(hourly_avg.get(hour, np.mean(history)))
+    
+    return np.array(predictions)
+
+
+def moving_average_predictor(history: np.ndarray, horizon: int = 1,
+                              window: int = 24) -> np.ndarray:
+    """
+    Moving average predictor.
+    
+    Good for smoothing noisy air quality readings.
+    """
+    if len(history) < window:
+        return persistence_predictor(history, horizon)
+    
+    ma = np.mean(history[-window:])
+    return np.full(horizon, ma)
+
+
+def regime_average_predictor(history: np.ndarray, horizon: int = 1) -> np.ndarray:
+    """
+    Regime-based average: predict based on current regime's historical average.
+    """
+    if len(history) < 24:
+        return persistence_predictor(history, horizon)
+    
+    # Determine current regime
+    current_val = history[-1]
+    if current_val >= 55:
+        current_regime = 'unhealthy'
+    elif current_val >= 35:
+        current_regime = 'unhealthy_sensitive'
+    elif current_val >= 12:
+        current_regime = 'moderate'
+    else:
+        current_regime = 'good'
+    
+    # Compute regime averages
+    regime_vals = defaultdict(list)
+    for val in history:
+        if val >= 55:
+            regime = 'unhealthy'
+        elif val >= 35:
+            regime = 'unhealthy_sensitive'
+        elif val >= 12:
+            regime = 'moderate'
+        else:
+            regime = 'good'
+        regime_vals[regime].append(val)
+    
+    regime_avg = {r: np.mean(vals) for r, vals in regime_vals.items()}
+    
+    return np.full(horizon, regime_avg.get(current_regime, np.mean(history)))
+
+
+def exponential_smoothing(history: np.ndarray, horizon: int = 1,
+                          alpha: float = 0.3) -> np.ndarray:
+    """
+    Simple exponential smoothing.
+    """
+    if len(history) == 0:
+        return np.zeros(horizon)
+    
+    level = history[0]
+    for val in history[1:]:
+        level = alpha * val + (1 - alpha) * level
+    
+    return np.full(horizon, level)
+
+
+def compute_rmse(predictions: np.ndarray, actuals: np.ndarray) -> float:
+    """
+    Compute Root Mean Square Error.
+    """
+    if len(predictions) == 0 or len(actuals) == 0:
+        return float('inf')
+    
+    mse = np.mean((predictions - actuals) ** 2)
+    return float(np.sqrt(mse))
+
+
+def get_regime_list() -> List[str]:
+    """Get list of regimes for this domain."""
+    return ['good', 'moderate', 'unhealthy_sensitive', 'unhealthy']
+
+
+def get_metric_name() -> str:
+    """Get primary metric name."""
+    return 'RMSE (μg/m³)'
+
+
+def is_lower_better() -> bool:
+    """Whether lower metric values are better."""
+    return True
+
+
+def is_real_data() -> bool:
+    """Check if using real data."""
+    data_file = DATA_DIR / "openmeteo_real_air_quality.csv"
+    return data_file.exists()

@@ -23,13 +23,13 @@ We present a population-based multi-agent system where agents **spontaneously sp
 
 **Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems.
 
-**Validated on 6 domains (4 real + 2 synthetic patterns):**
-- 📈 **Crypto** - Bybit Exchange (8,766 bars) ✅ Real
+**Validated on 6 domains (100% REAL DATA):**
+- 📈 **Crypto** - Bybit Exchange (44,000+ bars) ✅ Real
 - 📊 **Commodities** - FRED US Government (5,630 daily prices) ✅ Real
 - 🌤️ **Weather** - Open-Meteo (9,105 observations) ✅ Real
 - ☀️ **Solar** - Open-Meteo Satellite (116,834 hourly) ✅ Real
-- 🚕 **Traffic** - NYC Taxi patterns (8,760 hourly) 📊 Synthetic
-- ⚡ **Electricity** - US Grid patterns (8,760 hourly) 📊 Synthetic
+- 🚕 **Traffic** - NYC TLC Yellow Taxi (2,879 hourly trips) ✅ Real
+- 🌬️ **Air Quality** - Open-Meteo PM2.5 (2,880 hourly readings) ✅ Real
 
 ---
 

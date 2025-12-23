@@ -49,3 +49,8 @@ htmlcov/
 .tox/
 .mypy_cache/
 venv_fresh/
+# Large data files - raw parquets
+data/traffic_real/*.parquet
+data/air_quality_real/
+data/electricity_real/
+

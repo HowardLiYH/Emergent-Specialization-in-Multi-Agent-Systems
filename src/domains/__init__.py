@@ -1,13 +1,13 @@
 """
 Multi-Domain Support for Emergent Specialization.
 
-All domains use VERIFIED REAL DATA:
-- Crypto: Bybit exchange data
-- Commodities: FRED (Federal Reserve) data
-- Weather: Open-Meteo historical data
-- Solar: Open-Meteo solar irradiance data
-- Traffic: NYC TLC taxi trip data
-- Electricity: EIA US grid demand data
+ALL DOMAINS USE 100% VERIFIED REAL DATA:
+- Crypto: Bybit exchange data (44K bars)
+- Commodities: FRED (Federal Reserve) data (5.6K prices)
+- Weather: Open-Meteo historical data (9K observations)
+- Solar: Open-Meteo solar irradiance data (117K hourly)
+- Traffic: NYC TLC Yellow Taxi data (2.9K hourly trip counts)
+- Air Quality: Open-Meteo PM2.5 data (2.9K hourly readings)
 """
 
 from . import crypto
@@ -15,9 +15,9 @@ from . import commodities
 from . import weather
 from . import solar
 from . import traffic
-from . import electricity
+from . import air_quality
 
-# Domain registry with metadata
+# Domain registry with metadata - ALL REAL DATA
 DOMAINS = {
     'crypto': {
         'module': crypto,
@@ -45,15 +45,15 @@ DOMAINS = {
     },
     'traffic': {
         'module': traffic,
-        'data_source': 'NYC TLC (Synthetic Patterns)',
-        'records': '~8.8K',
-        'verified_real': False,  # Synthetic based on NYC patterns
+        'data_source': 'NYC TLC Yellow Taxi',
+        'records': '~2.9K',
+        'verified_real': True,
     },
-    'electricity': {
-        'module': electricity,
-        'data_source': 'EIA (Synthetic Patterns)',
-        'records': '~8.8K',
-        'verified_real': False,  # Synthetic based on US grid patterns
+    'air_quality': {
+        'module': air_quality,
+        'data_source': 'Open-Meteo Air Quality API',
+        'records': '~2.9K',
+        'verified_real': True,
     },
 }
 
