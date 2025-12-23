@@ -1,0 +1,223 @@
+{
+  "crypto": {
+    "domain": "crypto",
+    "n_methods": 5,
+    "n_regimes": 4,
+    "methods": [
+      "naive",
+      "momentum_short",
+      "momentum_long",
+      "mean_revert",
+      "trend"
+    ],
+    "metric": "Sharpe",
+    "niche_performance": {
+      "mean": 0.8857131876665245,
+      "std": 0.010650105734862872
+    },
+    "homo_performance": {
+      "mean": 0.6257049289450766,
+      "std": 0.0088808036827052
+    },
+    "improvement_pct": 41.55445269702695,
+    "method_specialization_index": {
+      "mean": 0.36080650257780383,
+      "std": 0.029445395055064858
+    },
+    "method_coverage": 0.7866666666666668,
+    "method_distribution": {
+      "momentum_short": 7,
+      "mean_revert": 115,
+      "momentum_long": 98,
+      "trend": 20
+    },
+    "t_stat": 100.97268920234269,
+    "p_value": 6.97725200367872e-67,
+    "effect_size": 26.516727270826088
+  },
+  "commodities": {
+    "domain": "commodities",
+    "n_methods": 5,
+    "n_regimes": 4,
+    "methods": [
+      "naive",
+      "ma5",
+      "ma20",
+      "mean_revert",
+      "trend"
+    ],
+    "metric": "Dir. Accuracy",
+    "niche_performance": {
+      "mean": 0.889569540573775,
+      "std": 0.009680542182544367
+    },
+    "homo_performance": {
+      "mean": 0.6482244308207028,
+      "std": 0.012304790886862947
+    },
+    "improvement_pct": 37.2317207247975,
+    "method_specialization_index": {
+      "mean": 0.3709336851761694,
+      "std": 0.034819155574244386
+    },
+    "method_coverage": 0.7333333333333336,
+    "method_distribution": {
+      "trend": 75,
+      "ma20": 27,
+      "mean_revert": 132,
+      "naive": 2,
+      "ma5": 4
+    },
+    "t_stat": 83.01325461838358,
+    "p_value": 5.538788342181274e-62,
+    "effect_size": 21.80034868803167
+  },
+  "weather": {
+    "domain": "weather",
+    "n_methods": 5,
+    "n_regimes": 4,
+    "methods": [
+      "naive",
+      "ma3",
+      "ma7",
+      "seasonal",
+      "trend"
+    ],
+    "metric": "RMSE",
+    "niche_performance": {
+      "mean": 0.8680092315640596,
+      "std": 0.010535408816514416
+    },
+    "homo_performance": {
+      "mean": 0.67483555370684,
+      "std": 0.005383314280232192
+    },
+    "improvement_pct": 28.62529645868918,
+    "method_specialization_index": {
+      "mean": 0.402298144726733,
+      "std": 0.039983472262634774
+    },
+    "method_coverage": 1.0,
+    "method_distribution": {
+      "naive": 50,
+      "trend": 44,
+      "ma3": 67,
+      "ma7": 47,
+      "seasonal": 32
+    },
+    "t_stat": 87.9269171738342,
+    "p_value": 2.0236456052527747e-63,
+    "effect_size": 23.090739692896893
+  },
+  "solar": {
+    "domain": "solar",
+    "n_methods": 5,
+    "n_regimes": 4,
+    "methods": [
+      "naive",
+      "ma6",
+      "clear_sky",
+      "seasonal",
+      "hybrid"
+    ],
+    "metric": "MAE",
+    "niche_performance": {
+      "mean": 0.9247012295703179,
+      "std": 0.006720785659218944
+    },
+    "homo_performance": {
+      "mean": 0.7862576918367826,
+      "std": 0.005612479229940938
+    },
+    "improvement_pct": 17.607908853663005,
+    "method_specialization_index": {
+      "mean": 0.3670144265843647,
+      "std": 0.025307618442652068
+    },
+    "method_coverage": 0.9666666666666667,
+    "method_distribution": {
+      "naive": 40,
+      "hybrid": 132,
+      "clear_sky": 38,
+      "seasonal": 11,
+      "ma6": 19
+    },
+    "t_stat": 85.14558222930319,
+    "p_value": 1.2872915224263378e-62,
+    "effect_size": 22.360325352587974
+  },
+  "traffic": {
+    "domain": "traffic",
+    "n_methods": 5,
+    "n_regimes": 6,
+    "methods": [
+      "persistence",
+      "hourly_avg",
+      "weekly_pattern",
+      "rush_hour",
+      "exp_smooth"
+    ],
+    "metric": "MAPE",
+    "niche_performance": {
+      "mean": 0.9165148873256279,
+      "std": 0.008926876873453605
+    },
+    "homo_performance": {
+      "mean": 0.7402127338275738,
+      "std": 0.006213986016848563
+    },
+    "improvement_pct": 23.817768249731593,
+    "method_specialization_index": {
+      "mean": 0.3114462925314428,
+      "std": 0.024580423247268487
+    },
+    "method_coverage": 1.0,
+    "method_distribution": {
+      "persistence": 39,
+      "rush_hour": 77,
+      "exp_smooth": 41,
+      "weekly_pattern": 49,
+      "hourly_avg": 34
+    },
+    "t_stat": 87.2889341781324,
+    "p_value": 3.077624314501267e-63,
+    "effect_size": 22.923197150115364
+  },
+  "air_quality": {
+    "domain": "air_quality",
+    "n_methods": 5,
+    "n_regimes": 4,
+    "methods": [
+      "persistence",
+      "hourly_avg",
+      "moving_avg",
+      "regime_avg",
+      "exp_smooth"
+    ],
+    "metric": "RMSE",
+    "niche_performance": {
+      "mean": 0.9161763198981678,
+      "std": 0.00688085773472552
+    },
+    "homo_performance": {
+      "mean": 0.8338246133392587,
+      "std": 0.004883360813585487
+    },
+    "improvement_pct": 9.876382304080849,
+    "method_specialization_index": {
+      "mean": 0.3713621859592372,
+      "std": 0.03670210572756584
+    },
+    "method_coverage": 0.7333333333333335,
+    "method_distribution": {
+      "regime_avg": 189,
+      "moving_avg": 3,
+      "exp_smooth": 15,
+      "persistence": 32,
+      "hourly_avg": 1
+    },
+    "t_stat": 52.559555835321774,
+    "p_value": 1.266596242575217e-50,
+    "effect_size": 13.802815578855036
+  }
+}

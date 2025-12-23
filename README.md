@@ -96,6 +96,40 @@ All experiments run with **identical configuration** across all 6 domains:
 
 **Diverse populations consistently outperform homogeneous baselines across all task-specific metrics.**
 
+### Method Specialization Experiment (NEW)
+
+Agents choose among **5 prediction methods per domain** and specialize through competition:
+
+| Domain | Methods | MSI | Coverage | Niche Perf | Homo Perf | Δ% | p-value |
+|--------|---------|-----|----------|------------|-----------|-----|---------|
+| **Crypto** | 5 | 0.361 | 79% | 0.886 | 0.626 | **+41.6%** | <0.001*** |
+| **Commodities** | 5 | 0.371 | 73% | 0.890 | 0.648 | **+37.2%** | <0.001*** |
+| **Weather** | 5 | 0.402 | 100% | 0.868 | 0.675 | **+28.6%** | <0.001*** |
+| **Solar** | 5 | 0.367 | 97% | 0.925 | 0.786 | **+17.6%** | <0.001*** |
+| **Traffic** | 5 | 0.311 | 100% | 0.917 | 0.740 | **+23.8%** | <0.001*** |
+| **Air Quality** | 5 | 0.371 | 73% | 0.916 | 0.834 | **+9.9%** | <0.001*** |
+| **Average** | 5 | **0.364** | **87%** | - | - | **+26.5%** | ✅ All |
+
+**Key Findings:**
+1. **Emergent Method Specialization:** Agents develop preferences for specific prediction methods (MSI = 0.364)
+2. **Division of Labor:** Population uses 87% of available methods on average
+3. **Performance Benefit:** Diverse populations outperform homogeneous by **+26.5%** on average
+
+### Method Distribution Examples
+
+**Crypto Domain:**
+- mean_revert: 47.9% of agents
+- momentum_long: 40.8% of agents
+- trend: 8.3% of agents
+- momentum_short: 2.9% of agents
+
+**Traffic Domain (best diversity):**
+- rush_hour: 32.1% of agents
+- weekly_pattern: 20.4% of agents
+- exp_smooth: 17.1% of agents
+- persistence: 16.2% of agents
+- hourly_avg: 14.2% of agents
+
 ### Experimental Rigor Checklist
 
 | Requirement | Status |
@@ -103,7 +137,9 @@ All experiments run with **identical configuration** across all 6 domains:
 | Same trials across all domains | ✅ 30 trials |
 | Same iterations per trial | ✅ 500 iterations |
 | Same number of agents | ✅ 8 agents |
+| Same methods per domain | ✅ 5 methods |
 | Lambda ablation on ALL domains | ✅ 6 λ values × 6 domains |
+| Method specialization on ALL domains | ✅ 8 agents × 5 methods × 6 domains |
 | Statistical tests on ALL domains | ✅ t-test, Cohen's d, p-value |
 | Random baseline on ALL domains | ✅ 30 trials each |
 | Homogeneous baseline on ALL domains | ✅ 30 trials each |
