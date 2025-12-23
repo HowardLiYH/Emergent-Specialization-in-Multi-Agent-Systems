@@ -1,166 +1,136 @@
 # Reproducibility Guide
 
-This document provides instructions for reproducing all experimental results reported in our NeurIPS 2025 paper: **"Emergent Specialization in Multi-Agent Trading"**.
+This document provides complete instructions to reproduce all results in the paper "Emergent Specialization in Multi-Agent Systems."
+
+## Quick Start (5 minutes)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems.git
+cd Emergent-Specialization-in-Multi-Agent-Systems
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run all experiments
+python experiments/exp_unified_pipeline.py
+```
+
+## Repository Structure
+
+```
+emergent_specialization/
+├── paper/              # LaTeX source
+│   ├── main.tex        # Full paper
+│   └── figures/        # Publication figures
+├── src/                # Core library
+│   ├── agents/         # NichePopulation algorithm
+│   ├── baselines/      # MARL baselines (QMIX, MAPPO, IQL)
+│   ├── domains/        # 6 domain implementations
+│   └── theory/         # Formal propositions
+├── experiments/        # Reproducible experiments
+│   └── exp_unified_pipeline.py  # Main entry point
+├── data/               # Real-world data (6 domains)
+├── results/            # Experiment outputs
+└── scripts/            # Data download & figure generation
+```
 
 ## System Requirements
 
-- **Python**: 3.9+ (tested on 3.10)
-- **Memory**: 8GB RAM minimum
-- **Disk**: 1GB for results
-- **Time**: ~2 hours for full experiments on modern CPU
+- **Python**: 3.8+
+- **Memory**: 4GB RAM
+- **Storage**: 500MB for data
+- **Time**: ~30 minutes for full experiments
 
-## Quick Start
+## Dependencies
 
-### Option 1: Local Installation
-
-```bash
-# Clone repository
-git clone https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Trading.git
-cd Emergent-Specialization-in-Multi-Agent-Trading
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -e .
-
-# Run quick test (2-3 minutes)
-make quick
-
-# Run full experiments (~2 hours)
-make full
+```
+numpy>=1.21.0
+scipy>=1.7.0
+matplotlib>=3.5.0
 ```
 
-### Option 2: Docker
+## Experiments
+
+### Main Experiment: Unified Pipeline
+
+Runs all core experiments across all 6 domains:
 
 ```bash
-# Build image
-docker build -t emergent-specialization .
-
-# Run quick test
-docker run emergent-specialization
-
-# Run full experiments
-docker run -v $(pwd)/results:/app/results emergent-specialization \
-    python -m experiments.runner --all --trials 100
+python experiments/exp_unified_pipeline.py
 ```
 
-## Experiment Details
+**Output**: `results/unified_pipeline/results.json`
 
-### Experiment 1: Emergence of Specialists
+### Individual Experiments
 
-- **File**: `experiments/exp1_emergence.py`
-- **Trials**: 100
-- **Duration**: ~20 minutes
-- **Expected Result**: Final SI = 0.65 ± 0.10, p < 0.001
+| Experiment | Command | Output |
+|------------|---------|--------|
+| Hypothesis Tests | `python experiments/exp_hypothesis_tests.py` | `results/hypothesis_tests/` |
+| Method Specialization | `python experiments/exp_method_specialization.py` | `results/method_specialization/` |
+| MARL Comparison | `python experiments/exp_marl_standalone.py` | `results/marl_comparison/` |
+| λ Ablation | `python experiments/exp_lambda_ablation.py` | `results/lambda_ablation/` |
+
+### Generate Figures
 
 ```bash
-python experiments/exp1_emergence.py --trials 100 --seed 42
+python scripts/generate_neurips_figures.py
 ```
 
-### Experiment 2: Value of Diversity
+## Data
 
-- **File**: `experiments/exp2_diversity_value.py`
-- **Trials**: 100
-- **Duration**: ~30 minutes
-- **Expected Result**: Diverse outperforms Homogeneous by 35%
+All data is **100% real-world data** from verified public sources:
 
-```bash
-python experiments/exp2_diversity_value.py --trials 100 --seed 42
-```
+| Domain | Source | Records |
+|--------|--------|---------|
+| Crypto | Bybit Exchange | 44,000+ |
+| Commodities | FRED (US Gov) | 5,630 |
+| Weather | Open-Meteo | 9,105 |
+| Solar | Open-Meteo | 116,834 |
+| Traffic | NYC TLC | 2,879 |
+| Air Quality | Open-Meteo | 2,880 |
 
-### Experiment 3: Population Size Effect
+See `data/README.md` for download instructions.
 
-- **File**: `experiments/exp3_population_size.py`
-- **Trials**: 50 per size
-- **Sizes tested**: [3, 5, 7, 10, 15, 20]
-- **Duration**: ~45 minutes
-- **Expected Result**: Optimal N* = 5-7
+## Expected Results
 
-```bash
-python experiments/exp3_population_size.py --trials 50 --seed 42
-```
+Running the unified pipeline should produce:
 
-### Experiment 4: Transfer Frequency
+| Domain | SI (Niche) | vs Homo | Cohen's d |
+|--------|------------|---------|-----------|
+| Crypto | 0.786 ± 0.06 | +26% | 20.05 |
+| Commodities | 0.773 ± 0.06 | +25% | 19.89 |
+| Weather | 0.758 ± 0.05 | +24% | 23.44 |
+| Solar | 0.764 ± 0.04 | +25% | 25.71 |
+| Traffic | 0.573 ± 0.05 | +18% | 15.86 |
+| Air Quality | 0.826 ± 0.04 | +27% | 32.06 |
 
-- **File**: `experiments/exp4_transfer_frequency.py`
-- **Trials**: 50 per frequency
-- **Frequencies tested**: [1, 5, 10, 25, 50, 100]
-- **Duration**: ~30 minutes
-- **Expected Result**: Optimal τ* = 10-25
-
-```bash
-python experiments/exp4_transfer_frequency.py --trials 50 --seed 42
-```
-
-### Experiment 5: Regime Transitions
-
-- **File**: `experiments/exp5_regime_transitions.py`
-- **Trials**: 50
-- **Duration**: ~15 minutes
-- **Expected Result**: Switch rate > 0.8, p < 0.05
-
-```bash
-python experiments/exp5_regime_transitions.py --trials 50 --seed 42
-```
-
-### Experiment 6: Real Data Validation
-
-- **File**: `experiments/exp6_real_data.py`
-- **Data**: BTC 2021-2024 (if available)
-- **Duration**: ~10 minutes
-- **Expected Result**: SI matches synthetic expectations
-
-```bash
-python experiments/exp6_real_data.py --seed 42
-```
-
-## Generating Paper Artifacts
-
-### Figures
-
-```bash
-make figures
-# Output: paper/figures/fig1_emergence.pdf, fig2_diversity.pdf, etc.
-```
-
-### Tables
-
-```bash
-make tables
-# Output: paper/tables/table1_main_results.tex, table2_baselines.tex
-```
+All differences should be statistically significant (p < 0.001).
 
 ## Random Seeds
 
-All experiments use seed 42 by default for reproducibility. To verify robustness, run with different seeds:
+All experiments use fixed random seeds for reproducibility:
+- Base seed: 42
+- Per-trial seed: 42 + trial_index
+
+## Statistical Methods
+
+- **Trials per experiment**: 30
+- **Statistical test**: Welch's t-test (two-sided)
+- **Significance threshold**: α = 0.001
+- **Effect size**: Cohen's d
+- **Multiple testing**: Bonferroni correction where applicable
+
+## Docker
 
 ```bash
-make full SEED=123
-make full SEED=456
+docker build -t emergent-specialization .
+docker run emergent-specialization python experiments/exp_unified_pipeline.py
 ```
-
-## Expected Variance
-
-Results may vary slightly due to:
-- Floating-point precision differences
-- Random number generator implementation
-- Platform-specific optimizations
-
-Acceptable variance: ±5% on mean values, same statistical significance conclusions.
-
-## Hardware Used for Paper
-
-Results reported in the paper were generated on:
-- CPU: Apple M1 Pro
-- RAM: 16GB
-- OS: macOS 14.0
-- Python: 3.10.12
-- NumPy: 1.24.3
-- Pandas: 2.0.3
 
 ## Contact
 
-For reproducibility issues, please open a GitHub issue.
+For questions about reproducibility:
+- **Author**: Yuhao Li
+- **Email**: li88@sas.upenn.edu
+- **Repository**: https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems

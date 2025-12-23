@@ -1,135 +1,0 @@
-===== BTC =====
-============================================================
-REAL DATA EXPERIMENT: BTC
-============================================================
-
-Loading data and detecting regimes...
-Train: 6136 bars, Test: 2630 bars
-
-Train Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
- trend_down   1265    0.206160    -0.014270    0.010264 -54.063661
-   volatile   1399    0.227999     0.002179    0.003330  25.445037
-mean_revert   2495    0.406617    -0.000295    0.002905  -3.954035
-   trend_up    976    0.159061     0.016584    0.010284  62.703067
-
-Test Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
-   trend_up    444    0.168821     0.013665    0.008875  59.868487
- trend_down    446    0.169582    -0.013338    0.008241 -62.937380
-mean_revert   1357    0.515970    -0.000350    0.003132  -4.347588
-   volatile    382    0.145247     0.002488    0.003447  28.062014
-
-Running 5 trials...
-Trials:   0%|          | 0/5 [00:00<?, ?it/s]Trials:  20%|██        | 1/5 [00:20<01:23, 20.97s/it]Trials:  40%|████      | 2/5 [00:50<01:18, 26.04s/it]Trials:  60%|██████    | 3/5 [01:02<00:39, 19.72s/it]Trials:  80%|████████  | 4/5 [01:16<00:17, 17.31s/it]Trials: 100%|██████████| 5/5 [01:28<00:00, 15.52s/it]Trials: 100%|██████████| 5/5 [01:28<00:00, 17.74s/it]
-
-============================================================
-REAL DATA EXPERIMENT RESULTS
-============================================================
-
-Metric                    |        Train |         Test
--------------------------------------------------------
-Diverse Population        |    145.8±52.3 |     35.9±15.3
-Homogeneous (VolScalp)    |        205.7 |         69.1
-Random                    |         25.8 |          8.6
-
-Specialization Metrics
-  SI (Train): 0.878 ± 0.003
-  Diversity: 1.00
-
-Key Insights:
-  ✅ Specialization emerges on real data (SI = 0.878)
-  ⚠️ Homogeneous beats Diverse on train by 29.1%
-  ⚠️ Homogeneous beats Diverse on test by 48.0%
-
-Results saved to results/exp_real_data
-===== ETH =====
-============================================================
-REAL DATA EXPERIMENT: ETH
-============================================================
-
-Loading data and detecting regimes...
-Train: 6136 bars, Test: 2630 bars
-
-Train Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
-mean_revert   2455    0.400098    -0.000394    0.003564  -4.297201
-   trend_up   1310    0.213494     0.017508    0.012361  55.074966
- trend_down   1183    0.192797    -0.018922    0.013120 -56.078094
-   volatile   1187    0.193449     0.000484    0.004141   4.544890
-
-Test Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
-mean_revert    809    0.307605    -0.000534    0.004005  -5.186347
-   trend_up    633    0.240684     0.017427    0.011984  56.543755
- trend_down    597    0.226996    -0.017762    0.012751 -54.166479
-   volatile    590    0.224335     0.000836    0.004147   7.842646
-
-Running 5 trials...
-Trials:   0%|          | 0/5 [00:00<?, ?it/s]Trials:  20%|██        | 1/5 [00:12<00:49, 12.34s/it]Trials:  40%|████      | 2/5 [00:25<00:37, 12.62s/it]Trials:  60%|██████    | 3/5 [00:37<00:24, 12.38s/it]Trials:  80%|████████  | 4/5 [00:48<00:11, 11.86s/it]Trials: 100%|██████████| 5/5 [00:58<00:00, 11.27s/it]Trials: 100%|██████████| 5/5 [00:58<00:00, 11.71s/it]
-
-============================================================
-REAL DATA EXPERIMENT RESULTS
-============================================================
-
-Metric                    |        Train |         Test
--------------------------------------------------------
-Diverse Population        |    197.8±17.6 |     46.6±15.7
-Homogeneous (VolScalp)    |        268.9 |        121.9
-Random                    |         40.4 |         19.1
-
-Specialization Metrics
-  SI (Train): 0.878 ± 0.000
-  Diversity: 1.00
-
-Key Insights:
-  ✅ Specialization emerges on real data (SI = 0.878)
-  ⚠️ Homogeneous beats Diverse on train by 26.4%
-  ⚠️ Homogeneous beats Diverse on test by 61.7%
-
-Results saved to results/exp_real_data
-===== SOL =====
-============================================================
-REAL DATA EXPERIMENT: SOL
-============================================================
-
-Loading data and detecting regimes...
-Train: 6136 bars, Test: 2630 bars
-
-Train Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
- trend_down   1564    0.254889    -0.012259    0.005495 -86.747694
-mean_revert   2488    0.405476     0.003526    0.005203  26.351420
-   trend_up   1314    0.214146     0.028041    0.020991  51.943856
-   volatile    769    0.125326    -0.032835    0.023917 -53.383755
-
-Test Regime Distribution:
-     regime  count  proportion  mean_return  std_return     sharpe
-mean_revert   1247    0.474144     0.003452    0.005324  25.210167
-   trend_up    466    0.177186     0.024187    0.014175  66.348942
- trend_down    734    0.279087    -0.012391    0.005216 -92.369065
-   volatile    182    0.069202    -0.033264    0.017702 -73.066643
-
-Running 5 trials...
-Trials:   0%|          | 0/5 [00:00<?, ?it/s]Trials:  20%|██        | 1/5 [00:10<00:40, 10.00s/it]Trials:  40%|████      | 2/5 [00:20<00:31, 10.55s/it]Trials:  60%|██████    | 3/5 [00:33<00:23, 11.61s/it]Trials:  80%|████████  | 4/5 [00:45<00:11, 11.54s/it]Trials: 100%|██████████| 5/5 [00:54<00:00, 10.74s/it]Trials: 100%|██████████| 5/5 [00:54<00:00, 10.91s/it]
-
-============================================================
-REAL DATA EXPERIMENT RESULTS
-============================================================
-
-Metric                    |        Train |         Test
--------------------------------------------------------
-Diverse Population        |    462.8±24.0 |     81.5±35.8
-Homogeneous (VolScalp)    |        437.0 |        156.2
-Random                    |         76.2 |         26.2
-
-Specialization Metrics
-  SI (Train): 0.879 ± 0.000
-  Diversity: 1.00
-
-Key Insights:
-  ✅ Specialization emerges on real data (SI = 0.879)
-  ✅ Diverse beats Homogeneous on train by 5.9%
-  ⚠️ Homogeneous beats Diverse on test by 47.8%
-
-Results saved to results/exp_real_data

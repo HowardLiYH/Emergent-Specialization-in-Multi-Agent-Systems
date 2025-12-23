@@ -99,22 +99,22 @@ def fig1_cross_domain_si(results, output_dir):
 
     # Extract data with standard errors (std/sqrt(n), assuming n=30 trials)
     n_trials = 30
-    
+
     niche_si = [unified.get(d, {}).get('niche_si', {}).get('mean', 0) for d in domains]
     niche_std = [unified.get(d, {}).get('niche_si', {}).get('std', 0) for d in domains]
     niche_se = [s / np.sqrt(n_trials) for s in niche_std]  # Standard error
-    
+
     homo_si = [unified.get(d, {}).get('homo_si', {}).get('mean', 0) for d in domains]
     homo_std = [unified.get(d, {}).get('homo_si', {}).get('std', 0) for d in domains]
     homo_se = [s / np.sqrt(n_trials) if s > 0 else 0.01 for s in homo_std]  # SE with fallback
-    
+
     random_si = [unified.get(d, {}).get('random_si', {}).get('mean', 0) for d in domains]
     random_std = [unified.get(d, {}).get('random_si', {}).get('std', 0) for d in domains]
     random_se = [s / np.sqrt(n_trials) if s > 0 else 0.02 for s in random_std]  # SE with fallback
 
     # Plot bars with error bars (standard error) - capsize=4 for visibility
-    bars1 = ax.bar(x - width, niche_si, width, yerr=niche_se, 
-                   label='NichePopulation (Ours)', color=COLORS['niche'], 
+    bars1 = ax.bar(x - width, niche_si, width, yerr=niche_se,
+                   label='NichePopulation (Ours)', color=COLORS['niche'],
                    capsize=4, error_kw={'linewidth': 1.5, 'capthick': 1.5})
     bars2 = ax.bar(x, homo_si, width, yerr=homo_se,
                    label='Homogeneous', color=COLORS['homo'],
@@ -140,11 +140,11 @@ def fig1_cross_domain_si(results, output_dir):
     ax.set_xticks(x)
     ax.set_xticklabels(domain_labels, rotation=15, ha='right')
     ax.set_ylim(0, 1.05)
-    
+
     # Legend with note about error bars
     legend = ax.legend(loc='upper right', title='Error bars = SE (n=30)')
     legend.get_title().set_fontsize(8)
-    
+
     # Random baseline threshold
     ax.axhline(y=0.25, color='gray', linestyle='--', alpha=0.5, linewidth=1.5)
     ax.text(5.3, 0.27, 'Random\nThreshold', fontsize=8, color='gray', ha='left')
@@ -179,11 +179,11 @@ def fig2_lambda_ablation(results, output_dir):
         si_values = [ablation.get(str(l), {}).get('mean', 0) for l in lambdas]
         si_stds = [ablation.get(str(l), {}).get('std', 0.05) for l in lambdas]
         si_se = [s / np.sqrt(n_trials) for s in si_stds]
-        
+
         # Plot line with confidence band (±1 SE)
         si_values = np.array(si_values)
         si_se = np.array(si_se)
-        
+
         ax.plot(lambdas, si_values, 'o-', label=domain.capitalize(),
                 color=DOMAIN_COLORS[domain], linewidth=2, markersize=6)
         ax.fill_between(lambdas, si_values - si_se, si_values + si_se,
@@ -195,7 +195,7 @@ def fig2_lambda_ablation(results, output_dir):
 
     # Highlight λ=0 region with annotation
     ax.axvspan(-0.02, 0.02, alpha=0.25, color='green')
-    ax.annotate('Competition\nAlone\n(SI > 0.25)', xy=(0.0, 0.40), fontsize=9, 
+    ax.annotate('Competition\nAlone\n(SI > 0.25)', xy=(0.0, 0.40), fontsize=9,
                 ha='center', color='darkgreen', fontweight='bold')
 
     # Add arrow showing improvement
@@ -207,7 +207,7 @@ def fig2_lambda_ablation(results, output_dir):
     ax.set_title('λ=0 Ablation: Competition Alone Induces Specialization', fontsize=12, fontweight='bold')
     ax.set_xlim(-0.05, 0.55)
     ax.set_ylim(0, 1.0)
-    
+
     # Legend with note
     legend = ax.legend(loc='lower right', ncol=2, fontsize=8, title='Shaded = ±1 SE')
     legend.get_title().set_fontsize(8)
@@ -314,7 +314,7 @@ def fig4_marl_comparison(results, output_dir):
     ax.set_xticks(x)
     ax.set_xticklabels(domain_labels)
     ax.set_ylim(0, 1.0)
-    
+
     # Legend with SE note
     legend = ax.legend(loc='upper right', title='Error bars = SE (n=30)')
     legend.get_title().set_fontsize(8)
@@ -322,7 +322,7 @@ def fig4_marl_comparison(results, output_dir):
     # Add "Ours >> MARL" annotation with context
     ax.annotate('', xy=(0.3, 0.78), xytext=(0.3, 0.18),
                 arrowprops=dict(arrowstyle='->', color='darkgreen', lw=2.5))
-    ax.text(0.55, 0.48, '4.3× higher SI\n(p < 0.001)', fontsize=9, 
+    ax.text(0.55, 0.48, '4.3× higher SI\n(p < 0.001)', fontsize=9,
             color='darkgreen', fontweight='bold')
 
     # Add note about MARL objective

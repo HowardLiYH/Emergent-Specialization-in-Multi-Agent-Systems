@@ -23,6 +23,7 @@ wheels/
 # Virtual environments
 venv/
 .venv/
+venv_fresh/
 ENV/
 
 # IDE
@@ -35,9 +36,6 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 
-# Results (optional - may want to track)
-# results/
-
 # OS
 .DS_Store
 Thumbs.db
@@ -48,9 +46,14 @@ Thumbs.db
 htmlcov/
 .tox/
 .mypy_cache/
-venv_fresh/
-# Large data files - raw parquets
-data/traffic_real/*.parquet
-data/air_quality_real/
-data/electricity_real/
 
+# Logs (never track)
+*.log
+*_log.txt
+
+# Large data files
+data/traffic_real/*.parquet
+data/bybit/*.csv
+
+# Temporary folders
+overleaf_upload/
