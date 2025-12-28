@@ -1,6 +1,6 @@
 # Code-Paper Consistency Audit Report
 
-**Generated:** 2025-12-23  
+**Generated:** 2025-12-23
 **Purpose:** Verify reproducibility and consistency between paper claims and code implementation
 
 ---
@@ -159,6 +159,5 @@ Cohen's d: 20.16
 
 ---
 
-**Audit Completed:** 2025-12-23  
+**Audit Completed:** 2025-12-23
 **Auditor:** Automated Code Audit System
-
