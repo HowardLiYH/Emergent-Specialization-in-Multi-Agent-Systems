@@ -208,79 +208,74 @@ Now that we understand the goal (specialization), the mechanism (competition), a
 
 \begin{figure}[h!]
     \centering
-    \scalebox{0.75}{%
+    \small
     \begin{tikzpicture}[
-        node distance=1.0cm and 1.5cm,
-        init/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=blue!60, fill=blue!8, rounded corners, font=\small},
-        process/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=black, fill=white, rounded corners, font=\small},
-        compute/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=purple!60, fill=purple!8, rounded corners, font=\small},
-        decision/.style={diamond, aspect=2.2, minimum width=2.5cm, text centered, draw=orange!70, fill=orange!10, font=\small},
-        winner/.style={rectangle, minimum width=3.0cm, minimum height=0.9cm, text centered, draw=green!60!black, fill=green!10, rounded corners, font=\small},
-        loser/.style={rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=red!60, fill=red!10, rounded corners, font=\small},
-        arrow/.style={->, >=stealth, thick},
+        node distance=0.6cm,
+        every node/.style={font=\footnotesize},
+        init/.style={rectangle, minimum width=2.8cm, minimum height=0.7cm, text centered, draw=blue!60, fill=blue!8, rounded corners},
+        process/.style={rectangle, minimum width=2.8cm, minimum height=0.7cm, text centered, draw=black, fill=white, rounded corners},
+        compute/.style={rectangle, minimum width=2.8cm, minimum height=0.7cm, text centered, draw=purple!60, fill=purple!8, rounded corners},
+        decision/.style={rectangle, minimum width=2.8cm, minimum height=0.7cm, text centered, draw=orange!70, fill=orange!10, rounded corners},
+        winner/.style={rectangle, minimum width=2.8cm, minimum height=0.7cm, text centered, draw=green!60!black, fill=green!10, rounded corners},
+        loser/.style={rectangle, minimum width=2.2cm, minimum height=0.6cm, text centered, draw=red!60, fill=red!10, rounded corners},
+        myarrow/.style={->, thick}
     ]
 
-    % === PHASE 0: INITIALIZATION ===
-    \node (beta) [init] {Init $\beta_{i,r,m}^+ = \beta_{i,r,m}^- = 1$\\(20 Beta distributions)};
-    \node (alpha) [init, right=2cm of beta] {Init $\alpha_{i,r} = 1/R$\\$[0.25, 0.25, 0.25, 0.25]$};
-
-    % === PHASE 1: CONTEXT (centered below the two init nodes) ===
-    \node (regime) [process, below=1.8cm of beta, xshift=2.5cm] {Sample regime $r_t \sim \pi(r)$\\Example: $r_t = \text{Bull}$};
-    \node (filter) [process, below=0.8cm of regime] {Filter beliefs for $r_t$\\(5 Beta dists for Bull)};
-
-    % === PHASE 2: SELECTION ===
-    \node (thompson) [compute, below=1.2cm of filter] {Thompson Sampling:\\$\tilde{\theta}_m \sim \text{Beta}(\beta^+_{r_t,m}, \beta^-_{r_t,m})$};
-    \node (select) [compute, below=0.8cm of thompson] {Select method:\\$m_i = \arg\max_m \tilde{\theta}_m$};
-
-    % === PHASE 3: EXECUTION ===
-    \node (execute) [process, below=1.2cm of select] {Execute method $m_i$\\in environment};
-    \node (reward) [process, below=0.8cm of execute] {Raw reward:\\$R_i = A(r_t, m_i) + \epsilon$};
-
-    % === PHASE 4: COMPETITION ===
-    \node (bonus) [compute, below=1.2cm of reward] {Niche bonus:\\$B_i = \lambda(\alpha_{i,r_t} - 1/R)$};
-    \node (score) [compute, below=0.8cm of bonus] {Final score:\\$S_i = R_i + B_i$};
-    \node (compare) [decision, below=1.0cm of score] {$S_i > S_j$ $\forall j$?};
-
-    % === PHASE 5: UPDATES ===
-    \node (losernode) [loser, right=2.5cm of compare] {LOSER\\(No update)};
-    \node (skillup) [winner, below=1.5cm of compare, xshift=-2cm] {Skill update:\\$\beta^+_{r_t,m_i} \mathrel{+}= 1$};
-    \node (affup) [winner, below=1.5cm of compare, xshift=2cm] {Affinity update:\\$\alpha_{r_t} \mathrel{+}= \eta(1-\alpha_{r_t})$};
-    \node (normalize) [winner, below=0.8cm of compare, yshift=-2.5cm] {Normalize: $\alpha \leftarrow \alpha / \|\alpha\|_1$};
-
-    % === LOOP BACK ===
-    \node (nextiter) [process, below=0.8cm of normalize] {Next iteration $t \leftarrow t+1$};
+    % === COLUMN LAYOUT ===
+    % Phase 0
+    \node (init1) [init] {Init Beta(1,1) beliefs};
+    \node (init2) [init, right=0.5cm of init1] {Init uniform $\alpha$};
+    
+    % Phase 1
+    \node (regime) [process, below=1cm of init1, xshift=1.5cm] {Sample regime $r_t$};
+    \node (filter) [process, below=of regime] {Filter beliefs for $r_t$};
+    
+    % Phase 2
+    \node (thompson) [compute, below=of filter] {Thompson Sampling};
+    \node (select) [compute, below=of thompson] {Select method $m_i$};
+    
+    % Phase 3
+    \node (execute) [process, below=of select] {Execute method};
+    \node (reward) [process, below=of execute] {Get reward $R_i$};
+    
+    % Phase 4
+    \node (bonus) [compute, below=of reward] {Add niche bonus};
+    \node (score) [compute, below=of bonus] {Compute score $S_i$};
+    \node (compare) [decision, below=of score] {Winner?};
+    
+    % Phase 5 - branching
+    \node (losernode) [loser, right=1.5cm of compare] {No update};
+    \node (winupdate) [winner, below=0.8cm of compare] {Update winner};
+    
+    % Loop
+    \node (nextiter) [process, below=of winupdate] {Next iteration};
 
     % === ARROWS ===
-    \draw [arrow] (beta.south) -- ++(0,-0.5) -| (regime.north);
-    \draw [arrow] (alpha.south) -- ++(0,-0.5) -| (regime.north);
-    \draw [arrow] (regime) -- (filter);
-    \draw [arrow] (filter) -- (thompson);
-    \draw [arrow] (thompson) -- (select);
-    \draw [arrow] (select) -- (execute);
-    \draw [arrow] (execute) -- (reward);
-    \draw [arrow] (reward) -- (bonus);
-    \draw [arrow] (bonus) -- (score);
-    \draw [arrow] (score) -- (compare);
-    \draw [arrow] (compare) -- node[above, font=\footnotesize] {No} (losernode);
-    \draw [arrow] (compare.south) -- ++(0,-0.3) -| (skillup.north);
-    \draw [arrow] (compare.south) -- ++(0,-0.3) -| (affup.north);
-    \node [left=0.1cm of compare, yshift=-0.5cm, font=\footnotesize] {Yes};
-    \draw [arrow] (skillup.south) |- (normalize.west);
-    \draw [arrow] (affup.south) |- (normalize.east);
-    \draw [arrow] (normalize) -- (nextiter);
-    \draw [arrow, rounded corners] (nextiter.west) -- ++(-4,0) |- (regime.west);
+    \draw [myarrow] (init1) -- (regime);
+    \draw [myarrow] (init2) -- (regime);
+    \draw [myarrow] (regime) -- (filter);
+    \draw [myarrow] (filter) -- (thompson);
+    \draw [myarrow] (thompson) -- (select);
+    \draw [myarrow] (select) -- (execute);
+    \draw [myarrow] (execute) -- (reward);
+    \draw [myarrow] (reward) -- (bonus);
+    \draw [myarrow] (bonus) -- (score);
+    \draw [myarrow] (score) -- (compare);
+    \draw [myarrow] (compare) -- node[above] {No} (losernode);
+    \draw [myarrow] (compare) -- node[left] {Yes} (winupdate);
+    \draw [myarrow] (winupdate) -- (nextiter);
+    \draw [myarrow] (nextiter.west) -- ++(-2,0) |- (regime.west);
 
-    % Phase labels
-    \node [above=0.3cm of beta, font=\footnotesize\bfseries, blue!70] {PHASE 0: INIT};
-    \node [left=0.3cm of regime, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 1};
-    \node [left=0.3cm of thompson, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 2};
-    \node [left=0.3cm of execute, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 3};
-    \node [left=0.3cm of bonus, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 4};
-    \node [left=0.3cm of skillup, font=\footnotesize\bfseries, rotate=90, anchor=south, green!50!black] {PHASE 5};
+    % Phase labels on left
+    \node [left=0.5cm of init1, blue!70] {\textbf{P0}};
+    \node [left=0.5cm of regime] {\textbf{P1}};
+    \node [left=0.5cm of thompson, purple!70] {\textbf{P2}};
+    \node [left=0.5cm of execute] {\textbf{P3}};
+    \node [left=0.5cm of bonus, purple!70] {\textbf{P4}};
+    \node [left=0.5cm of winupdate, green!50!black] {\textbf{P5}};
 
     \end{tikzpicture}
-    }
-    \caption{Complete NichePopulation flowchart. Blue = initialization, Purple = computation, Green = winner-only updates, Red = loser path. Loop repeats for $T=500$ iterations.}
+    \caption{NichePopulation algorithm flowchart. P0=Initialization, P1=Context, P2=Selection (Thompson Sampling), P3=Execution, P4=Competition (scoring), P5=Winner-only update. Blue=init, Purple=compute, Green=winner update, Red=loser path. Loop repeats $T=500$ times.}
     \label{fig:workflow}
 \end{figure}
 
