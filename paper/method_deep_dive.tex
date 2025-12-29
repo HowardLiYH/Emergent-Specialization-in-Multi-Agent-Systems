@@ -17,7 +17,8 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{tikz}
-\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathreplacing}
+\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathreplacing,shapes.geometric,arrows.meta,fit,backgrounds}
+\usepackage{colortbl} % For \rowcolor in tables
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 \usepackage{listings}
@@ -3168,6 +3169,12 @@ For domains not shown in the main text, consult the code in:
 \begin{itemize}
     \item \texttt{experiments/exp\_method\_specialization.py} (lines 42-116)
 \end{itemize}
+
+% ============================================================================
+% VISUAL WORKFLOW GUIDE
+% ============================================================================
+\newpage
+\input{appendix_workflow_v2}
 
 \vspace{2cm}
 \begin{center}
