@@ -225,28 +225,28 @@ Now that we understand the goal (specialization), the mechanism (competition), a
     % Phase 0
     \node (init1) [init] {Init Beta(1,1) beliefs};
     \node (init2) [init, right=0.5cm of init1] {Init uniform $\alpha$};
-    
+
     % Phase 1
     \node (regime) [process, below=1cm of init1, xshift=1.5cm] {Sample regime $r_t$};
     \node (filter) [process, below=of regime] {Filter beliefs for $r_t$};
-    
+
     % Phase 2
     \node (thompson) [compute, below=of filter] {Thompson Sampling};
     \node (select) [compute, below=of thompson] {Select method $m_i$};
-    
+
     % Phase 3
     \node (execute) [process, below=of select] {Execute method};
     \node (reward) [process, below=of execute] {Get reward $R_i$};
-    
+
     % Phase 4
     \node (bonus) [compute, below=of reward] {Add niche bonus};
     \node (score) [compute, below=of bonus] {Compute score $S_i$};
     \node (compare) [decision, below=of score] {Winner?};
-    
+
     % Phase 5 - branching
     \node (losernode) [loser, right=1.5cm of compare] {No update};
     \node (winupdate) [winner, below=0.8cm of compare] {Update winner};
-    
+
     % Loop
     \node (nextiter) [process, below=of winupdate] {Next iteration};
 
