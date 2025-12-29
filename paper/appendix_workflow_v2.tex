@@ -208,24 +208,24 @@ Now that we understand the goal (specialization), the mechanism (competition), a
 
 \begin{figure}[h!]
     \centering
-    \resizebox{0.95\textwidth}{!}{%
+    \scalebox{0.75}{%
     \begin{tikzpicture}[
-        node distance=1.0cm,
+        node distance=1.0cm and 1.5cm,
         init/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=blue!60, fill=blue!8, rounded corners, font=\small},
         process/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=black, fill=white, rounded corners, font=\small},
         compute/.style={rectangle, minimum width=3.2cm, minimum height=0.9cm, text centered, draw=purple!60, fill=purple!8, rounded corners, font=\small},
         decision/.style={diamond, aspect=2.2, minimum width=2.5cm, text centered, draw=orange!70, fill=orange!10, font=\small},
         winner/.style={rectangle, minimum width=3.0cm, minimum height=0.9cm, text centered, draw=green!60!black, fill=green!10, rounded corners, font=\small},
         loser/.style={rectangle, minimum width=2.5cm, minimum height=0.8cm, text centered, draw=red!60, fill=red!10, rounded corners, font=\small},
-        arrow/.style={-{Stealth[length=2.5mm]}, thick},
+        arrow/.style={->, >=stealth, thick},
     ]
 
     % === PHASE 0: INITIALIZATION ===
     \node (beta) [init] {Init $\beta_{i,r,m}^+ = \beta_{i,r,m}^- = 1$\\(20 Beta distributions)};
-    \node (alpha) [init, right=1.5cm of beta] {Init $\alpha_{i,r} = 1/R$\\$[0.25, 0.25, 0.25, 0.25]$};
+    \node (alpha) [init, right=2cm of beta] {Init $\alpha_{i,r} = 1/R$\\$[0.25, 0.25, 0.25, 0.25]$};
 
-    % === PHASE 1: CONTEXT ===
-    \node (regime) [process, below=1.8cm of $(beta)!0.5!(alpha)$] {Sample regime $r_t \sim \pi(r)$\\Example: $r_t = \text{Bull}$};
+    % === PHASE 1: CONTEXT (centered below the two init nodes) ===
+    \node (regime) [process, below=1.8cm of beta, xshift=2.5cm] {Sample regime $r_t \sim \pi(r)$\\Example: $r_t = \text{Bull}$};
     \node (filter) [process, below=0.8cm of regime] {Filter beliefs for $r_t$\\(5 Beta dists for Bull)};
 
     % === PHASE 2: SELECTION ===
@@ -243,16 +243,16 @@ Now that we understand the goal (specialization), the mechanism (competition), a
 
     % === PHASE 5: UPDATES ===
     \node (losernode) [loser, right=2.5cm of compare] {LOSER\\(No update)};
-    \node (skillup) [winner, below left=1.5cm and 0cm of compare] {Skill update:\\$\beta^+_{r_t,m_i} \mathrel{+}= 1$};
-    \node (affup) [winner, below right=1.5cm and 0cm of compare] {Affinity update:\\$\alpha_{r_t} \mathrel{+}= \eta(1-\alpha_{r_t})$};
-    \node (normalize) [winner, below=0.8cm of $(skillup)!0.5!(affup)$] {Normalize: $\alpha \leftarrow \alpha / \|\alpha\|_1$};
+    \node (skillup) [winner, below=1.5cm of compare, xshift=-2cm] {Skill update:\\$\beta^+_{r_t,m_i} \mathrel{+}= 1$};
+    \node (affup) [winner, below=1.5cm of compare, xshift=2cm] {Affinity update:\\$\alpha_{r_t} \mathrel{+}= \eta(1-\alpha_{r_t})$};
+    \node (normalize) [winner, below=0.8cm of compare, yshift=-2.5cm] {Normalize: $\alpha \leftarrow \alpha / \|\alpha\|_1$};
 
     % === LOOP BACK ===
     \node (nextiter) [process, below=0.8cm of normalize] {Next iteration $t \leftarrow t+1$};
 
     % === ARROWS ===
-    \draw [arrow] (beta) -- (regime);
-    \draw [arrow] (alpha) -- (regime);
+    \draw [arrow] (beta.south) -- ++(0,-0.5) -| (regime.north);
+    \draw [arrow] (alpha.south) -- ++(0,-0.5) -| (regime.north);
     \draw [arrow] (regime) -- (filter);
     \draw [arrow] (filter) -- (thompson);
     \draw [arrow] (thompson) -- (select);
@@ -262,20 +262,21 @@ Now that we understand the goal (specialization), the mechanism (competition), a
     \draw [arrow] (bonus) -- (score);
     \draw [arrow] (score) -- (compare);
     \draw [arrow] (compare) -- node[above, font=\footnotesize] {No} (losernode);
-    \draw [arrow] (compare) -| node[near start, left, font=\footnotesize] {Yes} (skillup);
-    \draw [arrow] (compare) -| (affup);
-    \draw [arrow] (skillup) -- (normalize);
-    \draw [arrow] (affup) -- (normalize);
+    \draw [arrow] (compare.south) -- ++(0,-0.3) -| (skillup.north);
+    \draw [arrow] (compare.south) -- ++(0,-0.3) -| (affup.north);
+    \node [left=0.1cm of compare, yshift=-0.5cm, font=\footnotesize] {Yes};
+    \draw [arrow] (skillup.south) |- (normalize.west);
+    \draw [arrow] (affup.south) |- (normalize.east);
     \draw [arrow] (normalize) -- (nextiter);
-    \draw [arrow, rounded corners] (nextiter.west) -- +(-3.5,0) |- (regime.west);
+    \draw [arrow, rounded corners] (nextiter.west) -- ++(-4,0) |- (regime.west);
 
     % Phase labels
     \node [above=0.3cm of beta, font=\footnotesize\bfseries, blue!70] {PHASE 0: INIT};
-    \node [left=0.1cm of regime, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 1};
-    \node [left=0.1cm of thompson, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 2};
-    \node [left=0.1cm of execute, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 3};
-    \node [left=0.1cm of bonus, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 4};
-    \node [left=0.1cm of skillup, font=\footnotesize\bfseries, rotate=90, anchor=south, green!50!black] {PHASE 5};
+    \node [left=0.3cm of regime, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 1};
+    \node [left=0.3cm of thompson, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 2};
+    \node [left=0.3cm of execute, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 3};
+    \node [left=0.3cm of bonus, font=\footnotesize\bfseries, rotate=90, anchor=south] {PHASE 4};
+    \node [left=0.3cm of skillup, font=\footnotesize\bfseries, rotate=90, anchor=south, green!50!black] {PHASE 5};
 
     \end{tikzpicture}
     }
@@ -528,9 +529,9 @@ This is \textbf{competitive exclusion} from ecology: identical strategies cannot
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[
-    node distance=0.8cm,
+    node distance=0.8cm and 2.5cm,
     box/.style={rectangle, draw, rounded corners, minimum width=3.5cm, minimum height=0.8cm, align=center, font=\small},
-    arrow/.style={-{Stealth[length=2.5mm]}, thick},
+    arrow/.style={->, >=stealth, thick},
 ]
 
 % Left column: Inputs
@@ -539,12 +540,12 @@ This is \textbf{competitive exclusion} from ecology: identical strategies cannot
 \node (agents) [box, fill=blue!10, below=of methods] {Agents\\(8 identical)};
 
 % Middle: Mechanism
-\node (compete) [box, fill=orange!15, right=2.5cm of methods] {Competition\\(winner-take-all)};
+\node (compete) [box, fill=orange!15, right=of methods] {Competition\\(winner-take-all)};
 \node (update) [box, fill=orange!15, below=of compete] {Selective Update\\(only winner learns)};
 \node (affinity) [box, fill=orange!15, above=of compete] {Niche Affinity\\(regime preference)};
 
 % Right column: Outputs
-\node (special) [box, fill=green!15, right=2.5cm of compete] {Specialization\\(SI $\approx$ 0.75)};
+\node (special) [box, fill=green!15, right=of compete] {Specialization\\(SI $\approx$ 0.75)};
 \node (diverse) [box, fill=green!15, above=of special] {Diversity\\(different niches)};
 \node (robust) [box, fill=green!15, below=of special] {Robustness\\(+26.5\% perf)};
 
