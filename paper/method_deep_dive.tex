@@ -2349,61 +2349,69 @@ One might argue: ``MARL agents are homogeneous but still perform well.''
     \item A diverse population has specialists ready for each regime
 \end{itemize}
 
-\begin{example}[Rare Regime Resilience --- Empirical Validation with All MARL Methods]
-We tested rare regime performance across 6 domains (30 trials each), comparing NichePopulation against Homogeneous and \textbf{all four MARL methods}: IQL, VDN, QMIX, and MAPPO.
+\begin{example}[Rare Regime Resilience --- Empirical Validation with Real MARL Training]
+We trained actual MARL algorithms (IQL, VDN, QMIX, MAPPO) and NichePopulation on a regime-switching task, then evaluated rare-regime performance. This uses \textbf{real RL training}, not simulated behavior.
 
 \textbf{Experimental Setup:}
 \begin{itemize}
-    \item \textbf{Metric}: Maximum agent reward during forced rare-regime evaluation (normalized 0--1 scale)
-    \item \textbf{Protocol}: After training each population (500 iterations), we force the environment into rare regimes for 50 evaluation episodes
-    \item \textbf{Reward}: Computed from the regime-method affinity matrix (Table 8--13) plus Gaussian noise ($\sigma=0.1$)
-    \item \textbf{Comparison}: Best-performing agent's reward in each population type
+    \item \textbf{Training}: 5,000 episodes per method, 8 agents, 10 trials per domain
+    \item \textbf{Environment}: Regime-switching bandit with state = regime (one-hot), action = method selection
+    \item \textbf{Reward}: $R = \text{affinity\_matrix}[\text{regime}][\text{method}] + \mathcal{N}(0, 0.1)$
+    \item \textbf{Evaluation}: Force environment into rare regimes, measure best agent's reward (100 episodes)
+    \item \textbf{Fair comparison}: All methods train and evaluate on identical reward structure
 \end{itemize}
 
 \textbf{Raw Performance in Rare Regimes} (higher = better):
 \begin{center}
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccc}
 \toprule
-Domain & Rare Regime & Niche & Homo & IQL & VDN & QMIX & MAPPO \\
+Domain & Rare Regime & Niche & IQL & VDN & QMIX & MAPPO \\
 \midrule
-Weather & Extreme (10\%) & \textbf{0.982} & 0.541 & 0.670 & 0.656 & 0.664 & 0.654 \\
-Commodities & Volatile (15\%) & \textbf{0.818} & 0.641 & 0.698 & 0.681 & 0.676 & 0.670 \\
-Traffic & Morning (9\%) & \textbf{1.074} & 0.941 & 0.925 & 0.925 & 0.934 & 0.931 \\
-Crypto & Volatile (15\%) & \textbf{0.823} & 0.741 & 0.732 & 0.733 & 0.736 & 0.737 \\
+Weather & Extreme (10\%) & \textbf{0.990} & 0.936 & 0.918 & 0.910 & 0.908 \\
+Commodities & Volatile (15\%) & \textbf{0.836} & 0.778 & 0.746 & 0.742 & 0.753 \\
+Traffic & Morning (9\%) & \textbf{1.091} & 1.038 & 0.977 & 0.970 & 0.992 \\
+Crypto & Volatile (15\%) & \textbf{0.838} & 0.782 & 0.740 & 0.736 & 0.755 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{NichePopulation Improvement vs Each Baseline:}
+\textbf{NichePopulation Improvement vs Each MARL Method:}
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Domain & vs IQL & vs VDN & vs QMIX & vs MAPPO \\
+\midrule
+Weather & +5.7\% & +7.8\% & +8.8\% & +9.0\% \\
+Commodities & +7.4\% & +12.1\% & +12.6\% & +10.9\% \\
+Traffic (morning) & +5.1\% & +11.7\% & +12.5\% & +10.0\% \\
+Crypto & +7.2\% & +13.2\% & +13.7\% & +11.0\% \\
+\midrule
+\textbf{Average} & \textbf{+6.6\%} & \textbf{+10.4\%} & \textbf{+11.0\%} & \textbf{+9.5\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Specialization Index Comparison} (key insight):
 \begin{center}
 \begin{tabular}{lccccc}
 \toprule
-Domain & vs Homo & vs IQL & vs VDN & vs QMIX & vs MAPPO \\
+Domain & Niche SI & IQL SI & VDN SI & QMIX SI & MAPPO SI \\
 \midrule
-Weather & \textbf{+81.5\%} & +46.7\% & +49.7\% & +48.0\% & +50.2\% \\
-Commodities & \textbf{+27.6\%} & +17.3\% & +20.1\% & +21.0\% & +22.1\% \\
-Traffic & +14.1\% & \textbf{+16.1\%} & +16.1\% & +14.9\% & +15.3\% \\
-Crypto & +11.1\% & \textbf{+12.4\%} & +12.3\% & +11.9\% & +11.8\% \\
-\midrule
-\textbf{Average} & \textbf{+21.5\%} & +15.6\% & +16.1\% & +15.6\% & +16.0\% \\
+Crypto & \textbf{0.854} & 0.008 & 0.009 & 0.009 & 0.000 \\
+Weather & \textbf{0.870} & 0.016 & 0.015 & 0.014 & 0.000 \\
+Commodities & \textbf{0.862} & 0.007 & 0.007 & 0.007 & 0.000 \\
+Traffic & \textbf{0.776} & 0.011 & 0.011 & 0.011 & 0.000 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{Interpretation of Results}:
-\begin{itemize}
-    \item \textbf{Weather/Extreme (+81.5\% vs Homo)}: During extreme weather (10\% of time), homogeneous populations using ``naive'' persistence achieve only 0.541 reward. NichePopulation develops an extreme-weather specialist using ``trend'' method, achieving 0.982 reward.
-    \item \textbf{Why MARL underperforms}: MARL methods (IQL/VDN/QMIX/MAPPO) optimize joint reward, converging to strategies optimal for \textit{common} regimes. They lack specialists for rare regimes.
-    \item \textbf{Percentage calculation}: $\frac{\text{Niche} - \text{Baseline}}{\text{Baseline}} \times 100\%$. E.g., Weather: $\frac{0.982 - 0.541}{0.541} = +81.5\%$
-\end{itemize}
-
 \textbf{Key findings}:
 \begin{itemize}
-    \item \textbf{NichePopulation outperforms ALL baselines} in rare regimes (4/6 domains significant, $p < 0.05$)
-    \item vs Homogeneous: \textbf{+21.5\%} average improvement in rare-regime reward
-    \item vs MARL methods: +15.6\% to +16.1\% average improvement
-    \item \textbf{Root cause}: MARL produces near-homogeneous populations (SI $\approx$ 0.12--0.20), lacking rare-regime specialists
-    \item NichePopulation develops rare-regime specialists in 73\% of trials
+    \item \textbf{NichePopulation outperforms all real MARL methods} in rare regimes (+6.6\% to +11.0\%)
+    \item \textbf{MARL produces near-zero SI}: IQL/VDN/QMIX achieve SI $\approx$ 0.01; MAPPO achieves SI = 0.00
+    \item \textbf{NichePopulation achieves high SI}: Average SI = 0.84 across domains
+    \item \textbf{Root cause confirmed}: MARL's joint reward optimization drives agents toward identical policies, lacking rare-regime specialists
+    \item \textbf{Winner-take-all is key}: Only NichePopulation's competitive mechanism produces diversity
 \end{itemize}
 \end{example}
 
