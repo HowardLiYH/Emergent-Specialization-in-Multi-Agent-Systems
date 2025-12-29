@@ -2352,7 +2352,15 @@ One might argue: ``MARL agents are homogeneous but still perform well.''
 \begin{example}[Rare Regime Resilience --- Empirical Validation with All MARL Methods]
 We tested rare regime performance across 6 domains (30 trials each), comparing NichePopulation against Homogeneous and \textbf{all four MARL methods}: IQL, VDN, QMIX, and MAPPO.
 
-\textbf{Raw Performance in Rare Regimes:}
+\textbf{Experimental Setup:}
+\begin{itemize}
+    \item \textbf{Metric}: Maximum agent reward during forced rare-regime evaluation (normalized 0--1 scale)
+    \item \textbf{Protocol}: After training each population (500 iterations), we force the environment into rare regimes for 50 evaluation episodes
+    \item \textbf{Reward}: Computed from the regime-method affinity matrix (Table 8--13) plus Gaussian noise ($\sigma=0.1$)
+    \item \textbf{Comparison}: Best-performing agent's reward in each population type
+\end{itemize}
+
+\textbf{Raw Performance in Rare Regimes} (higher = better):
 \begin{center}
 \begin{tabular}{lccccccc}
 \toprule
@@ -2382,14 +2390,20 @@ Crypto & +11.1\% & \textbf{+12.4\%} & +12.3\% & +11.9\% & +11.8\% \\
 \end{tabular}
 \end{center}
 
+\textbf{Interpretation of Results}:
+\begin{itemize}
+    \item \textbf{Weather/Extreme (+81.5\% vs Homo)}: During extreme weather (10\% of time), homogeneous populations using ``naive'' persistence achieve only 0.541 reward. NichePopulation develops an extreme-weather specialist using ``trend'' method, achieving 0.982 reward.
+    \item \textbf{Why MARL underperforms}: MARL methods (IQL/VDN/QMIX/MAPPO) optimize joint reward, converging to strategies optimal for \textit{common} regimes. They lack specialists for rare regimes.
+    \item \textbf{Percentage calculation}: $\frac{\text{Niche} - \text{Baseline}}{\text{Baseline}} \times 100\%$. E.g., Weather: $\frac{0.982 - 0.541}{0.541} = +81.5\%$
+\end{itemize}
+
 \textbf{Key findings}:
 \begin{itemize}
     \item \textbf{NichePopulation outperforms ALL baselines} in rare regimes (4/6 domains significant, $p < 0.05$)
-    \item vs Homogeneous: \textbf{+21.5\%} average (identical agents lack rare-regime expertise)
-    \item vs IQL: +15.6\%, vs VDN: +16.1\%, vs QMIX: +15.6\%, vs MAPPO: +16.0\%
-    \item \textbf{MARL methods produce near-homogeneous populations} (SI $\approx$ 0.12--0.20) $\rightarrow$ poor rare-regime coverage
+    \item vs Homogeneous: \textbf{+21.5\%} average improvement in rare-regime reward
+    \item vs MARL methods: +15.6\% to +16.1\% average improvement
+    \item \textbf{Root cause}: MARL produces near-homogeneous populations (SI $\approx$ 0.12--0.20), lacking rare-regime specialists
     \item NichePopulation develops rare-regime specialists in 73\% of trials
-    \item Best case (Weather/Extreme): \textbf{+81.5\%} vs Homo, \textbf{+50.2\%} vs MAPPO
 \end{itemize}
 \end{example}
 
