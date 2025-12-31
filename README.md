@@ -133,6 +133,85 @@ Agents choose among **5 prediction methods per domain** and specialize through c
 - persistence: 16.2% of agents
 - hourly_avg: 14.2% of agents
 
+---
+
+## 📐 Prediction Methods (Mathematical Formulas)
+
+Each domain has 5 prediction methods. Agents learn which method works best for each regime through Thompson sampling.
+
+### 📈 Crypto Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **naive** | Persistence | p̂ₜ = pₜ₋₁ |
+| **momentum_short** | 5-period momentum | p̂ₜ = pₜ₋₁ + 0.1 × (pₜ₋₁ - pₜ₋₅) |
+| **momentum_long** | 20-period momentum | p̂ₜ = pₜ₋₁ + 0.05 × (pₜ₋₁ - pₜ₋₂₀) |
+| **mean_revert** | Mean reversion to MA20 | p̂ₜ = pₜ₋₁ + 0.2 × (MA₂₀ - pₜ₋₁) |
+| **trend** | Linear trend extrapolation | p̂ₜ = pₜ₋₁ + slope(pₜ₋₁₀:ₜ) |
+
+### 📊 Commodities Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **naive** | Persistence | p̂ₜ = pₜ₋₁ |
+| **ma5** | 5-day moving average | p̂ₜ = (1/5) × Σᵢ₌₁⁵ pₜ₋ᵢ |
+| **ma20** | 20-day moving average | p̂ₜ = (1/20) × Σᵢ₌₁²⁰ pₜ₋ᵢ |
+| **mean_revert** | Mean reversion (α=0.3) | p̂ₜ = pₜ₋₁ + 0.3 × (MA₂₀ - pₜ₋₁) |
+| **trend** | 5-day trend extrapolation | p̂ₜ = pₜ₋₁ + (pₜ₋₁ - pₜ₋₅)/5 |
+
+### 🌤️ Weather Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **naive** | Persistence | T̂ₜ = Tₜ₋₁ |
+| **ma3** | 3-day moving average | T̂ₜ = (1/3) × Σᵢ₌₁³ Tₜ₋ᵢ |
+| **ma7** | 7-day moving average | T̂ₜ = (1/7) × Σᵢ₌₁⁷ Tₜ₋ᵢ |
+| **seasonal** | Same day last week | T̂ₜ = Tₜ₋₇ |
+| **trend** | 3-day trend extrapolation | T̂ₜ = Tₜ₋₁ + (Tₜ₋₁ - Tₜ₋₃)/3 |
+
+### ☀️ Solar Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **naive** | Persistence | Ĝₜ = Gₜ₋₁ |
+| **ma6** | 6-hour moving average | Ĝₜ = (1/6) × Σᵢ₌₁⁶ Gₜ₋ᵢ |
+| **clear_sky** | Clear sky model | Ĝₜ = G_clear(t) (theoretical max) |
+| **seasonal** | Same hour yesterday | Ĝₜ = Gₜ₋₂₄ |
+| **hybrid** | Weighted blend | Ĝₜ = 0.6 × Gₜ₋₁ + 0.4 × G_clear(t) |
+
+### 🚕 Traffic Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **persistence** | Last value | v̂ₜ = vₜ₋₁ |
+| **hourly_average** | Historical hourly mean | v̂ₜ = v̄_h(t) where h(t) = hour of day |
+| **weekly_pattern** | Same hour last week | v̂ₜ = vₜ₋₁₆₈ (168 = 24×7 hours) |
+| **rush_hour_model** | Regime-based prediction | v̂ₜ = v̄_regime(t) |
+| **exponential_smoothing** | EMA (α=0.3) | v̂ₜ = 0.3·vₜ₋₁ + 0.7·v̂ₜ₋₁ |
+
+### 🌬️ Air Quality Domain
+
+| Method | Description | Formula |
+|--------|-------------|---------|
+| **persistence** | Last value | q̂ₜ = qₜ₋₁ |
+| **hourly_average** | Historical hourly mean | q̂ₜ = q̄_h(t) |
+| **moving_average** | 24-hour MA | q̂ₜ = (1/24) × Σᵢ₌₁²⁴ qₜ₋ᵢ |
+| **regime_average** | AQI regime-based | q̂ₜ = q̄_regime(qₜ₋₁) |
+| **exponential_smoothing** | EMA (α=0.3) | q̂ₜ = 0.3·qₜ₋₁ + 0.7·q̂ₜ₋₁ |
+
+### Method Categories
+
+| Category | Methods | Best For |
+|----------|---------|----------|
+| **Baseline** | naive, persistence | Stable regimes, hard to beat |
+| **Smoothing** | ma3, ma5, ma7, ma20, moving_average | Noisy data, reduces variance |
+| **Momentum** | momentum_short, momentum_long, trend | Trending regimes |
+| **Mean Reversion** | mean_revert | Volatile regimes, overshoots |
+| **Seasonal** | seasonal, weekly_pattern, hourly_average | Predictable patterns |
+| **Adaptive** | exponential_smoothing, hybrid | Balance between recent and history |
+
+---
+
 ### Experimental Rigor Checklist
 
 | Requirement | Status |
