@@ -1,7 +1,7 @@
 # 🚀 WILD IDEAS FOR NEXT-LEVEL RESEARCH
 
-**Date:** January 1, 2026  
-**Status:** Research Directions for NeurIPS Best Paper Track  
+**Date:** January 1, 2026
+**Status:** Research Directions for NeurIPS Best Paper Track
 **Team:** Stanford Postdoc Group Discussion
 
 ---
@@ -105,21 +105,21 @@ class LLMNicheAgent:
     def __init__(self):
         self.system_prompt = "I am a general-purpose agent."
         self.performance_history = []
-    
+
     def compete(self, task, other_agents):
         # All agents attempt the task
         my_result = self.execute(task)
-        
+
         # Winner-take-all: best performer updates prompt
         if i_am_winner:
             self.evolve_prompt(task, my_result)
-    
+
     def evolve_prompt(self, task, result):
         """Use LLM to self-modify system prompt based on success"""
         evolution_prompt = f"""
         You just successfully completed this task: {task}
         Your current role: {self.system_prompt}
-        
+
         Update your role description to reflect your growing expertise
         in this type of task. Be specific about your specialization.
         """
@@ -135,10 +135,10 @@ def breed_agents(parent_a, parent_b):
     """Combine prompts of two high-performing agents"""
     child_prompt = llm.generate(f"""
     Create a new agent role that combines the strengths of these two experts:
-    
+
     Parent A: {parent_a.system_prompt}
     Parent B: {parent_b.system_prompt}
-    
+
     The child should inherit complementary skills.
     """)
     return LLMNicheAgent(system_prompt=child_prompt)
@@ -171,14 +171,14 @@ After 500 iterations:
 # Skills can be "passed down" when agent "dies"
 def agent_death(dying_agent, surviving_agents):
     best_survivor = get_best_performer(surviving_agents)
-    
+
     # Transfer knowledge
     best_survivor.system_prompt = llm.generate(f"""
     Absorb the expertise of a fallen colleague:
-    
+
     Your expertise: {best_survivor.system_prompt}
     Their expertise: {dying_agent.system_prompt}
-    
+
     Integrate their unique skills into your role.
     """)
 ```
@@ -194,10 +194,10 @@ Instead of entropy over numeric affinities, compute SI via:
 ```python
 def compute_llm_specialization_index(agent, task_types):
     performance = {task: agent.score(task) for task in task_types}
-    
+
     # Normalize to probability distribution
     p = softmax(performance)
-    
+
     # SI = 1 - normalized entropy
     return 1 - entropy(p) / log(len(task_types))
 ```
@@ -252,24 +252,24 @@ class AgentSociety:
     def __init__(self, n_agents=100):
         self.agents = [LLMAgent(wealth=100) for _ in range(n_agents)]
         self.generation = 0
-    
+
     def run_generation(self):
         # Competition phase
         for task in self.get_tasks():
             results = [agent.compete(task) for agent in self.agents]
             winner = max(results)
             winner.agent.wealth += task.reward
-        
+
         # Reproduction phase
         for agent in self.agents:
             if agent.wealth > REPRODUCTION_THRESHOLD:
                 offspring = agent.reproduce()
                 self.agents.append(offspring)
                 agent.wealth -= REPRODUCTION_COST
-        
+
         # Death phase
         self.agents = [a for a in self.agents if a.wealth > 0]
-        
+
         # Measure inequality
         self.gini_coefficient = compute_gini(self.agents)
 ```
@@ -282,16 +282,16 @@ class AgentSociety:
 def governance_round(agents):
     # Any agent can propose a rule
     proposals = [agent.propose_rule() for agent in random.sample(agents, 3)]
-    
+
     # All agents vote
     votes = {p: sum(a.vote(p) for a in agents) for p in proposals}
-    
+
     # Winning proposal becomes law
     winner = max(votes, key=votes.get)
-    
+
     # Update society rules
     society.rules.append(winner)
-    
+
     # Example emergent rules:
     # - "Wealthy agents must pay 10% to common pool"
     # - "Agents with specialized skills get priority"
@@ -307,10 +307,10 @@ def cultural_transmission(parent, child):
     """Child inherits parent's cultural knowledge"""
     child.system_prompt = llm.generate(f"""
     You are a new agent, offspring of: {parent.name}
-    
+
     Your parent's values and expertise:
     {parent.system_prompt}
-    
+
     Inherit their core values while developing your own identity.
     You may specialize in a different area but share their fundamental beliefs.
     """)
@@ -463,7 +463,7 @@ Phase 4: Analysis
 
 # 🎯 FINAL RECOMMENDATION
 
-**Go with the Mega-Project (Project Genesis)** combining Directions 2 and 3. 
+**Go with the Mega-Project (Project Genesis)** combining Directions 2 and 3.
 
 ### Why This is the Right Choice:
 
@@ -496,4 +496,3 @@ Phase 4: Analysis
 ---
 
 *This document represents the next frontier of multi-agent systems research. The goal is not just a good paper, but a paradigm shift in how we understand emergent behavior in AI systems.*
-

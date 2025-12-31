@@ -325,11 +325,11 @@ Added all 6 domain formulas to `/emergent_specialization/README.md`
 class MethodBelief:
     success_rate: float = 0.5
     momentum: float = 0.1  # Learning rate
-    
+
     def update(self, success: bool) -> None:
         target = 1.0 if success else 0.0
         self.success_rate = (1 - self.momentum) * self.success_rate + self.momentum * target
-    
+
     def sample(self, rng, temperature=1.0) -> float:
         noise = rng.normal(0, 0.1 * temperature)  # Gaussian noise!
         return np.clip(self.success_rate + noise, 0, 1)
@@ -337,14 +337,14 @@ class MethodBelief:
 
 ### What Paper Claims (CORRECT):
 ```python
-@dataclass  
+@dataclass
 class MethodBelief:
     successes: float = 1.0  # α - 1
     failures: float = 1.0   # β - 1
-    
+
     def sample(self, rng) -> float:
         return rng.beta(self.alpha, self.beta)  # True Thompson Sampling!
-    
+
     def update(self, reward: float) -> None:
         self.successes += reward
         self.failures += (1 - reward)
@@ -427,7 +427,7 @@ Instead of numeric affinity α ∈ [0,1], update agent system prompts:
 class LLMNicheAgent:
     def __init__(self):
         self.system_prompt = "I am a general-purpose agent."
-    
+
     def evolve_prompt(self, task, result):
         """Use LLM to self-modify system prompt based on success"""
         evolution_prompt = f"""
@@ -555,5 +555,5 @@ GENERATION 0              GENERATION 100
 
 # End of Conversation v1.5 Summary
 
-**Last Updated**: January 1, 2026  
+**Last Updated**: January 1, 2026
 **Git Commits**: All changes committed and pushed to main branch
