@@ -12,6 +12,9 @@ Mechanism:
 
 This is inspired by ecological niche theory:
 - MacArthur, R. & Levins, R. (1967). "The Limiting Similarity"
+
+UPDATED: Now uses proper Beta distribution for Thompson Sampling
+and winner-only updates as described in the paper.
 """
 
 from dataclasses import dataclass, field
@@ -20,24 +23,7 @@ import numpy as np
 from collections import defaultdict
 
 from .inventory_v2 import METHOD_INVENTORY_V2, get_method_names_v2
-
-
-@dataclass
-class MethodBelief:
-    """Simple belief tracking with exponential moving average."""
-    success_rate: float = 0.5
-    count: int = 0
-    momentum: float = 0.1  # Learning rate
-
-    def update(self, success: bool) -> None:
-        self.count += 1
-        target = 1.0 if success else 0.0
-        self.success_rate = (1 - self.momentum) * self.success_rate + self.momentum * target
-
-    def sample(self, rng: np.random.Generator, temperature: float = 1.0) -> float:
-        # Add noise for exploration
-        noise = rng.normal(0, 0.1 * temperature)
-        return np.clip(self.success_rate + noise, 0, 1)
+from .method_selector import MethodBelief  # Proper Beta distribution!
 
 
 class NicheAgent:
@@ -45,9 +31,10 @@ class NicheAgent:
     Agent that develops a niche preference.
 
     Key mechanism:
-    - Tracks success rate in each regime
+    - Tracks success rate in each regime using Beta distributions
     - Develops "niche affinity" - which regime it prefers
     - Gets bonus/penalty based on regime match
+    - Only updates beliefs when winning (winner-take-all)
     """
 
     def __init__(
@@ -57,13 +44,15 @@ class NicheAgent:
         seed: Optional[int] = None,
         methods: Optional[List[str]] = None,
         min_exploration: float = 0.05,
+        learning_rate: float = 0.1,  # η in paper
     ):
         self.agent_id = agent_id
         self.regimes = regimes
         self.method_names = methods or list(METHOD_INVENTORY_V2.keys())
         self.rng = np.random.default_rng(seed)
+        self.learning_rate = learning_rate  # η = 0.1 as in paper
 
-        # Beliefs per regime per method
+        # Beliefs per regime per method - using proper Beta distribution!
         self.beliefs: Dict[str, Dict[str, MethodBelief]] = {
             r: {m: MethodBelief() for m in self.method_names}
             for r in regimes
@@ -85,7 +74,7 @@ class NicheAgent:
         self.min_exploration = min_exploration
 
     def select_method(self, regime: str) -> str:
-        """Select a method for the current regime."""
+        """Select a method for the current regime using Thompson Sampling."""
         self.regime_attempts[regime] += 1
 
         # Decay exploration
@@ -98,9 +87,9 @@ class NicheAgent:
             # Random exploration
             method = self.rng.choice(self.method_names)
         else:
-            # Thompson Sampling within regime
+            # Thompson Sampling: sample from Beta distributions
             samples = {
-                m: self.beliefs[regime][m].sample(self.rng, temperature=0.5)
+                m: self.beliefs[regime][m].sample(self.rng)  # Proper Beta sampling!
                 for m in self.method_names
             }
             method = max(samples, key=samples.get)
@@ -109,34 +98,44 @@ class NicheAgent:
         return method
 
     def update(self, regime: str, method: str, won: bool) -> None:
-        """Update beliefs and niche affinity."""
-        # Update method belief
-        self.beliefs[regime][method].update(won)
-
+        """
+        Update beliefs and niche affinity.
+        
+        IMPORTANT: Only called for the WINNER as per paper.
+        Losers do not update (winner-take-all dynamics).
+        """
+        if not won:
+            # Losers don't update - this is winner-take-all!
+            return
+        
+        # Update method belief with success (winner always gets reward=1)
+        self.beliefs[regime][method].update(1.0)
+        
         # Update niche affinity
-        if won:
-            self.regime_successes[regime] += 1
-            # Strengthen affinity for this regime
-            self._update_niche_affinity(regime, boost=True)
-        else:
-            self._update_niche_affinity(regime, boost=False)
+        self.regime_successes[regime] += 1
+        self._update_niche_affinity(regime)
 
-    def _update_niche_affinity(self, regime: str, boost: bool) -> None:
-        """Update niche affinity using softmax-like mechanism."""
-        lr = 0.02
-
-        if boost:
-            # Increase affinity for this regime
-            self.niche_affinity[regime] += lr
-        else:
-            # Slightly decrease
-            self.niche_affinity[regime] -= lr * 0.3
-
-        # Clamp
+    def _update_niche_affinity(self, regime: str) -> None:
+        """
+        Update niche affinity using the paper's formula.
+        
+        Paper formula: α_r ← α_r + η × (1 - α_r)  [for winning regime]
+        Other regimes: α_r' ← α_r' - η/(R-1)
+        Then normalize.
+        """
+        eta = self.learning_rate  # η = 0.1 as in paper
+        n_regimes = len(self.regimes)
+        
+        # Paper formula: α += η × (1 - α) for winning regime
+        self.niche_affinity[regime] += eta * (1 - self.niche_affinity[regime])
+        
+        # Decrease other regimes
         for r in self.regimes:
-            self.niche_affinity[r] = max(0.01, self.niche_affinity[r])
+            if r != regime:
+                self.niche_affinity[r] -= eta / (n_regimes - 1)
+                self.niche_affinity[r] = max(0.01, self.niche_affinity[r])
 
-        # Normalize
+        # Normalize to maintain probability simplex
         total = sum(self.niche_affinity.values())
         self.niche_affinity = {r: a / total for r, a in self.niche_affinity.items()}
 
@@ -175,22 +174,26 @@ class NichePopulation:
     Key mechanism: When computing winner, apply niche bonus/penalty.
     Agents that specialize in the current regime get a BOOST.
     This creates evolutionary pressure to specialize.
+    
+    UPDATED: Winner-take-all dynamics - only winner updates beliefs/affinity.
     """
 
     def __init__(
         self,
         n_agents: int = 8,
         regimes: List[str] = None,
-        niche_bonus: float = 0.3,  # Reward boost for matching niche
+        niche_bonus: float = 0.3,  # λ - Reward boost for matching niche
         seed: Optional[int] = None,
         methods: Optional[List[str]] = None,
         min_exploration_rate: float = 0.05,
+        learning_rate: float = 0.1,  # η in paper
     ):
         self.n_agents = n_agents
         self.regimes = regimes or ["trend_up", "trend_down", "mean_revert", "volatile"]
         self.niche_bonus = niche_bonus
         self.methods = methods
         self.min_exploration_rate = min_exploration_rate
+        self.learning_rate = learning_rate
         self.rng = np.random.default_rng(seed)
 
         self.agents: Dict[str, NicheAgent] = {}
@@ -203,6 +206,7 @@ class NichePopulation:
                 seed=(seed + i * 100) if seed else None,
                 methods=methods,
                 min_exploration=min_exploration_rate,
+                learning_rate=learning_rate,
             )
 
         self.iteration = 0
@@ -246,10 +250,14 @@ class NichePopulation:
         # Determine winner based on adjusted rewards
         winner_id = max(adjusted_rewards, key=adjusted_rewards.get)
 
-        # Update all agents
-        for agent_id, agent in self.agents.items():
-            won = (agent_id == winner_id)
-            agent.update(regime, selections[agent_id], won=won)
+        # WINNER-TAKE-ALL: Only winner updates!
+        winner_agent = self.agents[winner_id]
+        winner_agent.update(regime, selections[winner_id], won=True)
+        
+        # Losers do NOT update (this is the key difference from before)
+        # for agent_id, agent in self.agents.items():
+        #     if agent_id != winner_id:
+        #         agent.update(regime, selections[agent_id], won=False)  # NO!
 
         self.history.append({
             "iteration": self.iteration,
