@@ -1,10 +1,10 @@
-# 🧬 Emergent Specialization in Multi-Agent Systems
+# 🧬 Emergent Specialization in Learner Populations
 
 ### Competition-Driven Niche Partitioning
 
 <div align="center">
 
-<img src="assets/cover.jpeg" alt="Emergent Specialization - 6 Domain Agents" width="100%">
+<img src="assets/cover.jpeg" alt="Emergent Specialization - 6 Domain Learners" width="100%">
 
 <br><br>
 
@@ -22,9 +22,11 @@
 
 ## 📖 Abstract
 
-We present a population-based multi-agent system where agents **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
+We present a population-based learning system where learners **spontaneously specialize** to different environmental regimes without explicit supervision. Drawing from ecological niche theory, we introduce **competitive exclusion with niche affinity** that creates evolutionary pressure for strategy space partitioning.
 
-**Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in multi-agent systems.
+**Core Thesis:** Competition alone, without explicit diversity incentives, is sufficient to induce emergent specialization in learner populations.
+
+> **Note on Terminology:** We use "learner" to denote individual units in the population, each implementing Thompson Sampling over prediction methods. This distinguishes our approach from LLM-based "agents" which are autoregressive language models.
 
 **Validated on 6 domains (100% REAL DATA):**
 - 📈 **Crypto** - Bybit Exchange (44,000+ bars) ✅ Real
@@ -54,7 +56,7 @@ We present a population-based multi-agent system where agents **spontaneously sp
 All experiments run with **identical configuration** across all 6 domains:
 - 30 independent trials per experiment
 - 500 iterations per trial
-- 8 agents per population
+- 8 learners per population
 - Same random seeds for reproducibility
 
 | Domain | Data Source | Records | Regimes | SI (Niche) | SI (Homo) | Cohen's d | p-value |
@@ -101,7 +103,7 @@ All experiments run with **identical configuration** across all 6 domains:
 
 ### Method Specialization Experiment (NEW)
 
-Agents choose among **5 prediction methods per domain** and specialize through competition:
+Learners choose among **5 prediction methods per domain** and specialize through competition:
 
 | Domain | Methods | MSI | Coverage | Niche Perf | Homo Perf | Δ% | p-value |
 |--------|---------|-----|----------|------------|-----------|-----|---------|
@@ -114,30 +116,30 @@ Agents choose among **5 prediction methods per domain** and specialize through c
 | **Average** | 5 | **0.364** | **87%** | - | - | **+26.5%** | ✅ All |
 
 **Key Findings:**
-1. **Emergent Method Specialization:** Agents develop preferences for specific prediction methods (MSI = 0.364)
+1. **Emergent Method Specialization:** Learners develop preferences for specific prediction methods (MSI = 0.364)
 2. **Division of Labor:** Population uses 87% of available methods on average
 3. **Performance Benefit:** Diverse populations outperform homogeneous by **+26.5%** on average
 
 ### Method Distribution Examples
 
 **Crypto Domain:**
-- mean_revert: 47.9% of agents
-- momentum_long: 40.8% of agents
-- trend: 8.3% of agents
-- momentum_short: 2.9% of agents
+- mean_revert: 47.9% of learners
+- momentum_long: 40.8% of learners
+- trend: 8.3% of learners
+- momentum_short: 2.9% of learners
 
 **Traffic Domain (best diversity):**
-- rush_hour: 32.1% of agents
-- weekly_pattern: 20.4% of agents
-- exp_smooth: 17.1% of agents
-- persistence: 16.2% of agents
-- hourly_avg: 14.2% of agents
+- rush_hour: 32.1% of learners
+- weekly_pattern: 20.4% of learners
+- exp_smooth: 17.1% of learners
+- persistence: 16.2% of learners
+- hourly_avg: 14.2% of learners
 
 ---
 
 ## 📐 Prediction Methods (Mathematical Formulas)
 
-Each domain has 5 prediction methods. Agents learn which method works best for each regime through Thompson sampling.
+Each domain has 5 prediction methods. Learners learn which method works best for each regime through Thompson sampling.
 
 ### 📈 Crypto Domain
 
@@ -218,10 +220,10 @@ Each domain has 5 prediction methods. Agents learn which method works best for e
 |-------------|--------|
 | Same trials across all domains | ✅ 30 trials |
 | Same iterations per trial | ✅ 500 iterations |
-| Same number of agents | ✅ 8 agents |
+| Same number of learners | ✅ 8 learners |
 | Same methods per domain | ✅ 5 methods |
 | Lambda ablation on ALL domains | ✅ 6 λ values × 6 domains |
-| Method specialization on ALL domains | ✅ 8 agents × 5 methods × 6 domains |
+| Method specialization on ALL domains | ✅ 8 learners × 5 methods × 6 domains |
 | Statistical tests on ALL domains | ✅ t-test, Cohen's d, p-value |
 | Random baseline on ALL domains | ✅ 30 trials each |
 | Homogeneous baseline on ALL domains | ✅ 30 trials each |
@@ -248,7 +250,7 @@ emergent_specialization/
 │   │   ├── commodities.py            # FRED real data
 │   │   ├── weather.py                # Open-Meteo real data
 │   │   └── solar.py                  # Open-Meteo solar data
-│   ├── agents/                       # Agent implementations
+│   ├── learners/                     # Learner implementations
 │   │   ├── niche_population.py       # ⭐ Core: Competitive exclusion
 │   │   └── inventory_v2.py           # Prediction methods
 │   └── baselines/                    # Comparison baselines
@@ -264,7 +266,7 @@ emergent_specialization/
 │   └── solar/                        # Open-Meteo solar
 ├── 📁 results/                       # Experiment outputs
 │   └── figures/                      # Publication figures
-├── 📁 paper/                         # NeurIPS paper
+├── 📁 paper/                         # arXiv paper
 │   ├── propositions.tex              # 3 theoretical propositions
 │   └── limitations.tex               # Limitations section
 └── 📁 scripts/                       # Data download utilities
@@ -278,8 +280,8 @@ emergent_specialization/
 
 ```bash
 # Clone repository
-git clone https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems.git
-cd Emergent-Specialization-in-Multi-Agent-Systems
+git clone https://github.com/HowardLiYH/NichePopulation.git
+cd NichePopulation
 
 # Create conda environment
 conda create -n emergent python=3.10
@@ -344,14 +346,14 @@ python scripts/generate_real_data_figures.py
 ### Three Propositions with Rigorous Proofs
 
 **Proposition 1: Competitive Exclusion** (Game-Theoretic Proof)
-> In a winner-take-all game with n agents competing across k regimes, complete competitors cannot coexist at Nash equilibrium.
+> In a winner-take-all game with n learners competing across k regimes, complete competitors cannot coexist at Nash equilibrium.
 
 *Proof:* When identical strategies yield payoff V/n - c, deviation to empty niche yields V - c > V/n - c for n ≥ 2. No symmetric Nash equilibrium exists. See `paper/propositions_formal.tex` for complete proof.
 
 **Proposition 2: SI Lower Bound** (Optimization Proof)
 > For niche bonus λ > 0 and k regimes: E[SI] ≥ λ/(1+λ) · (1 - 1/k)
 
-*Proof:* Using Lagrangian optimization on the agent's reward function with entropy constraint. For λ=0.3, k=4: SI ≥ 0.173. Our observed SI (0.20-0.76) exceeds this bound.
+*Proof:* Using Lagrangian optimization on the learner's reward function with entropy constraint. For λ=0.3, k=4: SI ≥ 0.173. Our observed SI (0.20-0.76) exceeds this bound.
 
 **Proposition 3: Mono-Regime Collapse** (Limit Analysis)
 > As dominant regime fraction η → 1, meaningful SI → 0.
@@ -376,7 +378,16 @@ Five publication-quality figures in `results/figures/`:
 
 ## 📋 Changelog
 
-### v2.0.0 (2024-12-23) - Real Data Validation ⭐
+### v3.0.0 (2026-01-16) - Learner Populations Reframing ⭐
+
+**Major Update: Reframed from "Multi-Agent Systems" to "Learner Populations"**
+
+- ✅ **Terminology Update**: "agents" → "learners" throughout
+- ✅ **Paper Title**: "Emergent Specialization in Learner Populations"
+- ✅ **Clearer Positioning**: Distinguishes from LLM-based agents
+- ✅ **arXiv Ready**: Updated paper ready for submission
+
+### v2.0.0 (2024-12-23) - Real Data Validation
 
 **Major Update: All experiments now use 100% verified real data**
 
@@ -415,13 +426,13 @@ Five publication-quality figures in `results/figures/`:
 ## 📚 Citation
 
 ```bibtex
-@misc{li2025emergent,
-  title     = {Emergent Specialization in Multi-Agent Systems:
-               Niche Partitioning Without Explicit Coordination},
+@misc{li2026emergent,
+  title     = {Emergent Specialization in Learner Populations:
+               Competition as the Source of Diversity},
   author    = {Li, Yuhao},
-  year      = {2025},
-  howpublished = {\url{https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems}},
-  note      = {Preprint}
+  year      = {2026},
+  howpublished = {\url{https://github.com/HowardLiYH/NichePopulation}},
+  note      = {arXiv preprint}
 }
 ```
 
@@ -437,6 +448,6 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 **⭐ Star this repo if you find it useful!**
 
-[Report Bug](https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems/issues) • [Request Feature](https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems/issues)
+[Report Bug](https://github.com/HowardLiYH/NichePopulation/issues) • [Request Feature](https://github.com/HowardLiYH/NichePopulation/issues)
 
 </div>

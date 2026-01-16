@@ -37,7 +37,7 @@
 \newcommand{\Var}{\text{Var}}
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 
-\title{Emergent Specialization in Multi-Agent Systems:\\
+\title{Emergent Specialization in Learner Populations:\\
 Competition as the Source of Diversity}
 
 \author{
@@ -51,42 +51,42 @@ Competition as the Source of Diversity}
 \maketitle
 
 \begin{abstract}
-How can multi-agent systems develop coordinated, diverse behaviors without explicit communication or diversity incentives? We demonstrate that \textbf{competition alone is sufficient} to induce emergent specialization---agents spontaneously partition into specialists for different environmental regimes through competitive dynamics, consistent with ecological niche theory. We introduce the \textbf{NichePopulation} algorithm, a simple mechanism combining competitive exclusion with niche affinity tracking. Validated across \textbf{six real-world domains} (cryptocurrency trading, commodity prices, weather forecasting, solar irradiance, urban traffic, and air quality), our approach achieves a mean Specialization Index of \textbf{0.75} with effect sizes of Cohen's $d > 20$. Key findings: (1) At $\lambda=0$ (no niche bonus), agents still achieve SI $> 0.30$, proving specialization is genuinely emergent; (2) Diverse populations outperform homogeneous baselines by \textbf{+26.5\%} through method-level division of labor; (3) Our approach outperforms MARL baselines (QMIX, MAPPO, IQL) by \textbf{4.3$\times$} while being 4$\times$ faster. Code and data available at: \url{https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems}.
+How can populations of learners develop coordinated, diverse behaviors without explicit communication or diversity incentives? We demonstrate that \textbf{competition alone is sufficient} to induce emergent specialization---learners spontaneously partition into specialists for different environmental regimes through competitive dynamics, consistent with ecological niche theory. We introduce the \textbf{NichePopulation} algorithm, a simple mechanism combining competitive exclusion with niche affinity tracking. Validated across \textbf{six real-world domains} (cryptocurrency trading, commodity prices, weather forecasting, solar irradiance, urban traffic, and air quality), our approach achieves a mean Specialization Index of \textbf{0.75} with effect sizes of Cohen's $d > 20$. Key findings: (1) At $\lambda=0$ (no niche bonus), learners still achieve SI $> 0.30$, proving specialization is genuinely emergent; (2) Diverse populations outperform homogeneous baselines by \textbf{+26.5\%} through method-level division of labor; (3) Our approach outperforms MARL baselines (QMIX, MAPPO, IQL) by \textbf{4.3$\times$} while being 4$\times$ faster. Code and data available at: \url{https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems}.
 \end{abstract}
 
 %=============================================================================
 \section{Introduction}
 %=============================================================================
 
-Multi-agent coordination remains one of the fundamental challenges in artificial intelligence. When multiple agents operate in shared environments, they face a critical dilemma: how to divide labor and specialize without explicit communication. This question connects to a deeper debate about the nature of intelligence itself: recent discussions among AI leaders have reignited questions about whether intelligence is inherently ``general'' or fundamentally specialized. LeCun has argued that human intelligence is ``ridiculously specialized''---we can only compute an infinitesimal fraction of possible functions, and our sense of generality is an illusion \cite{lecun2022path}. Others maintain that brains are general in the Turing-complete sense, though practical systems inevitably require some degree of specialization. Our work contributes empirical evidence to this debate: we show that \textbf{specialization emerges inevitably from competition}, suggesting that the tendency to specialize is itself a universal property of bounded intelligent systems.
+Coordinating populations of learners remains one of the fundamental challenges in machine learning. When multiple learners operate in shared environments, they face a critical dilemma: how to divide labor and specialize without explicit communication. This question connects to a deeper debate about the nature of intelligence itself: recent discussions among AI leaders have reignited questions about whether intelligence is inherently ``general'' or fundamentally specialized. LeCun has argued that human intelligence is ``ridiculously specialized''---we can only compute an infinitesimal fraction of possible functions, and our sense of generality is an illusion \cite{lecun2022path}. Others maintain that brains are general in the Turing-complete sense, though practical systems inevitably require some degree of specialization. Our work contributes empirical evidence to this debate: we show that \textbf{specialization emerges inevitably from competition}, suggesting that the tendency to specialize is itself a universal property of bounded intelligent systems.
 
-This challenge manifests across numerous domains with significant real-world impact. In autonomous driving, vehicles must implicitly coordinate traffic flow to avoid congestion and collisions. In algorithmic trading, strategies must avoid correlated behaviors that amplify market volatility---the 2010 Flash Crash, where the Dow Jones dropped 1,000 points in minutes, exemplifies the catastrophic consequences of homogeneous agent behaviors \cite{kirilenko2017flash}. In distributed sensing networks, sensors must specialize to different environmental conditions to maximize information gain.
+This challenge manifests across numerous domains with significant real-world impact. In autonomous driving, vehicles must implicitly coordinate traffic flow to avoid congestion and collisions. In algorithmic trading, strategies must avoid correlated behaviors that amplify market volatility---the 2010 Flash Crash, where the Dow Jones dropped 1,000 points in minutes, exemplifies the catastrophic consequences of homogeneous learner behaviors \cite{kirilenko2017flash}. In distributed sensing networks, sensors must specialize to different environmental conditions to maximize information gain.
 
-Existing approaches to multi-agent coordination typically require one of three mechanisms: (1) \textbf{explicit communication channels} that enable agents to share intentions and negotiate roles \cite{foerster2016learning}, (2) \textbf{centralized training} with shared reward functions that encourage cooperative behaviors \cite{lowe2017multi}, or (3) \textbf{handcrafted diversity incentives} such as quality-diversity archives that explicitly maintain behavioral variety \cite{pugh2016quality, mouret2015illuminating}. While these methods have demonstrated success in specific settings, they introduce significant complexity and may not scale to large, decentralized systems where communication is costly or impossible.
+Existing approaches to coordinating learner populations typically require one of three mechanisms: (1) \textbf{explicit communication channels} that enable learners to share intentions and negotiate roles \cite{foerster2016learning}, (2) \textbf{centralized training} with shared reward functions that encourage cooperative behaviors \cite{lowe2017multi}, or (3) \textbf{handcrafted diversity incentives} such as quality-diversity archives that explicitly maintain behavioral variety \cite{pugh2016quality, mouret2015illuminating}. While these methods have demonstrated success in specific settings, they introduce significant complexity and may not scale to large, decentralized systems where communication is costly or impossible.
 
 \textbf{Our key insight} is drawn from ecology: in natural ecosystems, species spontaneously partition resources through \emph{competitive exclusion}---the principle that two species with identical ecological niches cannot stably coexist \cite{hardin1960competitive}. This competitive pressure, rather than explicit coordination or diversity incentives, drives the emergence of ecological diversity. Darwin's finches on the Galápagos Islands famously evolved different beak shapes to exploit different food sources, not through communication, but through the selective pressure of competition for limited resources \cite{grant2014finches}.
 
-We hypothesize that similar dynamics can emerge in artificial multi-agent systems. When agents compete for limited rewards in regime-switching environments, homogeneous strategies become unstable: agents with identical behaviors compete directly, reducing their expected payoffs. Deviation to a less-contested niche becomes profitable, creating pressure for differentiation. This hypothesis, if validated, suggests that \textbf{competition itself can serve as a coordination mechanism}---a finding with profound implications for designing self-organizing multi-agent systems.
+We hypothesize that similar dynamics can emerge in artificial learner populations. When learners compete for limited rewards in regime-switching environments, homogeneous strategies become unstable: learners with identical behaviors compete directly, reducing their expected payoffs. Deviation to a less-contested niche becomes profitable, creating pressure for differentiation. This hypothesis, if validated, suggests that \textbf{competition itself can serve as a coordination mechanism}---a finding with profound implications for designing self-organizing learner populations.
 
-Crucially, we demonstrate that \textbf{strict competitive exclusion (winner-take-all dynamics) is not a simplification but a structural necessity}: softer competition allows agents to ``hedge'' across niches, preventing the differentiation we seek. We prove this formally in Proposition \ref{prop:exclusion}, showing that under winner-take-all dynamics, homogeneous strategies are not Nash equilibria. This stands in contrast to standard multi-agent reinforcement learning (MARL) methods, which optimize shared value functions or critics, inadvertently driving agents toward behavioral homogeneity rather than diversity.
+Crucially, we demonstrate that \textbf{strict competitive exclusion (winner-take-all dynamics) is not a simplification but a structural necessity}: softer competition allows learners to ``hedge'' across niches, preventing the differentiation we seek. We prove this formally in Proposition \ref{prop:exclusion}, showing that under winner-take-all dynamics, homogeneous strategies are not Nash equilibria. This stands in contrast to standard multi-agent reinforcement learning (MARL) methods, which optimize shared value functions or critics, inadvertently driving learners toward behavioral homogeneity rather than diversity.
 
 To test this hypothesis, we introduce \textbf{NichePopulation}, a deliberately simple algorithm that induces emergent specialization through three mechanisms:
 \begin{enumerate}
-    \item \textbf{Competitive exclusion}: Only the best-performing agent in each iteration receives positive updates, creating winner-take-all dynamics that penalize homogeneous behaviors.
-    \item \textbf{Niche affinity tracking}: Agents maintain probability distributions over environmental regimes, developing preferences for conditions where they consistently perform well.
-    \item \textbf{Optional niche bonus}: Agents receive amplified rewards when operating in their preferred regime, controlled by parameter $\lambda \geq 0$.
+    \item \textbf{Competitive exclusion}: Only the best-performing learner in each iteration receives positive updates, creating winner-take-all dynamics that penalize homogeneous behaviors.
+    \item \textbf{Niche affinity tracking}: Learners maintain probability distributions over environmental regimes, developing preferences for conditions where they consistently perform well.
+    \item \textbf{Optional niche bonus}: Learners receive amplified rewards when operating in their preferred regime, controlled by parameter $\lambda \geq 0$.
 \end{enumerate}
 
 Critically, we demonstrate that \textbf{setting $\lambda = 0$ (no niche bonus) still produces significant specialization}---the niche bonus accelerates specialization but is not its cause. This validates our ecological hypothesis: diversity emerges from competitive dynamics alone, without explicit incentives.
 
-\paragraph{Contributions.} Our work makes five contributions to the multi-agent systems literature:
+\paragraph{Contributions.} Our work makes five contributions to the literature on learner populations and emergent coordination:
 
 \begin{enumerate}
     \item We introduce \textbf{NichePopulation}, achieving mean Specialization Index SI = 0.75 across six real-world domains with extremely large effect sizes (Cohen's $d > 20$ in all domains).
 
     \item We prove that \textbf{competition alone induces specialization}: at $\lambda = 0$, SI exceeds 0.30 across all domains, significantly above random baselines (SI $\approx$ 0.13). This is our core theoretical contribution.
 
-    \item We demonstrate \textbf{method-level division of labor}: agents specialize not just to environmental regimes but to specific prediction strategies, with populations using 87\% of available methods and achieving +26.5\% improvement over homogeneous baselines.
+    \item We demonstrate \textbf{method-level division of labor}: learners specialize not just to environmental regimes but to specific prediction strategies, with populations using 87\% of available methods and achieving +26.5\% improvement over homogeneous baselines.
 
     \item We outperform \textbf{MARL baselines} (QMIX, MAPPO, IQL) by 4.3$\times$ in inducing specialization while being simpler, 4$\times$ faster, and using 99\% less memory.
 
@@ -98,13 +98,13 @@ Critically, we demonstrate that \textbf{setting $\lambda = 0$ (no niche bonus) s
 %=============================================================================
 
 \paragraph{Multi-Agent Reinforcement Learning.}
-MARL methods have achieved remarkable success in cooperative and competitive settings. Independent Q-Learning (IQL) \cite{tan1993multi} allows agents to learn independently but struggles with non-stationarity. Value decomposition methods like QMIX \cite{rashid2018qmix} and VDN factor joint value functions to enable centralized training with decentralized execution. Multi-Agent PPO (MAPPO) \cite{yu2022surprising} extends policy gradient methods to multi-agent settings with shared critics. However, these methods optimize for task performance rather than agent diversity. As we demonstrate empirically, standard MARL methods achieve low specialization indices (SI $< 0.20$), with agents converging to similar behaviors despite operating in heterogeneous environments.
+MARL methods have achieved remarkable success in cooperative and competitive settings. Independent Q-Learning (IQL) \cite{tan1993multi} allows learners to learn independently but struggles with non-stationarity. Value decomposition methods like QMIX \cite{rashid2018qmix} and VDN factor joint value functions to enable centralized training with decentralized execution. Multi-Agent PPO (MAPPO) \cite{yu2022surprising} extends policy gradient methods to multi-learner settings with shared critics. However, these methods optimize for task performance rather than learner diversity. As we demonstrate empirically, standard MARL methods achieve low specialization indices (SI $< 0.20$), with learners converging to similar behaviors despite operating in heterogeneous environments.
 
 \paragraph{Quality-Diversity Optimization.}
 The quality-diversity (QD) paradigm explicitly optimizes for both performance and behavioral diversity. MAP-Elites \cite{mouret2015illuminating} maintains an archive of diverse, high-performing solutions indexed by behavior descriptors. Novelty search \cite{lehman2011evolving} rewards behavioral novelty rather than task performance. These methods have proven effective in evolutionary robotics and game playing. However, QD methods require defining behavior descriptors \emph{a priori}---a non-trivial design choice that may miss important dimensions of variation. Our approach achieves diversity without explicit diversity objectives, emerging naturally from competitive dynamics.
 
 \paragraph{Ecological Niche Theory.}
-The competitive exclusion principle, formalized by Gause \cite{gause1934struggle} and Hardin \cite{hardin1960competitive}, states that complete competitors cannot coexist: species with identical ecological niches will compete until one is driven to extinction or evolves to occupy a different niche. MacArthur's work on resource partitioning \cite{macarthur1958population} showed how species divide resources along multiple dimensions to reduce competition. We formalize these ecological concepts for artificial agents, proving that competitive dynamics in multi-agent systems produce analogous niche partitioning.
+The competitive exclusion principle, formalized by Gause \cite{gause1934struggle} and Hardin \cite{hardin1960competitive}, states that complete competitors cannot coexist: species with identical ecological niches will compete until one is driven to extinction or evolves to occupy a different niche. MacArthur's work on resource partitioning \cite{macarthur1958population} showed how species divide resources along multiple dimensions to reduce competition. We formalize these ecological concepts for artificial learners, proving that competitive dynamics in learner populations produce analogous niche partitioning.
 
 \paragraph{Ensemble Methods and Diversity.}
 Ensemble methods combine diverse models to improve prediction accuracy \cite{dietterich2000ensemble}. Traditional approaches achieve diversity through random initialization, bagging, or boosting---methods that introduce diversity exogenously. Our work demonstrates that diversity can emerge endogenously through competition, without requiring external mechanisms.
@@ -112,7 +112,7 @@ Ensemble methods combine diverse models to improve prediction accuracy \cite{die
 \paragraph{General vs.\ Specialized Intelligence.}
 The question of whether intelligence is inherently general or specialized has resurfaced in recent discussions among AI researchers. LeCun argues that human intelligence is ``super-specialized for the physical world'' and that our perception of generality is illusory---we cannot imagine the problems we are blind to \cite{lecun2022path}. He provides a compelling mathematical argument: the space of possible boolean functions on sensory inputs ($2^{2^{10^6}}$) vastly exceeds what any brain can represent ($2^{3.2 \times 10^{15}}$), making biological intelligence ``ridiculously specialized'' by necessity. Others counter that this conflates generality with universality: in the Turing Machine sense, brains are capable of learning anything computable given sufficient resources. However, practical systems inevitably require some degree of specialization around the target distribution being learned.
 
-Our work provides a bridge between these perspectives. We show that specialization is not merely a constraint imposed by finite resources, but an \textit{emergent property} of competitive multi-agent systems. Even agents with identical, general-purpose capabilities will spontaneously partition into specialists under competitive pressure (Proposition~\ref{prop:exclusion}). This suggests that the debate may be missing a key insight: generality and specialization are not opposites---rather, specialization \textit{emerges from} general systems under ecological pressure. The No Free Lunch theorem guarantees that no single strategy can dominate across all conditions; competition enforces this principle by driving agents toward complementary niches.
+Our work provides a bridge between these perspectives. We show that specialization is not merely a constraint imposed by finite resources, but an \textit{emergent property} of competitive learner populations. Even learners with identical, general-purpose capabilities will spontaneously partition into specialists under competitive pressure (Proposition~\ref{prop:exclusion}). This suggests that the debate may be missing a key insight: generality and specialization are not opposites---rather, specialization \textit{emerges from} general systems under ecological pressure. The No Free Lunch theorem guarantees that no single strategy can dominate across all conditions; competition enforces this principle by driving learners toward complementary niches.
 
 %=============================================================================
 \section{Method}
@@ -120,18 +120,18 @@ Our work provides a bridge between these perspectives. We show that specializati
 
 \subsection{Problem Formulation}
 
-Consider a population of $N$ agents operating in a regime-switching environment. The environment transitions between $R$ distinct regimes $\mathcal{R} = \{r_1, \ldots, r_R\}$, where each regime represents a qualitatively different state with distinct dynamics. In financial markets, regimes might include bull markets, bear markets, and sideways consolidation; in weather prediction, regimes might distinguish clear, cloudy, and stormy conditions.
+Consider a population of $N$ learners operating in a regime-switching environment. The environment transitions between $R$ distinct regimes $\mathcal{R} = \{r_1, \ldots, r_R\}$, where each regime represents a qualitatively different state with distinct dynamics. In financial markets, regimes might include bull markets, bear markets, and sideways consolidation; in weather prediction, regimes might distinguish clear, cloudy, and stormy conditions.
 
-At each timestep $t$, the environment is in regime $r_t \in \mathcal{R}$, drawn from stationary distribution $\pi(r)$. Each agent $i$ selects a prediction method $m_i \in \mathcal{M}$ from a shared inventory of $M$ methods. The agent then receives reward $R_i(r_t, m_i)$ based on the method's performance in the current regime. Crucially, different methods have different strengths across regimes: a momentum-following strategy may excel in trending markets but fail during mean-reversion periods.
+At each timestep $t$, the environment is in regime $r_t \in \mathcal{R}$, drawn from stationary distribution $\pi(r)$. Each learner $i$ selects a prediction method $m_i \in \mathcal{M}$ from a shared inventory of $M$ methods. The learner then receives reward $R_i(r_t, m_i)$ based on the method's performance in the current regime. Crucially, different methods have different strengths across regimes: a momentum-following strategy may excel in trending markets but fail during mean-reversion periods.
 
 \begin{definition}[Regime-Method Affinity]
 The affinity $A(r, m) \in [0, 1]$ measures the expected performance of method $m$ in regime $r$, normalized such that $\max_m A(r, m) = 1$ for each regime.
 \end{definition}
 
-Our goal is to induce \textbf{emergent specialization}: agents should spontaneously partition into specialists for different regimes, without explicit coordination or diversity incentives. We measure specialization through an entropy-based index.
+Our goal is to induce \textbf{emergent specialization}: learners should spontaneously partition into specialists for different regimes, without explicit coordination or diversity incentives. We measure specialization through an entropy-based index.
 
 \begin{definition}[Specialization Index]
-For an agent with niche affinity distribution $\alpha \in \Delta^R$ (probability simplex over regimes), the Specialization Index is:
+For a learner with niche affinity distribution $\alpha \in \Delta^R$ (probability simplex over regimes), the Specialization Index is:
 \begin{equation}
     \SI(\alpha) = 1 - \frac{H(\alpha)}{\log R}
 \end{equation}
@@ -140,25 +140,25 @@ where $H(\alpha) = -\sum_r \alpha_r \log \alpha_r$ is Shannon entropy. SI = 1 in
 
 \subsection{The NichePopulation Algorithm}
 
-Each agent $i$ maintains two learned representations:
+Each learner $i$ maintains two learned representations:
 \begin{itemize}
     \item \textbf{Method beliefs} $\beta_{i,r,m} \in \R^+$: Parameters of a Beta distribution representing expected performance of method $m$ in regime $r$. These beliefs are updated through Bayesian inference.
-    \item \textbf{Niche affinity} $\alpha_i \in \Delta^R$: A probability distribution over regimes representing the agent's specialization. This distribution evolves based on competitive outcomes.
+    \item \textbf{Niche affinity} $\alpha_i \in \Delta^R$: A probability distribution over regimes representing the learner's specialization. This distribution evolves based on competitive outcomes.
 \end{itemize}
 
-\paragraph{Method Selection via Thompson Sampling.} When the environment is in regime $r_t$, agent $i$ selects method $m$ by sampling from belief distributions and choosing greedily:
+\paragraph{Method Selection via Thompson Sampling.} When the environment is in regime $r_t$, learner $i$ selects method $m$ by sampling from belief distributions and choosing greedily:
 \begin{equation}
     m_i = \argmax_{m \in \mathcal{M}} \tilde{\theta}_m, \quad \text{where } \tilde{\theta}_m \sim \text{Beta}(\beta_{i,r_t,m}^+, \beta_{i,r_t,m}^-)
 \end{equation}
 Thompson Sampling provides principled exploration-exploitation balance: uncertain methods are occasionally selected to gather information, while well-understood high-performing methods are exploited.
 
-\paragraph{Competitive Exclusion.} All agents execute their selected methods simultaneously and receive rewards. The \textbf{winner} is the agent with highest adjusted reward:
+\paragraph{Competitive Exclusion.} All learners execute their selected methods simultaneously and receive rewards. The \textbf{winner} is the learner with highest adjusted reward:
 \begin{equation}
     i^* = \argmax_i \tilde{R}_i, \quad \text{where } \tilde{R}_i = R_i \cdot (1 + \lambda \cdot \mathbf{1}[r^*_i = r_t] \cdot \alpha_{i,r_t})
 \end{equation}
-Here, $r^*_i = \argmax_r \alpha_{i,r}$ is agent $i$'s primary niche, and $\lambda \geq 0$ is the niche bonus coefficient. When $\lambda > 0$, agents receive amplified rewards when the current regime matches their preferred niche, creating additional pressure for specialization.
+Here, $r^*_i = \argmax_r \alpha_{i,r}$ is learner $i$'s primary niche, and $\lambda \geq 0$ is the niche bonus coefficient. When $\lambda > 0$, learners receive amplified rewards when the current regime matches their preferred niche, creating additional pressure for specialization.
 
-The key mechanism is \textbf{competitive exclusion}: only the winner receives positive belief updates. This creates winner-take-all dynamics where agents with identical strategies compete directly, reducing their expected payoffs.
+The key mechanism is \textbf{competitive exclusion}: only the winner receives positive belief updates. This creates winner-take-all dynamics where learners with identical strategies compete directly, reducing their expected payoffs.
 
 \paragraph{Belief and Affinity Updates.} After competition, the winner updates their method beliefs:
 \begin{equation}
@@ -174,11 +174,11 @@ followed by normalization to maintain $\alpha_{i^*} \in \Delta^R$. This reinforc
 \caption{NichePopulation}
 \label{alg:niche}
 \begin{algorithmic}[1]
-\REQUIRE Population of $N$ agents, regimes $\mathcal{R}$, methods $\mathcal{M}$, bonus $\lambda$, learning rate $\eta$
+\REQUIRE Population of $N$ learners, regimes $\mathcal{R}$, methods $\mathcal{M}$, bonus $\lambda$, learning rate $\eta$
 \STATE Initialize $\beta_{i,r,m}^+ \leftarrow 1, \beta_{i,r,m}^- \leftarrow 1$ and $\alpha_{i,r} \leftarrow 1/R$ for all $i, r, m$
 \FOR{iteration $t = 1, 2, \ldots, T$}
     \STATE Sample regime $r_t \sim \pi(r)$
-    \FOR{each agent $i = 1, \ldots, N$}
+    \FOR{each learner $i = 1, \ldots, N$}
         \STATE Sample $\tilde{\theta}_m \sim \text{Beta}(\beta_{i,r_t,m}^+, \beta_{i,r_t,m}^-)$ for all $m$
         \STATE Select method: $m_i \leftarrow \argmax_m \tilde{\theta}_m$
         \STATE Execute method, observe reward $R_i$
@@ -194,10 +194,10 @@ followed by normalization to maintain $\alpha_{i^*} \in \Delta^R$. This reinforc
 
 \subsection{Method Specialization}
 
-Beyond regime specialization, we observe that agents develop preferences for specific prediction methods. We quantify this through:
+Beyond regime specialization, we observe that learners develop preferences for specific prediction methods. We quantify this through:
 
 \begin{definition}[Method Specialization Index]
-For an agent with method usage distribution $\pi_i \in \Delta^M$, the Method Specialization Index is:
+For a learner with method usage distribution $\pi_i \in \Delta^M$, the Method Specialization Index is:
 \begin{equation}
     \MSI(\pi_i) = 1 - \frac{H(\pi_i)}{\log M}
 \end{equation}
@@ -211,7 +211,7 @@ The population's method coverage is the fraction of methods used by at least one
 where $\tau$ is a threshold (we use $\tau = 0.3$).
 \end{definition}
 
-High method coverage indicates division of labor: different agents specialize in different prediction strategies, collectively utilizing the population's full repertoire.
+High method coverage indicates division of labor: different learners specialize in different prediction strategies, collectively utilizing the population's full repertoire.
 
 %=============================================================================
 \section{Theoretical Analysis}
@@ -221,21 +221,21 @@ We provide rigorous theoretical foundations for emergent specialization through 
 
 \begin{proposition}[Competitive Exclusion]
 \label{prop:exclusion}
-In a competitive multi-agent system with $N$ agents, $R$ regimes, and winner-take-all dynamics, if two agents $i$ and $j$ have identical niche affinities ($\alpha_i = \alpha_j$), then the strategy profile is not a Nash equilibrium when $N > R$.
+In a competitive learner population with $N$ learners, $R$ regimes, and winner-take-all dynamics, if two learners $i$ and $j$ have identical niche affinities ($\alpha_i = \alpha_j$), then the strategy profile is not a Nash equilibrium when $N > R$.
 \end{proposition}
 
 \begin{proof}
-Let agents $i$ and $j$ share identical affinities $\alpha_i = \alpha_j = \alpha$. In any regime $r$, both agents select methods from identical belief distributions and compete for the same reward. Under winner-take-all dynamics, the expected payoff for each is:
+Let learners $i$ and $j$ share identical affinities $\alpha_i = \alpha_j = \alpha$. In any regime $r$, both learners select methods from identical belief distributions and compete for the same reward. Under winner-take-all dynamics, the expected payoff for each is:
 \begin{equation}
     \E[\text{Payoff}_i | r] = \frac{V_r}{k_r} - c
 \end{equation}
-where $V_r$ is the regime value, $k_r$ is the number of agents with high affinity for regime $r$, and $c$ is a competition cost.
+where $V_r$ is the regime value, $k_r$ is the number of learners with high affinity for regime $r$, and $c$ is a competition cost.
 
-Consider agent $i$ deviating to specialize in a different regime $r' \neq r$ with lower competition density. After deviation, agent $i$'s expected payoff becomes:
+Consider learner $i$ deviating to specialize in a different regime $r' \neq r$ with lower competition density. After deviation, learner $i$'s expected payoff becomes:
 \begin{equation}
     \E[\text{Payoff}_i' | r'] = \frac{V_{r'}}{k_{r'} - 1} - c'
 \end{equation}
-where $k_{r'} - 1 < k_r$ because agent $i$ has moved to a less-contested niche.
+where $k_{r'} - 1 < k_r$ because learner $i$ has moved to a less-contested niche.
 
 By the pigeonhole principle, when $N > R$, at least one regime has $k_r > N/R > 1$. For this regime, deviation to a less-contested niche strictly increases expected payoff:
 \begin{equation}
@@ -244,7 +244,7 @@ By the pigeonhole principle, when $N > R$, at least one regime has $k_r > N/R > 
 assuming regimes have comparable values. Thus, identical strategies are not best responses, and the strategy profile is not a Nash equilibrium.
 \end{proof}
 
-This proposition formalizes the ecological principle of competitive exclusion: complete competitors cannot stably coexist. In the context of multi-agent systems, it implies that homogeneous populations are unstable---competitive pressure drives differentiation.
+This proposition formalizes the ecological principle of competitive exclusion: complete competitors cannot stably coexist. In the context of learner populations, it implies that homogeneous populations are unstable---competitive pressure drives differentiation.
 
 \begin{proposition}[SI Lower Bound---Informal]
 \label{prop:bound}
@@ -255,12 +255,12 @@ Under NichePopulation dynamics with niche bonus $\lambda > 0$, $R$ equiprobable 
 \end{proposition}
 
 \begin{proof}[Proof Sketch]
-We provide intuition here; a rigorous treatment appears in Appendix A.3. Consider an agent's optimal strategy. In their primary niche $r^*$, the agent receives reward multiplier $(1 + \lambda \alpha_{r^*})$; in other regimes, they receive multiplier 1. The expected reward is:
+We provide intuition here; a rigorous treatment appears in Appendix A.3. Consider a learner's optimal strategy. In their primary niche $r^*$, the learner receives reward multiplier $(1 + \lambda \alpha_{r^*})$; in other regimes, they receive multiplier 1. The expected reward is:
 \begin{equation}
     \E[R] = \frac{1}{R} \sum_r R_0 \cdot (1 + \lambda \alpha_r \cdot \mathbf{1}[r = r^*]) = R_0 \left(1 + \frac{\lambda \alpha_{r^*}}{R}\right)
 \end{equation}
 
-To maximize expected reward, agents should concentrate affinity on their primary niche. The optimal affinity allocation, balancing exploitation of the primary niche against the need to occasionally explore other regimes, satisfies $\alpha_{r^*}^* \approx \lambda/(1 + \lambda)$ with remaining probability distributed over other regimes.
+To maximize expected reward, learners should concentrate affinity on their primary niche. The optimal affinity allocation, balancing exploitation of the primary niche against the need to occasionally explore other regimes, satisfies $\alpha_{r^*}^* \approx \lambda/(1 + \lambda)$ with remaining probability distributed over other regimes.
 
 The resulting Specialization Index is:
 \begin{equation}
@@ -281,19 +281,19 @@ Define the effective regime count as $k_{\text{eff}} = \exp(H(\pi_r))$, where $\
 \end{proposition}
 
 \begin{proof}
-When $k_{\text{eff}} \to 1$, the environment is dominated by a single regime $r^*$ with $\pi_{r^*} \to 1$. All agents experience the same conditions with probability approaching 1, receiving rewards only in regime $r^*$.
+When $k_{\text{eff}} \to 1$, the environment is dominated by a single regime $r^*$ with $\pi_{r^*} \to 1$. All learners experience the same conditions with probability approaching 1, receiving rewards only in regime $r^*$.
 
-The niche affinity update rule reinforces regimes where agents win. When only regime $r^*$ occurs, all agents' affinities converge:
+The niche affinity update rule reinforces regimes where learners win. When only regime $r^*$ occurs, all learners' affinities converge:
 \begin{equation}
     \alpha_{i,r^*} \to 1, \quad \alpha_{i,r} \to 0 \text{ for } r \neq r^*
 \end{equation}
 
-With all agents having identical affinities $\alpha_i = \delta_{r^*}$, the Specialization Index for any individual agent is high, but there is no \emph{population-level diversity}. More importantly, the SI measure becomes degenerate: all agents specialize in the same regime, which is not meaningful specialization.
+With all learners having identical affinities $\alpha_i = \delta_{r^*}$, the Specialization Index for any individual learner is high, but there is no \emph{population-level diversity}. More importantly, the SI measure becomes degenerate: all learners specialize in the same regime, which is not meaningful specialization.
 
-For the population-level interpretation, we define effective specialization as requiring agents to specialize in \emph{different} regimes. Under mono-regime conditions, this is impossible, so effective SI $\to 0$.
+For the population-level interpretation, we define effective specialization as requiring learners to specialize in \emph{different} regimes. Under mono-regime conditions, this is impossible, so effective SI $\to 0$.
 \end{proof}
 
-This proposition establishes a necessary condition for emergent specialization: environmental heterogeneity. In mono-regime environments, there is no pressure for differentiation because all agents face identical conditions.
+This proposition establishes a necessary condition for emergent specialization: environmental heterogeneity. In mono-regime environments, there is no pressure for differentiation because all learners face identical conditions.
 
 %=============================================================================
 \section{Experiments}
@@ -333,13 +333,13 @@ Air Quality & Open-Meteo API & RMSE ($\mu$g/m$^3$) & 2,880 & 4 \\
 \end{tabular}
 \end{table}
 
-\paragraph{Configuration.} All experiments use consistent hyperparameters: $N = 8$ agents, $M = 5$ methods per domain, $T = 500$ iterations per trial, 30 trials per condition, $\lambda = 0.3$ (except ablations), learning rate $\eta = 0.1$, random seed base 42.
+\paragraph{Configuration.} All experiments use consistent hyperparameters: $N = 8$ learners, $M = 5$ methods per domain, $T = 500$ iterations per trial, 30 trials per condition, $\lambda = 0.3$ (except ablations), learning rate $\eta = 0.1$, random seed base 42.
 
 \paragraph{Baselines.} We compare against:
 \begin{itemize}
-    \item \textbf{Homogeneous}: All agents use the single best-performing method (oracle selection).
-    \item \textbf{Random}: Agents select methods uniformly at random each iteration.
-    \item \textbf{MARL}: IQL, QMIX, and MAPPO with equivalent agent counts and training budgets.
+    \item \textbf{Homogeneous}: All learners use the single best-performing method (oracle selection).
+    \item \textbf{Random}: Learners select methods uniformly at random each iteration.
+    \item \textbf{MARL}: IQL, QMIX, and MAPPO with equivalent learner counts and training budgets.
 \end{itemize}
 
 \subsection{Main Results: Cross-Domain Specialization}
@@ -400,17 +400,17 @@ Air Quality & 0.501 & 0.588 & 0.769 & 0.826 & 0.837 & 0.800 \\
 \end{tabular}
 \end{table}
 
-\textbf{At $\lambda = 0$, mean SI = 0.329, which is 2.5$\times$ higher than random (0.127).} This result is striking: \emph{competition alone, without any explicit diversity incentive, produces significant specialization}. The mechanism is precisely that described in Proposition \ref{prop:exclusion}: agents competing for the same regime face reduced expected payoffs, creating pressure to differentiate.
+\textbf{At $\lambda = 0$, mean SI = 0.329, which is 2.5$\times$ higher than random (0.127).} This result is striking: \emph{competition alone, without any explicit diversity incentive, produces significant specialization}. The mechanism is precisely that described in Proposition \ref{prop:exclusion}: learners competing for the same regime face reduced expected payoffs, creating pressure to differentiate.
 
-\textbf{Interpreting the $\lambda = 0$ vs. $\lambda = 0.3$ gap.} A skeptical reader might note that SI = 0.33 at $\lambda = 0$ is much lower than SI = 0.75 at $\lambda = 0.3$, and conclude that the niche bonus is ``doing most of the work.'' We argue otherwise: \emph{competition creates the foundation; the niche bonus is an accelerant, not the cause}. The crucial observation is that SI = 0.33 at $\lambda = 0$ is 2.5$\times$ higher than random---a statistically significant difference ($p < 0.001$) that emerges purely from competitive dynamics. Without competition, no amount of niche bonus would produce specialization, as agents would have no pressure to differentiate. The niche bonus amplifies an existing phenomenon; it does not create it. This distinction is central to our theoretical contribution: diversity is an emergent property of competition, not an engineered outcome of reward shaping.
+\textbf{Interpreting the $\lambda = 0$ vs. $\lambda = 0.3$ gap.} A skeptical reader might note that SI = 0.33 at $\lambda = 0$ is much lower than SI = 0.75 at $\lambda = 0.3$, and conclude that the niche bonus is ``doing most of the work.'' We argue otherwise: \emph{competition creates the foundation; the niche bonus is an accelerant, not the cause}. The crucial observation is that SI = 0.33 at $\lambda = 0$ is 2.5$\times$ higher than random---a statistically significant difference ($p < 0.001$) that emerges purely from competitive dynamics. Without competition, no amount of niche bonus would produce specialization, as learners would have no pressure to differentiate. The niche bonus amplifies an existing phenomenon; it does not create it. This distinction is central to our theoretical contribution: diversity is an emergent property of competition, not an engineered outcome of reward shaping.
 
-\textbf{Air Quality shows highest $\lambda = 0$ specialization (SI = 0.501).} This domain has particularly distinct regime-method affinities, making competitive exclusion more effective. When one agent discovers a high-performing method for a regime, others are forced to find alternative niches.
+\textbf{Air Quality shows highest $\lambda = 0$ specialization (SI = 0.501).} This domain has particularly distinct regime-method affinities, making competitive exclusion more effective. When one learner discovers a high-performing method for a regime, others are forced to find alternative niches.
 
-\textbf{SI increases monotonically with $\lambda$ (except Air Quality at $\lambda = 0.5$).} The niche bonus accelerates specialization by amplifying rewards in preferred regimes. The slight decrease for Air Quality at $\lambda = 0.5$ suggests over-specialization: agents become so focused on their primary niche that they fail to explore.
+\textbf{SI increases monotonically with $\lambda$ (except Air Quality at $\lambda = 0.5$).} The niche bonus accelerates specialization by amplifying rewards in preferred regimes. The slight decrease for Air Quality at $\lambda = 0.5$ suggests over-specialization: learners become so focused on their primary niche that they fail to explore.
 
 \subsection{Method Specialization and Division of Labor}
 
-Beyond regime specialization, we observe that agents develop preferences for specific prediction methods, creating a division of labor that improves population performance (Table \ref{tab:method}).
+Beyond regime specialization, we observe that learners develop preferences for specific prediction methods, creating a division of labor that improves population performance (Table \ref{tab:method}).
 
 \begin{table}[t]
 \centering
@@ -433,7 +433,7 @@ Air Quality & 0.371 & 73\% & 0.916 & 0.834 & +9.9\% & $< 10^{-50}$ \\
 \end{tabular}
 \end{table}
 
-\textbf{Populations use 87\% of available methods on average.} This indicates genuine division of labor: agents are not converging to a single dominant method but collectively utilizing the population's full repertoire. Weather and Traffic achieve 100\% coverage, with all 5 methods actively used by specialists.
+\textbf{Populations use 87\% of available methods on average.} This indicates genuine division of labor: learners are not converging to a single dominant method but collectively utilizing the population's full repertoire. Weather and Traffic achieve 100\% coverage, with all 5 methods actively used by specialists.
 
 \textbf{Diverse populations outperform homogeneous by +26.5\%.} This performance improvement demonstrates the practical value of emergent specialization. Different methods excel in different regimes; by having specialists for each, the population achieves better aggregate performance than any single method could.
 
@@ -462,22 +462,22 @@ IQL & 0.175 & 0.024 & 0.332 & 0.138 \\
 
 \textbf{NichePopulation achieves 4.3$\times$ higher SI than the best MARL baseline.} Averaging across domains, our approach achieves mean SI = 0.756 compared to 0.167 for MARL methods. This difference is statistically significant ($p < 0.001$) and practically meaningful.
 
-\textbf{MARL methods do not naturally induce specialization.} Despite their sophistication, QMIX, MAPPO, and IQL optimize for shared task objectives rather than agent diversity. Agents learn similar value functions and converge to similar behaviors. This homogenization is precisely what our approach avoids through competitive exclusion.
+\textbf{MARL methods do not naturally induce specialization.} Despite their sophistication, QMIX, MAPPO, and IQL optimize for shared task objectives rather than learner diversity. Learners learn similar value functions and converge to similar behaviors. This homogenization is precisely what our approach avoids through competitive exclusion.
 
 \textbf{Weather shows highest MARL performance.} Weather's strong seasonal patterns may be more amenable to standard RL methods. However, even here, MARL SI (0.332) is less than half of NichePopulation (0.716).
 
-\textbf{Fairness of comparison.} To ensure fair comparison, all MARL baselines used published hyperparameters from their original papers \cite{rashid2018qmix, yu2022surprising, tan1993multi} and received equivalent computational budgets: identical agent counts ($N = 8$), training iterations ($T = 500$), and random seeds. We did not perform hyperparameter tuning for MARL methods; doing so might improve their SI, but the magnitude of the gap (4.3$\times$) suggests our core finding would hold.
+\textbf{Fairness of comparison.} To ensure fair comparison, all MARL baselines used published hyperparameters from their original papers \cite{rashid2018qmix, yu2022surprising, tan1993multi} and received equivalent computational budgets: identical learner counts ($N = 8$), training iterations ($T = 500$), and random seeds. We did not perform hyperparameter tuning for MARL methods; doing so might improve their SI, but the magnitude of the gap (4.3$\times$) suggests our core finding would hold.
 
-\paragraph{Computational Efficiency.} Our approach offers significant efficiency advantages: 4$\times$ faster training (0.9s vs. 3.7s per 500 iterations), 99\% less memory (1 MB vs. 384-512 MB), and interpretable specialist assignments (each agent has a clear primary niche with human-readable affinity distributions).
+\paragraph{Computational Efficiency.} Our approach offers significant efficiency advantages: 4$\times$ faster training (0.9s vs. 3.7s per 500 iterations), 99\% less memory (1 MB vs. 384-512 MB), and interpretable specialist assignments (each learner has a clear primary niche with human-readable affinity distributions).
 
 \subsection{Failure Analysis: Why Traffic Shows Lower Specialization}
 \label{sec:traffic_analysis}
 
 Traffic exhibits the lowest SI (0.573) among our domains. \textbf{Rather than hiding this result, we highlight it: Traffic is a successful prediction of our theory, not a failure of our method.} Understanding this case illuminates the boundary conditions for emergent specialization.
 
-\textbf{More regimes dilute affinity.} Traffic has 6 regimes compared to 4 in other domains. By Proposition \ref{prop:bound}, the SI upper bound scales as $(1 - 1/R)$, which equals 0.83 for $R = 6$ versus 0.75 for $R = 4$. However, with 8 agents and 6 regimes, the pigeonhole principle guarantees less competition per regime, reducing specialization pressure. \emph{This is exactly what our theory predicts: the lower SI in Traffic validates Proposition \ref{prop:bound} rather than contradicting it.}
+\textbf{More regimes dilute affinity.} Traffic has 6 regimes compared to 4 in other domains. By Proposition \ref{prop:bound}, the SI upper bound scales as $(1 - 1/R)$, which equals 0.83 for $R = 6$ versus 0.75 for $R = 4$. However, with 8 learners and 6 regimes, the pigeonhole principle guarantees less competition per regime, reducing specialization pressure. \emph{This is exactly what our theory predicts: the lower SI in Traffic validates Proposition \ref{prop:bound} rather than contradicting it.}
 
-\textbf{Temporal regime correlation.} Traffic regimes exhibit strong temporal structure: morning rush reliably precedes midday, which precedes evening rush. This correlation violates the i.i.d. regime assumption in our theoretical analysis. Agents learn that succeeding in one regime predicts the next, reducing the value of pure specialization.
+\textbf{Temporal regime correlation.} Traffic regimes exhibit strong temporal structure: morning rush reliably precedes midday, which precedes evening rush. This correlation violates the i.i.d. regime assumption in our theoretical analysis. Learners learn that succeeding in one regime predicts the next, reducing the value of pure specialization.
 
 \textbf{Regime overlap.} The ``transition'' regime in Traffic (periods between rush hours) overlaps with multiple other regimes, creating ambiguous boundaries that complicate niche partitioning.
 
@@ -488,7 +488,7 @@ Despite lower SI, Traffic still achieves +23.8\% performance improvement through
 %=============================================================================
 
 \paragraph{Why Does Competition Induce Specialization?}
-Our theoretical and empirical analysis reveals the mechanism: competitive exclusion creates instability for homogeneous strategies. When agents share identical niches, they compete for the same rewards with reduced expected payoffs (Proposition \ref{prop:exclusion}). Deviation to a less-contested niche is profitable, driving differentiation. This dynamic mirrors ecological niche partitioning, where species evolve to exploit different resources to reduce competition.
+Our theoretical and empirical analysis reveals the mechanism: competitive exclusion creates instability for homogeneous strategies. When learners share identical niches, they compete for the same rewards with reduced expected payoffs (Proposition \ref{prop:exclusion}). Deviation to a less-contested niche is profitable, driving differentiation. This dynamic mirrors ecological niche partitioning, where species evolve to exploit different resources to reduce competition.
 
 The niche bonus ($\lambda$) accelerates this process by amplifying rewards in preferred regimes, but critically, competition alone ($\lambda = 0$) is sufficient. At $\lambda = 0$, mean SI = 0.329, significantly exceeding random baselines. This validates our core thesis: diversity can emerge from competitive dynamics without explicit incentives.
 
@@ -498,13 +498,13 @@ Our experiments reveal three necessary conditions for emergent specialization:
 \begin{enumerate}
     \item \textbf{Regime heterogeneity}: The environment must have multiple distinct regimes. Proposition \ref{prop:collapse} establishes that mono-regime environments produce SI $\to 0$. Our empirical validation shows SI $< 0.10$ in single-regime conditions.
 
-    \item \textbf{Strategy differentiation}: Different methods must be optimal in different regimes. If one method dominates all regimes, there is no incentive for agents to specialize in different methods. Our domain-specific method inventories ensure this condition is met.
+    \item \textbf{Strategy differentiation}: Different methods must be optimal in different regimes. If one method dominates all regimes, there is no incentive for learners to specialize in different methods. Our domain-specific method inventories ensure this condition is met.
 
-    \item \textbf{Limited resources}: Competition must be meaningful, i.e., agents must compete for limited rewards. In our winner-take-all setup, only one agent wins per iteration, creating strong competitive pressure. Softer competition (e.g., top-$k$ winners) would weaken specialization.
+    \item \textbf{Limited resources}: Competition must be meaningful, i.e., learners must compete for limited rewards. In our winner-take-all setup, only one learner wins per iteration, creating strong competitive pressure. Softer competition (e.g., top-$k$ winners) would weaken specialization.
 \end{enumerate}
 
 \paragraph{Practical Implications.}
-Our findings suggest a design principle for multi-agent systems: \textbf{competition can substitute for communication}. Rather than engineering explicit coordination mechanisms, system designers can introduce competitive dynamics that naturally induce specialization. This is particularly valuable in settings where communication is costly (bandwidth-limited networks), impossible (adversarial environments), or undesirable (privacy-preserving systems).
+Our findings suggest a design principle for learner populations: \textbf{competition can substitute for communication}. Rather than engineering explicit coordination mechanisms, system designers can introduce competitive dynamics that naturally induce specialization. This is particularly valuable in settings where communication is costly (bandwidth-limited networks), impossible (adversarial environments), or undesirable (privacy-preserving systems).
 
 %=============================================================================
 \section{Limitations}
@@ -521,14 +521,14 @@ Our findings suggest a design principle for multi-agent systems: \textbf{competi
 
     \item \textbf{Hand-defined regimes}: Our regime definitions (bull/bear/sideways, good/moderate/unhealthy) are externally specified based on domain knowledge, not discovered by the algorithm. In novel domains without prior knowledge, regime discovery would require unsupervised methods. Future work could integrate regime detection with specialization learning.
 
-    \item \textbf{Missing oracle baseline}: We compare against Homogeneous (single best method) and Random baselines, but not against an Oracle that perfectly switches methods per regime. Such an oracle would upper-bound achievable performance. Additionally, comparing against ensembles without competitive exclusion would isolate the value of competition vs. simply having multiple agents.
+    \item \textbf{Missing oracle baseline}: We compare against Homogeneous (single best method) and Random baselines, but not against an Oracle that perfectly switches methods per regime. Such an oracle would upper-bound achievable performance. Additionally, comparing against ensembles without competitive exclusion would isolate the value of competition vs. simply having multiple learners.
 \end{enumerate}
 
 %=============================================================================
 \section{Conclusion}
 %=============================================================================
 
-We have demonstrated that \textbf{competition alone is sufficient} to induce emergent specialization in multi-agent systems. Drawing from ecological niche theory, we introduced NichePopulation, a simple algorithm that achieves remarkable specialization through competitive exclusion and niche affinity tracking.
+We have demonstrated that \textbf{competition alone is sufficient} to induce emergent specialization in learner populations. Drawing from ecological niche theory, we introduced NichePopulation, a simple algorithm that achieves remarkable specialization through competitive exclusion and niche affinity tracking.
 
 Our key findings, validated across six real-world domains with 145,294 total records:
 
@@ -539,9 +539,9 @@ Our key findings, validated across six real-world domains with 145,294 total rec
     \item \textbf{Superiority over MARL}: 4.3$\times$ higher SI than QMIX/MAPPO/IQL while being 4$\times$ faster and using 99\% less memory.
 \end{itemize}
 
-Our theoretical contributions---three propositions establishing conditions for emergent specialization---provide a foundation for understanding when and why diversity emerges from competition. The practical implication is profound: in multi-agent systems requiring coordination without communication, \textbf{competition can serve as a coordination mechanism}.
+Our theoretical contributions---three propositions establishing conditions for emergent specialization---provide a foundation for understanding when and why diversity emerges from competition. The practical implication is profound: in learner populations requiring coordination without communication, \textbf{competition can serve as a coordination mechanism}.
 
-\paragraph{Reproducibility.} All code, data (145,294 real records from 6 domains), and experiment configurations are available at: \url{https://github.com/HowardLiYH/Emergent-Specialization-in-Multi-Agent-Systems}. We provide detailed documentation for reproduction.
+\paragraph{Reproducibility.} All code, data (145,294 real records from 6 domains), and experiment configurations are available at: \url{https://github.com/HowardLiYH/NichePopulation}. We provide detailed documentation for reproduction.
 
 %=============================================================================
 \bibliographystyle{plain}
@@ -567,7 +567,7 @@ All figures referenced in the main text are presented here to maximize space for
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/fig2_lambda_ablation.pdf}
-    \caption{$\lambda$ ablation across all domains. At $\lambda = 0$ (green shaded region), agents achieve SI $> 0.25$ in all domains, proving that competition alone induces specialization. The niche bonus accelerates but does not cause specialization.}
+    \caption{$\lambda$ ablation across all domains. At $\lambda = 0$ (green shaded region), learners achieve SI $> 0.25$ in all domains, proving that competition alone induces specialization. The niche bonus accelerates but does not cause specialization.}
     \label{fig:lambda}
 \end{figure}
 
@@ -581,7 +581,7 @@ All figures referenced in the main text are presented here to maximize space for
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\linewidth]{figures/fig4_marl_comparison.pdf}
-    \caption{NichePopulation vs. MARL baselines (QMIX, MAPPO, IQL). Our approach achieves 4.3$\times$ higher SI than the best MARL baseline. Standard MARL methods optimize for task performance rather than diversity, leading to agent homogenization.}
+    \caption{NichePopulation vs. MARL baselines (QMIX, MAPPO, IQL). Our approach achieves 4.3$\times$ higher SI than the best MARL baseline. Standard MARL methods optimize for task performance rather than diversity, leading to learner homogenization.}
     \label{fig:marl}
 \end{figure}
 
@@ -617,7 +617,7 @@ Air Quality & Persistence, Hourly-Avg, Moving-Avg (24-hour), Regime-Avg (EPA cat
 \subsection{Extended Proof of Proposition 2}
 
 \begin{proof}[Full Proof of Proposition 2]
-We derive the SI lower bound through constrained optimization. An agent's expected reward over $T$ iterations with regime distribution $\pi(r) = 1/R$ is:
+We derive the SI lower bound through constrained optimization. A learner's expected reward over $T$ iterations with regime distribution $\pi(r) = 1/R$ is:
 \begin{equation}
     \E[R_T] = \sum_{t=1}^T \sum_r \pi(r) \cdot R_0 \cdot (1 + \lambda \alpha_r \cdot \mathbf{1}[r = r^*])
 \end{equation}
@@ -666,7 +666,7 @@ The learning dynamics converge to this optimum exponentially with rate $\eta/R$,
 
 \paragraph{Hyperparameters.}
 \begin{itemize}
-    \item Population size: $N = 8$ agents
+    \item Population size: $N = 8$ learners
     \item Methods per domain: $M = 5$
     \item Iterations per trial: $T = 500$
     \item Trials per condition: 30
